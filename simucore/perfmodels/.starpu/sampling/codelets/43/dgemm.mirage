@@ -1,0 +1,116 @@
+##################
+# Performance Model Version
+43
+
+####################
+# CPUs
+# number of CPU devices
+1
+###############
+# CPU_0
+# number of workers on device CPU_0
+1
+##########
+# 1 worker(s) in parallel
+# number of implementations
+1
+#####
+# Model for cpu_impl_0
+# number of entries
+5
+# sumlnx	sumlnx2		sumlny		sumlnxlny	alpha		beta		n	minx		maxx
+0.000000e+00   	0.000000e+00   	0.000000e+00   	0.000000e+00   	nan            	nan            	0	0              	0              
+# a		b		c
+nan            	nan            	nan            
+# hash		size		flops		mean (us)	dev (us)		sum		sum2		n
+20a74a79	2252800        	0.000000e+00   	5.714967e+03   	9.983302e+01   	1.861365e+07   	1.064089e+11   	3257
+d46431bb	2457600        	0.000000e+00   	6.572893e+03   	9.671459e+02   	1.516432e+08   	1.018314e+12   	23071
+24c84a50	22118400       	0.000000e+00   	1.729324e+05   	2.099315e+03   	4.762558e+08   	8.237217e+13   	2754
+94526596	14131200       	0.000000e+00   	8.066041e+04   	2.228611e+03   	3.461945e+08   	2.794551e+13   	4292
+d041c8f5	1228800        	0.000000e+00   	1.783073e+03   	6.303677e+02   	1.489757e+07   	2.988342e+10   	8355
+
+####################
+# CUDAs
+# number of CUDA devices
+3
+###############
+# CUDA_0
+# number of workers on device CUDA_0
+1
+##########
+# 1 worker(s) in parallel
+# number of implementations
+1
+#####
+# Model for cuda_0_impl_0
+# number of entries
+5
+# sumlnx	sumlnx2		sumlny		sumlnxlny	alpha		beta		n	minx		maxx
+0.000000e+00   	0.000000e+00   	0.000000e+00   	0.000000e+00   	nan            	nan            	0	0              	0              
+# a		b		c
+nan            	nan            	nan            
+# hash		size		flops		mean (us)	dev (us)		sum		sum2		n
+20a74a79	2252800        	0.000000e+00   	3.095456e+02   	2.053203e+02   	7.525053e+05   	3.354169e+08   	2431
+d46431bb	2457600        	0.000000e+00   	3.270395e+02   	2.436610e+02   	2.585346e+07   	1.314853e+10   	79053
+24c84a50	22118400       	0.000000e+00   	5.981205e+03   	3.102152e+02   	1.503555e+08   	9.017264e+11   	25138
+94526596	14131200       	0.000000e+00   	2.881518e+03   	4.199780e+02   	2.276399e+06   	6.698827e+09   	790
+d041c8f5	1228800        	0.000000e+00   	2.338286e+02   	1.144770e+02   	6.921326e+04   	2.006311e+07   	296
+
+###############
+# CUDA_1
+# number of workers on device CUDA_1
+1
+##########
+# 1 worker(s) in parallel
+# number of implementations
+1
+#####
+# Model for cuda_1_impl_0
+# number of entries
+5
+# sumlnx	sumlnx2		sumlny		sumlnxlny	alpha		beta		n	minx		maxx
+0.000000e+00   	0.000000e+00   	0.000000e+00   	0.000000e+00   	nan            	nan            	0	0              	0              
+# a		b		c
+nan            	nan            	nan            
+# hash		size		flops		mean (us)	dev (us)		sum		sum2		n
+20a74a79	2252800        	0.000000e+00   	3.016439e+02   	4.389580e+01   	8.949776e+05   	2.756815e+08   	2967
+d46431bb	2457600        	0.000000e+00   	3.302564e+02   	3.287456e+02   	2.582341e+07   	1.697884e+10   	78192
+24c84a50	22118400       	0.000000e+00   	5.971525e+03   	2.301128e+02   	1.521067e+08   	9.096577e+11   	25472
+94526596	14131200       	0.000000e+00   	2.861859e+03   	8.311454e+01   	2.632911e+06   	7.541376e+09   	920
+d041c8f5	1228800        	0.000000e+00   	2.238745e+02   	1.263761e+02   	6.850561e+04   	2.022376e+07   	306
+
+###############
+# CUDA_2
+# number of workers on device CUDA_2
+1
+##########
+# 1 worker(s) in parallel
+# number of implementations
+1
+#####
+# Model for cuda_2_impl_0
+# number of entries
+5
+# sumlnx	sumlnx2		sumlny		sumlnxlny	alpha		beta		n	minx		maxx
+0.000000e+00   	0.000000e+00   	0.000000e+00   	0.000000e+00   	nan            	nan            	0	0              	0              
+# a		b		c
+nan            	nan            	nan            
+# hash		size		flops		mean (us)	dev (us)		sum		sum2		n
+20a74a79	2252800        	0.000000e+00   	3.197659e+02   	1.633721e+02   	8.716819e+05   	3.514923e+08   	2726
+d46431bb	2457600        	0.000000e+00   	3.408506e+02   	3.203963e+02   	2.609552e+07   	1.675385e+10   	76560
+24c84a50	22118400       	0.000000e+00   	5.988062e+03   	3.050672e+02   	1.507315e+08   	9.049323e+11   	25172
+94526596	14131200       	0.000000e+00   	2.850260e+03   	5.292387e+01   	2.633640e+06   	7.509149e+09   	924
+d041c8f5	1228800        	0.000000e+00   	2.356252e+02   	1.206585e+02   	7.987695e+04   	2.375635e+07   	339
+
+####################
+# OPENCLs
+# number of OPENCLs devices
+0
+####################
+# MICs
+# number of MIC devices
+0
+####################
+# SCCs
+# number of SCC devices
+0

@@ -1,0 +1,133 @@
+/**
+ *
+ * @file altanal_runtime.h
+ *
+ * @copyright 2009-2014 The University of Tennessee and The University of
+ *                      Tennessee Research Foundation. All rights reserved.
+ * @copyright 2012-2016 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
+ *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2017-2018 King Abdullah University of Science and Technology (KAUST). 
+ *                      All rights reserved.
+ ***
+ *
+ * @brief Altanal StarPU runtime header
+ *
+ * @version 1.0.0
+ * @author Mathieu Faverge
+ * @author Cedric Castagnede
+ * @author Florent Pruvost
+ * @date 2011-06-01
+ *
+ * 
+ * @brief ALTANAL StarPU runtime main header
+ *
+ *  ALTANAL is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
+ * @version 0.1.0
+ * @author Rabab Alomairy
+ * @date 2018-05-19
+ *
+ **/
+#ifndef _ALTANAL_STARPU_H_
+#define _ALTANAL_STARPU_H_
+
+#include "altanal/altanal_config.h"
+
+/* StarPU options */
+#cmakedefine HAVE_STARPU_FXT_PROFILING
+#cmakedefine HAVE_STARPU_IDLE_PREFETCH
+#cmakedefine HAVE_STARPU_ITERATION_PUSH
+#cmakedefine HAVE_STARPU_DATA_WONT_USE
+#cmakedefine HAVE_STARPU_DATA_SET_COORDINATES
+#cmakedefine HAVE_STARPU_MALLOC_ON_NODE_SET_DEFAULT_FLAGS
+#cmakedefine HAVE_STARPU_MPI_DATA_MIGRATE
+#cmakedefine HAVE_STARPU_MPI_DATA_REGISTER
+#cmakedefine HAVE_STARPU_MPI_COMM_RANK
+#cmakedefine HAVE_STARPU_MPI_CACHED_RECEIVE
+#cmakedefine HAVE_STARPU_MPI_COMM_GET_ATTR
+
+#if defined(ALTANAL_USE_MPI)
+#include <starpu_mpi.h>
+#else
+#include <starpu.h>
+#endif
+
+#include <starpu_profiling.h>
+
+#if defined(ALTANAL_USE_CUDA) && !defined(ALTANAL_SIMULATION)
+#include <starpu_scheduler.h>
+#include <starpu_cuda.h>
+
+#include <cublas.h>
+#include <starpu_cublas.h>
+#if defined(ALTANAL_USE_CUBLAS_V2)
+#include <cublas_v2.h>
+#include <starpu_cublas_v2.h>
+#endif
+#endif
+
+#if defined(ALTANAL_SIMULATION)
+# if !defined(STARPU_SIMGRID)
+#  error "Starpu was not built with simgrid support (--enable-simgrid). Can not run Altanal with simulation support."
+# endif
+#else
+# if defined(STARPU_SIMGRID)
+#  warning "Starpu was built with simgrid support. Better build Altanal with simulation support (-DALTANAL_SIMULATION=YES)."
+# endif
+#endif
+
+#include "runtime_task.h"
+#include "control/common.h"
+#include "runtime_codelet.h"
+#include "runtime_profiling.h"
+#include "runtime_codelet_profile.h"
+#include "runtime_workspace.h"
+
+BEGIN_C_DECLS
+typedef struct starpu_conf starpu_conf_t;
+
+/**/
+
+/*
+ * MPI Redefinitions
+ */
+#if defined(ALTANAL_USE_MPI)
+#undef STARPU_REDUX
+//#define starpu_insert_task(...) starpu_mpi_insert_task(MPI_COMM_WORLD, __VA_ARGS__)
+#define starpu_insert_task starpu_mpi_insert_task
+#define starpu_mpi_codelet(_codelet_) MPI_COMM_WORLD, _codelet_
+
+#else
+
+#define starpu_mpi_codelet(_codelet_) _codelet_
+
+#endif
+
+/*
+ * cuBlasAPI v2 - StarPU enable the support for cublas handle
+ */
+#if defined(ALTANAL_USE_CUDA) && defined(ALTANAL_USE_CUBLAS_V2)
+#define ALTANAL_Runtime_getStream(_stream_)                             \
+    cublasHandle_t _stream_ = starpu_cublas_get_local_handle();
+#else
+#define ALTANAL_Runtime_getStream(_stream_)                             \
+    cudaStream_t _stream_ = starpu_cuda_get_local_stream();     \
+    cublasSetKernelStream( stream );
+
+#endif
+
+/*
+ * Enable codelets names
+ */
+#if (STARPU_MAJOR_VERSION > 1) || ((STARPU_MAJOR_VERSION == 1) && (STARPU_MINOR_VERSION > 1))
+#define ALTANAL_CODELETS_HAVE_NAME
+#endif
+
+
+typedef struct starpu_codelet altanal_codelet;
+void altanal_insert_task(altanal_codelet *codelet, ALTANAL_option_t *options, ...);
+void altanal_unpack_arg(ALTANAL_arg_list *altanal_arg, ...);
+
+END_C_DECLS
+
+#endif /* _ALTANAL_STARPU_H_ */

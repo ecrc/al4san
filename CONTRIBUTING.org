@@ -1,0 +1,4 @@
+* To contribute to the project, you need to do it through merge request
+** Create a fork
+   First you need to fork the repository into your own account. You can
+   do that simply by clicking the fork button on the github interface.

@@ -1,0 +1,439 @@
+# This file is part of the Altanal User's Guide.
+# Copyright (C) 2017 Inria
+# See the file ../users_guide.org for copying conditions.
+
+Altanal is written in C and depends on a couple of external
+libraries that must be installed on the system.
+# , it provides an interface to be called from Fortran
+
+Altanal can be built and installed by the standard means of [[http://www.cmake.org/][CMake]].
+General information about CMake, as well as installation binaries and
+CMake source code are available from [[http://www.cmake.org/cmake/resources/software.html][here]].
+
+To get support to install a full distribution Altanal + dependencies
+we encourage users to use the /altanal/ branch of [[sec:spack][Spack]].
+
+
+** Getting Altanal
+
+   The latest official release tarballs of Altanal sources are
+   available for download from the [[https://gitlab.inria.fr/solverstack/altanal/tags][gitlab tags page]].
+
+   The latest development state is available on [[https://gitlab.inria.fr/solverstack/altanal][gitlab]]. You need [[https://git-scm.com/downloads][Git]]
+   #+begin_src
+   git clone --recursive https://gitlab.inria.fr/solverstack/altanal.git
+   #+end_src
+
+** Prerequisites for installing Altanal
+
+   To install Altanal's libraries, header files, and executables, one
+   needs:
+   - CMake (version 2.8 minimum): the build system
+   - C and Fortran compilers: GNU compiler suite, Clang, Intel or IBM
+     can be used
+   - python: to generate files in the different precisions
+   - external libraries: this depends on the configuration, by default
+     the required libraries are
+     - [[http://runtime.bordeaux.inria.fr/StarPU/][StarPU]]
+     - CBLAS, LAPACKE: these are interfaces and there exist several
+       providers that can be used with Altanal
+       - Intel MKL, Netlib, OpenBlas
+     - BLAS, LAPACK, TMGLIB: there exist several providers that can be
+       used with Altanal
+       - Eigen, Intel MKL, Netlib, OpenBlas
+     - pthread (libpthread)
+     - math (libm)
+
+   Optional libraries:
+   - [[http://icl.cs.utk.edu/quark/][quark]]
+   - [[https://developer.nvidia.com/cuda-downloads][cuda]]
+   - [[http://docs.nvidia.com/cuda/cublas/][cublas]]: comes with cuda
+   - mpi: [[http://www.open-mpi.org/][openmpi]]
+
+   These packages must be installed on the system before trying to
+   configure/build altanal.  Please look at the distrib/ directory
+   which gives some hints for the installation of dependencies for Unix
+   systems.
+
+   We give here some examples for a Debian system:
+   #+begin_src
+
+   # Update Debian packages list
+   sudo apt-get update
+   # Install Netlib blas, lapack, tmglib, cblas and lapacke suite
+   sudo apt-get install -y liblapack-dev liblapacke-dev
+   # Alternatively to Netlib, OpenBLAS could be used (faster kernels)
+   sudo apt-get install -y libopenblas-dev liblapacke-dev
+   # Install OpenMPI
+   sudo apt-get install -y libopenmpi-dev
+   # Install hwloc (used by StarPU or QUARK, already a dependency of OpenMPI)
+   sudo apt-get install -y libhwloc-dev
+   # install FxT, usefull to export some nice execution traces with StarPU
+   sudo apt-get install -y libfxt-dev
+   # Install cuda and cuBLAS: only if you have a GPU cuda compatible
+   sudo apt-get install -y nvidia-cuda-toolkit nvidia-cuda-dev
+
+   # Install StarPU (with MPI and FxT enabled)
+   mkdir -p $HOME/install
+   cd $HOME/install
+   wget http://starpu.gforge.inria.fr/files/starpu-1.2.2/starpu-1.2.2.tar.gz
+   tar xvzf starpu-1.2.2.tar.gz
+   cd starpu-1.2.2/
+   ./configure --prefix=$HOME/install/starpu --disable-opencl --disable-cuda --with-fxt=/usr/lib/x86_64-linux-gnu/
+   make
+   make install
+   cd $HOME/install
+   rm starpu-1.2.2/ starpu-1.2.2.tar.gz -rf
+
+   # Install QUARK: to be used in place of StarPU
+   mkdir -p $HOME/install
+   cd $HOME/install
+   wget http://icl.cs.utk.edu/projectsfiles/quark/pubs/quark-0.9.0.tgz
+   tar xvzf quark-0.9.0.tgz
+   cd quark-0.9.0/
+   sed -i -e "s#prefix=\.\/install#prefix=$HOME/install/quark#g" make.inc
+   sed -i -e "s#CFLAGS=-O2#CFLAGS=-O2 -fPIC#g" make.inc
+   make
+   make install
+   cd $HOME/install
+   rm quark-0.9.0/ quark-0.9.0.tgz -rf
+
+   #+end_src
+
+*** Some details about dependencies
+**** BLAS implementation
+     [[http://www.netlib.org/blas/][BLAS]] (Basic Linear Algebra Subprograms), are a de facto standard
+     for basic linear algebra operations such as vector and matrix
+     multiplication.  FORTRAN implementation of BLAS is available from
+     Netlib.  Also, C implementation of BLAS is included in GSL (GNU
+     Scientific Library).  Both these implementations are reference
+     implementation of BLAS, are not optimized for modern processor
+     architectures and provide an order of magnitude lower performance
+     than optimized implementations.  Highly optimized implementations
+     of BLAS are available from many hardware vendors, such as Intel
+     MKL, IBM ESSL and AMD ACML.  Fast implementations are also
+     available as academic packages, such as ATLAS and OpenBLAS.  The
+     standard interface to BLAS is the FORTRAN interface.
+
+     *Caution about the compatibility:* Altanal has been mainly tested
+     with the reference BLAS from NETLIB, OpenBLAS and Intel MKL.
+**** CBLAS
+     [[http://www.netlib.org/blas/#_cblas][CBLAS]] is a C language interface to BLAS.  Most commercial and
+     academic implementations of BLAS also provide CBLAS.  Netlib
+     provides a reference implementation of CBLAS on top of FORTRAN
+     BLAS (Netlib CBLAS).  Since GSL is implemented in C, it naturally
+     provides CBLAS.
+
+     *Caution about the compatibility:* Altanal has been mainly tested with
+     the reference CBLAS from NETLIB, OpenBLAS and Intel MKL.
+
+**** LAPACK implementation
+     [[http://www.netlib.org/lapack/][LAPACK]] (Linear Algebra PACKage) is a software library for
+     numerical linear algebra, a successor of LINPACK and EISPACK and
+     a predecessor of Altanal.  LAPACK provides routines for solving
+     linear systems of equations, linear least square problems,
+     eigenvalue problems and singular value problems.  Most commercial
+     and academic BLAS packages also provide some LAPACK routines.
+
+     *Caution about the compatibility:* Altanal has been mainly tested
+     with the reference LAPACK from NETLIB, OpenBLAS and Intel MKL.
+
+**** LAPACKE
+     [[http://www.netlib.org/lapack/][LAPACKE]] is a C language interface to LAPACK (or CLAPACK).  It is
+     produced by Intel in coordination with the LAPACK team and is
+     available in source code from Netlib in its original version
+     (Netlib LAPACKE) and from Altanal website in an extended
+     version (LAPACKE for Altanal).  In addition to implementing the
+     C interface, LAPACKE also provides routines which automatically
+     handle workspace allocation, making the use of LAPACK much more
+     convenient.
+
+     *Caution about the compatibility:* Altanal has been mainly tested
+     with the reference LAPACKE from NETLIB, OpenBLAS and Intel MKL.
+
+**** libtmg
+     [[http://www.netlib.org/lapack/][libtmg]] is a component of the LAPACK library, containing routines
+     for generation of input matrices for testing and timing of
+     LAPACK.  The testing and timing suites of LAPACK require libtmg,
+     but not the library itself. Note that the LAPACK library can be
+     built and used without libtmg.
+
+     *Caution about the compatibility:* Altanal has been mainly tested
+     with the reference TMGLIB from NETLIB, OpenBLAS and Intel MKL.
+
+**** QUARK
+     [[http://icl.cs.utk.edu/quark/][QUARK]] (QUeuing And Runtime for Kernels) provides a library that
+     enables the dynamic execution of tasks with data dependencies in
+     a multi-core, multi-socket, shared-memory environment.  One of
+     QUARK or StarPU Runtime systems has to be enabled in order to
+     schedule tasks on the architecture.  If QUARK is enabled then
+     StarPU is disabled and conversely.  Note StarPU is enabled by
+     default.  When Altanal is linked with QUARK, it is not possible
+     to exploit neither CUDA (for GPUs) nor MPI (distributed-memory
+     environment).  You can use StarPU to do so.
+
+     *Caution about the compatibility:* Altanal has been mainly tested
+     with the QUARK library 0.9.
+
+**** StarPU
+     [[http://runtime.bordeaux.inria.fr/StarPU/][StarPU]] is a task programming library for hybrid architectures.
+     StarPU handles run-time concerns such as:
+     * Task dependencies
+     * Optimized heterogeneous scheduling
+     * Optimized data transfers and replication between main memory
+       and discrete memories
+     * Optimized cluster communications
+
+     StarPU can be used to benefit from GPUs and distributed-memory
+     environment.  One of QUARK or StarPU runtime system has to be
+     enabled in order to schedule tasks on the architecture.  If
+     StarPU is enabled then QUARK is disabled and conversely.  Note
+     StarPU is enabled by default.
+
+     *Caution about the compatibility:* Altanal has been mainly tested
+     with StarPU-1.1 and 1.2 releases.
+
+**** FxT
+     [[http://download.savannah.gnu.org/releases/fkt/][FxT]] stands for both FKT (Fast Kernel Tracing) and FUT (Fast User
+     Tracing).  This library provides efficient support for recording
+     traces.  Altanal can trace kernels execution on the different
+     workers and produce .paje files if FxT is enabled.  FxT can only
+     be used through StarPU and StarPU must be compiled with FxT
+     enabled, see how to use this feature here [[sec:trace][Execution trace using
+     StarPU]].
+
+     *Caution about the compatibility:* FxT should be compatible with
+     the version of StarPU used.
+
+**** hwloc
+     [[http://www.open-mpi.org/projects/hwloc/][hwloc]] (Portable Hardware Locality) is a software package for
+     accessing the topology of a multicore system including components
+     like: cores, sockets, caches and NUMA nodes. The topology
+     discovery library, ~hwloc~, is not mandatory to use StarPU but
+     strongly recommended.  It allows to increase performance, and to
+     perform some topology aware scheduling. ~hwloc~ is available in
+     major distributions and for most OSes and can be downloaded from
+     http://www.open-mpi.org/software/hwloc.
+
+**** pthread
+     POSIX threads library is required to run Altanal on Unix-like systems.
+     It is a standard component of any such system.
+
+**** OpenMPI
+     [[http://www.open-mpi.org/][OpenMPI]] is an open source Message Passing Interface
+     implementation for execution on multiple nodes with
+     distributed-memory environment.  MPI can be enabled only if the
+     runtime system chosen is StarPU (default).  To use MPI through
+     StarPU, it is necessary to compile StarPU with MPI enabled.
+
+     *Caution about the compatibility:* OpenMPI should be built with the
+     --enable-mpi-thread-multiple option.
+
+**** Nvidia CUDA Toolkit
+     [[https://developer.nvidia.com/cuda-toolkit][Nvidia CUDA Toolkit]] provides a comprehensive development
+     environment for C and C++ developers building GPU-accelerated
+     applications.  Altanal can use a set of low level optimized
+     kernels coming from cuBLAS to accelerate computations on GPUs.
+     The [[http://docs.nvidia.com/cuda/cublas/][cuBLAS]] library is an implementation of BLAS (Basic Linear
+     Algebra Subprograms) on top of the Nvidia CUDA runtime.  cuBLAS
+     is normaly distributed with Nvidia CUDA Toolkit.  CUDA/cuBLAS can
+     be enabled in Altanal only if the runtime system chosen is
+     StarPU (default).  To use CUDA through StarPU, it is necessary to
+     compile StarPU with CUDA enabled.
+
+     *Caution about the compatibility:* Altanal has been mainly tested
+     with CUDA releases from versions 4 to 7.5.  Your compiler must be
+     compatible with CUDA.
+
+** Distribution of Altanal using Spack
+   <<sec:spack>>
+
+   To get support to install a full distribution (Altanal +
+   dependencies) we encourage users to use the altanal branch of *Spack*.
+
+   Please read these documentations:
+   * [[http://altanal.gforge.inria.fr/spack/spack.html][Spack Altanal]]
+   * [[http://altanal.gforge.inria.fr/spack/spack.html#orgd5b1afe][Section Altanal]]
+
+*** Usage example for a simple distribution of Altanal
+    #+begin_src sh
+    git clone https://github.com/solverstack/spack.git
+    . ./spack/share/spack/setup-env.sh
+    spack install -v altanal
+    # altanal is installed here:
+    `spack location -i altanal`
+    #+end_src
+
+** Build and install Altanal with CMake
+   Compilation of Altanal libraries and executables are done with
+   CMake (http://www.cmake.org/). This version has been tested with
+   CMake 3.5.1 but any version superior to 2.8 should be fine.
+
+   Here the steps to configure, build, test and install
+   1. configure:
+      #+begin_src
+      cmake path/to/altanal -DOPTION1= -DOPTION2= ...
+      # see the "Configuration options" section to get list of options
+      # see the "Dependencies detection" for details about libraries detection
+      #+end_src
+   2. build:
+      #+begin_src
+      make
+      # do not hesitate to use -j[ncores] option to speedup the compilation
+      #+end_src
+   3. test (optional, required ALTANAL_ENABLE_TESTING=ON and/or
+      ALTANAL_ENABLE_TIMING=ON):
+      #+begin_src
+      make test
+      # or
+      ctest
+      #+end_src
+   4. install (optional):
+      #+begin_src
+      make install
+      #+end_src
+      Do not forget to specify the install directory with
+      *-DCMAKE_INSTALL_PREFIX* at configure.
+      #+begin_example
+      cmake /home/jdoe/altanal -DCMAKE_INSTALL_PREFIX=/home/jdoe/install/altanal
+      #+end_example
+      Note that the install process is optional. You are free to use
+      Altanal binaries compiled in the build directory.
+*** Configuration options
+    You can optionally activate some options at cmake configure (like CUDA, MPI, ...)
+    invoking ~cmake path/to/your/CMakeLists.txt -DOPTION1= -DOPTION2= ...~
+    #+begin_src
+    cmake /home/jdoe/altanal/ -DCMAKE_BUILD_TYPE=Debug \
+                                -DCMAKE_INSTALL_PREFIX=/home/jdoe/install/ \
+                                -DALTANAL_USE_CUDA=ON \
+                                -DALTANAL_USE_MPI=ON \
+                                -DBLA_VENDOR=Intel10_64lp \
+                                -DSTARPU_DIR=/home/jdoe/install/starpu-1.2/ \
+                                -DALTANAL_ENABLE_TRACING=ON
+    #+end_src
+
+    You can get the full list of options with *-L[A][H]* options of cmake command
+    #+begin_src
+    cmake -LH /home/jdoe/altanal/
+    #+end_src
+
+    You can also set the options thanks to the *ccmake* interface.
+
+**** Native CMake options (non-exhaustive list)
+     * *CMAKE_BUILD_TYPE=Debug|Release|RelWithDebInfo|MinSizeRel*:
+       level of compiler optimization, enable/disable debug
+       information
+     * *CMAKE_INSTALL_PREFIX=path/to/your/install/dir*: where headers,
+       libraries, executables, etc, will be copied when invoking make
+       install
+     * *BUILD_SHARED_LIBS=ON|OFF*: indicate wether or not CMake has to
+       build Altanal static (~OFF~) or shared (~ON~) libraries.
+     * *CMAKE_C_COMPILER=gcc|icc|...*: to choose the C compilers
+       if several exist in the environment
+     * *CMAKE_Fortran_COMPILER=gfortran|ifort|...*: to choose the
+       Fortran compilers if several exist in the environment
+
+**** Related to specific modules (find_package) to find external libraries
+     * *BLA_VENDOR=All|Eigen|Open|Generic|Intel10_64lp|Intel10_64lp_seq*:
+       to use intel mkl for example, see the list of BLA_VENDOR in
+       FindBLAS.cmake in cmake_modules/altanal_cmake/modules/find
+     * *STARPU_DIR=path/to/root/starpu/install*, see [[sec:depdet][Dependencies
+       detection]]
+     * *STARPU_INCDIR=path/to/root/starpu/install/headers*, see
+       [[sec:depdet][Dependencies detection]]
+     * *STARPU_LIBDIR=path/to/root/starpu/install/libs*, see
+       [[sec:depdet][Dependencies detection]]
+     * List of packages that can searched just like STARPU (with _DIR,
+       _INCDIR and _LIBDIR):
+       * *BLAS*, *CBLAS*, *EZTRACE*, *FXT*, *HWLOC*, *LAPACK*, *LAPACKE*, *QUARK*,
+         *SIMGRID*, *TMG*
+
+     Libraries detected with an official cmake module (see module files
+     in CMAKE_ROOT/Modules/): CUDA - MPI - Threads.
+
+     Libraries detected with our cmake modules (see module files in
+     cmake_modules/altanal_cmake/modules/find/ directory of Altanal
+     sources): BLAS - CBLAS - EZTRACE - FXT - HWLOC - LAPACK -
+     LAPACKE - QUARK - SIMGRID - STARPU - TMG.
+
+**** Altanal specific options
+     * *ALTANAL_SCHED_STARPU=ON|OFF* (default ON): to link with
+       StarPU library (runtime system)
+     * *ALTANAL_SCHED_QUARK=ON|OFF* (default OFF): to link with QUARK
+       library (runtime system)
+     * *ALTANAL_USE_MPI=ON|OFF* (default OFF): to link with MPI
+       library (message passing implementation for use of multiple
+       nodes with distributed memory), can only be used with StarPU
+     * *ALTANAL_USE_CUDA=ON|OFF* (default OFF): to link with CUDA
+       runtime (implementation paradigm for accelerated codes on GPUs)
+       and cuBLAS library (optimized BLAS kernels on GPUs), can only
+       be used with StarPU
+     * *ALTANAL_ENABLE_DOC=ON|OFF* (default OFF): to control build of
+       the documentation contained in doc/ sub-directory
+     * *ALTANAL_ENABLE_EXAMPLE=ON|OFF* (default ON): to control build
+       of the examples executables (API usage) contained in example/
+       sub-directory
+     * *ALTANAL_ENABLE_PRUNING_STATS=ON|OFF* (default OFF)
+     * *ALTANAL_ENABLE_TESTING=ON|OFF* (default ON): to control build
+       of testing executables (numerical check) contained in testing/
+       sub-directory
+     * *ALTANAL_ENABLE_TIMING=ON|OFF* (default ON): to control build
+       of timing executables (performances check) contained in timing/
+       sub-directory
+     * *ALTANAL_ENABLE_TRACING=ON|OFF* (default OFF): to enable trace
+       generation during execution of timing drivers. It requires
+       StarPU to be linked with FxT library (trace execution of
+       kernels on workers), see also [[sec:trace][Execution tracing
+       with StarPU]].
+     * *ALTANAL_SIMULATION=ON|OFF* (default OFF): to enable
+       simulation mode, means Altanal will not really execute tasks,
+       see details in section [[sec:simu][Use simulation mode with
+       StarPU-SimGrid]]. This option must be used with StarPU compiled
+       with [[http://simgrid.gforge.inria.fr/][SimGrid]] allowing to guess the execution time on any
+       architecture. This feature should be used to make experiments
+       on the scheduler behaviors and performances not to produce
+       solutions of linear systems.
+
+*** Dependencies detection
+    <<sec:depdet>>
+
+    You have different choices to detect dependencies on your system,
+    either by setting some environment variables containing paths to
+    the libs and headers or by specifying them directly at cmake
+    configure. Different cases:
+
+    1) detection of dependencies through environment variables:
+       - LD_LIBRARY_PATH should contain the list of paths where to find
+         the libraries:
+         #+begin_src
+         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:install/path/to/your/lib
+         #+end_src
+       - INCLUDE should contain the list of paths where to find the
+         header files of libraries
+         #+begin_src
+         export INCLUDE=$INCLUDE:install/path/to/your/headers
+         #+end_src
+    2) detection with user's given paths:
+       - you can specify the path at cmake configure by invoking ~cmake
+         path/to/your/CMakeLists.txt -DLIB_DIR=path/to/your/lib~ where
+         LIB stands for the name of the lib to look for
+         #+begin_src
+         cmake path/to/your/CMakeLists.txt -DSTARPU_DIR=path/to/starpudir \
+                                           -DCBLAS_DIR= ...
+         #+end_src
+         it is also possible to specify headers and library directories
+         separately
+         #+begin_src
+         cmake path/to/your/CMakeLists.txt -DSTARPU_INCDIR=path/to/libstarpu/include/starpu/1.1 \
+                                           -DSTARPU_LIBDIR=path/to/libstarpu/lib
+         #+end_src
+       - note: BLAS and LAPACK detection can be tedious so that we
+         provide a verbose mode you can set *-DBLAS_VERBOSE=ON* or
+         *-DLAPACK_VERBOSE=ON* to enable it
+    3) detection with custom environment variables: all variables like
+       _DIR, _INCDIR, _LIBDIR can be set as environment variables
+       instead of CMake options, there will be read
+    4) using [[https://www.freedesktop.org/wiki/Software/pkg-config/][pkg-config]] for libraries that provide .pc files
+       - update your *PKG_CONFIG_PATH* to the paths where to find .pc
+         files of installed external libraries like hwloc, starpu, some
+         blas/lapack, etc
