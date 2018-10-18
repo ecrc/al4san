@@ -1,0 +1,9 @@
+<map id="runtime/starpu/include/runtime_workspace.h" name="runtime/starpu/include/runtime_workspace.h">
+<area shape="rect" id="node2" href="$al4san__runtime_8h.html" title="AL4SAN StarPU runtime main header. " alt="" coords="423,95,594,136"/>
+<area shape="rect" id="node3" href="$runtime__async_8c.html" title="runtime/starpu/control\l/runtime_async.c" alt="" coords="5,184,153,225"/>
+<area shape="rect" id="node4" href="$runtime__context_8c.html" title="runtime/starpu/control\l/runtime_context.c" alt="" coords="177,184,325,225"/>
+<area shape="rect" id="node5" href="$runtime__control_8c.html" title="runtime/starpu/control\l/runtime_control.c" alt="" coords="349,184,497,225"/>
+<area shape="rect" id="node6" href="$runtime__options_8c.html" title="runtime/starpu/control\l/runtime_options.c" alt="" coords="521,184,669,225"/>
+<area shape="rect" id="node7" href="$runtime__workspace_8c.html" title="runtime/starpu/control\l/runtime_workspace.c" alt="" coords="693,184,844,225"/>
+<area shape="rect" id="node8" href="$runtime__task_8c.html" title="runtime/starpu/control\l/runtime_task.c" alt="" coords="868,184,1016,225"/>
+</map>

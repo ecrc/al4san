@@ -1,0 +1,20 @@
+<map id="include/al4san/struct.h" name="include/al4san/struct.h">
+<area shape="rect" id="node2" href="$runtime_8h.html" title="include/al4san/runtime.h" alt="" coords="146,155,309,181"/>
+<area shape="rect" id="node7" href="$al4san__async_8h.html" title="control/al4san_async.h" alt="" coords="327,80,483,107"/>
+<area shape="rect" id="node18" href="$al4san__auxiliary_8h.html" title="control/al4san_auxiliary.h" alt="" coords="507,80,676,107"/>
+<area shape="rect" id="node19" href="$al4san__context_8h.html" title="control/al4san_context.h" alt="" coords="139,80,303,107"/>
+<area shape="rect" id="node3" href="$async_8c.html" title="control/async.c" alt="" coords="148,237,259,263"/>
+<area shape="rect" id="node4" href="$context_8c.html" title="control/context.c" alt="" coords="5,237,124,263"/>
+<area shape="rect" id="node5" href="$control_8c.html" title="control/control.c" alt="" coords="283,237,398,263"/>
+<area shape="rect" id="node6" href="$task_8c.html" title="control/task.c" alt="" coords="422,237,523,263"/>
+<area shape="rect" id="node8" href="$al4san__common_8h.html" title="control/al4san_common.h" alt="" coords="383,155,554,181"/>
+<area shape="rect" id="node9" href="$auxiliary_8c.html" title="control/auxiliary.c" alt="" coords="905,237,1029,263"/>
+<area shape="rect" id="node10" href="$al4san__f77_8c.html" title="control/al4san_f77.c" alt="" coords="742,237,881,263"/>
+<area shape="rect" id="node11" href="$al4san__runtime_8h.html" title="AL4SAN StarPU runtime main header. " alt="" coords="547,229,718,271"/>
+<area shape="rect" id="node12" href="$runtime__async_8c.html" title="runtime/starpu/control\l/runtime_async.c" alt="" coords="128,319,276,360"/>
+<area shape="rect" id="node13" href="$runtime__context_8c.html" title="runtime/starpu/control\l/runtime_context.c" alt="" coords="300,319,448,360"/>
+<area shape="rect" id="node14" href="$runtime__control_8c.html" title="runtime/starpu/control\l/runtime_control.c" alt="" coords="472,319,620,360"/>
+<area shape="rect" id="node15" href="$runtime__options_8c.html" title="runtime/starpu/control\l/runtime_options.c" alt="" coords="644,319,792,360"/>
+<area shape="rect" id="node16" href="$runtime__workspace_8c.html" title="runtime/starpu/control\l/runtime_workspace.c" alt="" coords="816,319,967,360"/>
+<area shape="rect" id="node17" href="$runtime__task_8c.html" title="runtime/starpu/control\l/runtime_task.c" alt="" coords="991,319,1139,360"/>
+</map>

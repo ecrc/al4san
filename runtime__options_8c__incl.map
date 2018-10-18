@@ -1,0 +1,13 @@
+<map id="runtime/starpu/control/runtime_options.c" name="runtime/starpu/control/runtime_options.c">
+<area shape="rect" id="node4" href="$al4san__runtime_8h.html" title="AL4SAN StarPU runtime main header. " alt="" coords="233,95,354,121"/>
+<area shape="rect" id="node5" href="$config_8h.html" title="al4san/config.h" alt="" coords="195,468,306,495"/>
+<area shape="rect" id="node8" href="$runtime__task_8h.html" title="runtime_task.h" alt="" coords="239,169,347,196"/>
+<area shape="rect" id="node9" href="$runtime__codelet_8h_source.html" title="runtime_codelet.h" alt="" coords="136,244,261,271"/>
+<area shape="rect" id="node10" href="$al4san__common_8h.html" title="control/al4san_common.h" alt="" coords="568,169,739,196"/>
+<area shape="rect" id="node22" href="$runtime__workspace_8h.html" title="Al4san StarPU workspace header. " alt="" coords="763,169,909,196"/>
+<area shape="rect" id="node14" href="$al4san__auxiliary_8h.html" title="control/al4san_auxiliary.h" alt="" coords="286,244,455,271"/>
+<area shape="rect" id="node20" href="$al4san__context_8h.html" title="control/al4san_context.h" alt="" coords="479,244,643,271"/>
+<area shape="rect" id="node21" href="$al4san__async_8h.html" title="control/al4san_async.h" alt="" coords="667,244,823,271"/>
+<area shape="rect" id="node15" href="$struct_8h.html" title="al4san/struct.h" alt="" coords="490,319,598,345"/>
+<area shape="rect" id="node16" href="$types_8h.html" title="al4san/types.h" alt="" coords="491,393,597,420"/>
+</map>
