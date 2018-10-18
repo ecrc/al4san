@@ -2,24 +2,26 @@
  *
  * @file runtime_task.c
  *
- * @copyright 2017-2018 King Abdullah University of Science and Technology (KAUST).
+* @copyright 2012-2017 The University of Tennessee and The University of
+ *                      Tennessee Research Foundation. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
  **/
 
 /**
  *
- * @brief ALTANAL PaRSEC Task routines
- *  ALTANAL is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ * @brief AL4SAN PaRSEC Task routines
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 0.1.0
+ * @version 1.0.0
  * @author Rabab Alomairy
- * @date 2018-05-19
+ * @date 2018-10-18
  *
  **/
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "altanal_runtime.h"
+#include "al4san_runtime.h"
 #include <stdarg.h>
 
 
@@ -31,7 +33,7 @@
  * accompanying data that might be needed.
  */
 int
-altanal_arg_iterator(va_list args, parsec_dtd_arg_cb *cb, void *cb_data)
+al4san_arg_iterator(va_list args, parsec_dtd_arg_cb *cb, void *cb_data)
 {
     /* We always expect three arguments to come a set */
     int arg_type, arg_size;
@@ -40,35 +42,34 @@ altanal_arg_iterator(va_list args, parsec_dtd_arg_cb *cb, void *cb_data)
         arg_ptr = va_arg(args, void *);
         arg_size  = va_arg(args, int);
         
-        if((arg_type & GET_OP_TYPE) == INPUT || 
-         (arg_type & GET_OP_TYPE) == INOUT || 
-         (arg_type & GET_OP_TYPE) == OUTPUT )
-        {
-            arg_size=PASSED_BY_REF;
-            cb(arg_size, arg_ptr, arg_type, cb_data);
+        if(((arg_type & AL4SAN_UNDEFINED_MASK) & GET_OP_TYPE) == AL4SAN_INPUT || 
+         ((arg_type & AL4SAN_UNDEFINED_MASK) & GET_OP_TYPE) == AL4SAN_INOUT || 
+         ((arg_type & AL4SAN_UNDEFINED_MASK) & GET_OP_TYPE) == AL4SAN_OUTPUT )
+          {
+             arg_size=PASSED_BY_REF;
+             cb(arg_size, arg_ptr, (arg_type & AL4SAN_UNDEFINED_MASK), cb_data);
             
-        }
-        else if(arg_type==ALTANAL_VALUE       || 
-            arg_type==ALTANAL_REF         || 
-            arg_type==ALTANAL_SCRATCH     || 
-            arg_type==ALTANAL_AFFINITY    ||
-            arg_type==ALTANAL_DONT_TRACK  ||
-            arg_type==ALTANAL_PASSED_BY_REF)
+          }
+        else if(arg_type==AL4SAN_VALUE   || 
+            arg_type==AL4SAN_REF         || 
+            arg_type==AL4SAN_SCRATCH     || 
+            arg_type==AL4SAN_AFFINITY    ||
+            arg_type==AL4SAN_DONT_TRACK  ||
+            arg_type==AL4SAN_PASSED_BY_REF)
+           {
             cb(arg_size, arg_ptr, arg_type, cb_data);
-
-        else if(arg_type!=ALTANAL_PRIORITY  && 
-            arg_type!=ALTANAL_LABEL     && 
-            arg_type!=ALTANAL_undefined)
-        {
-               // fprintf(stderr,"task option is not exist\n");
-                // abort();
+           }
+        else if(arg_type!=AL4SAN_PRIORITY  && 
+            arg_type!=AL4SAN_LABEL     && 
+            arg_type!=AL4SAN_UNDEFINED)
+           {
             parsec_fatal("Unrecognized argument, did you perhaps forget to end arguments with ARG_END?\n");
-        }
+           }
         
     }
     return 1;
 }
-void altanal_flags_decode(ALTANAL_Task_Flags *task_flag, va_list args_for_flags)
+void al4san_flags_decode(AL4SAN_Task_Flags *task_flag, va_list args_for_flags)
 {
          /* We always expect three arguments to come a set */
     int arg_type, arg_size;
@@ -82,19 +83,19 @@ void altanal_flags_decode(ALTANAL_Task_Flags *task_flag, va_list args_for_flags)
         arg_ptr = va_arg(args_for_flags, void *);
         arg_size  = va_arg(args_for_flags, int);
 
-        if( arg_type == ALTANAL_PRIORITY)
-        {
-           task_flag->task_priority=(int *)arg_ptr;
-       }
-       else if(arg_type == ALTANAL_LABEL)
-       {
+        if( arg_type == AL4SAN_PRIORITY)
+          {
+           task_flag->task_priority=(intptr_t)arg_ptr;
+          }
+       else if(arg_type == AL4SAN_LABEL)
+         {
            task_flag->task_label=(char *)arg_ptr;
-       }
+         }
    }
    return;
 }
 
-void  altanal_insert_task( altanal_codelet *codelet,  ALTANAL_option_t *options, ...) 
+void  al4san_insert_task( al4san_codelet *codelet,  AL4SAN_option_t *options, ...) 
 {
     //Defines a DAG of tasks
     parsec_taskpool_t *tp = (parsec_taskpool_t *) (options->sequence->schedopt);
@@ -116,7 +117,7 @@ void  altanal_insert_task( altanal_codelet *codelet,  ALTANAL_option_t *options,
 
     va_list args, args_for_size, args_for_rank, args_for_flags;
     parsec_dtd_common_args_t common_args;
-    ALTANAL_Task_Flags task_flag;
+    AL4SAN_Task_Flags task_flag;
 
     common_args.rank = -1; common_args.write_flow_count = 1;
     common_args.flow_count_of_template = 0; common_args.dtd_tp = dtd_tp;
@@ -130,26 +131,26 @@ void  altanal_insert_task( altanal_codelet *codelet,  ALTANAL_option_t *options,
 #endif
      //extracting the flags of the task 
     va_copy(args_for_flags, args);
-    altanal_flags_decode(&task_flag, args_for_flags);
+    al4san_flags_decode(&task_flag, args_for_flags);
     va_end(args_for_flags);
 
      //extracting the rank of the task 
     va_copy(args_for_rank, args);
-    altanal_arg_iterator(args_for_rank, parsec_dtd_iterator_arg_get_rank, (void*)&common_args);
+    al4san_arg_iterator(args_for_rank, parsec_dtd_iterator_arg_get_rank, (void*)&common_args);
     va_end(args_for_rank);
 
     uint64_t fkey = (uint64_t)(uintptr_t)codelet+ common_args.flow_count_of_template;
      //Creating master function structures 
      //Hash table lookup to check if the function structure exists or not 
     parsec_task_class_t *tc = (parsec_task_class_t *)
-    parsec_dtd_find_task_class(dtd_tp, fkey);
+                                       parsec_dtd_find_task_class(dtd_tp, fkey);
 
     if( NULL == tc ) {
         va_copy(args_for_size, args);
-        altanal_arg_iterator(args_for_size, parsec_dtd_iterator_arg_get_size, (void*)&common_args);
+        al4san_arg_iterator(args_for_size, parsec_dtd_iterator_arg_get_size, (void*)&common_args);
         va_end(args_for_size);
 
-        tc = parsec_dtd_create_task_class(dtd_tp, codelet, task_flag.task_label,
+        tc = parsec_dtd_create_task_class(dtd_tp, (parsec_dtd_funcptr_t*) codelet, task_flag.task_label,
           common_args.count_of_params_sent_by_user,
           common_args.size_of_params, common_args.flow_count_of_template);
 
@@ -193,12 +194,12 @@ void  altanal_insert_task( altanal_codelet *codelet,  ALTANAL_option_t *options,
         common_args.value_block        = GET_VALUE_BLOCK(common_args.head_of_param_list, ((parsec_dtd_task_class_t*)tc)->count_of_params);
         common_args.current_val        = common_args.value_block;
 
-        altanal_arg_iterator(args, parsec_dtd_iterator_arg_set_param_local, (void*)&common_args);
+        al4san_arg_iterator(args, parsec_dtd_iterator_arg_set_param_local, (void*)&common_args);
 
         if( common_args.tmp_param != NULL )
             common_args.tmp_param->next = NULL;
     } else {
-        altanal_arg_iterator(args, parsec_dtd_iterator_arg_set_param_remote, (void*)&common_args);
+        al4san_arg_iterator(args, parsec_dtd_iterator_arg_set_param_remote, (void*)&common_args);
     }
     va_end(args);
 
@@ -206,10 +207,10 @@ void  altanal_insert_task( altanal_codelet *codelet,  ALTANAL_option_t *options,
     assert(this_task->rank != -1);
 #endif
 
-    parsec_insert_dtd_task( this_task );
+    parsec_insert_dtd_task( (parsec_task_t *)this_task );
 }
 
-int ALTANAL_Runtime_insert_task(ALTANAL_codelet codelet,  ALTANAL_option_t *options, va_list args)
+int AL4SAN_Runtime_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list args)
 {
 
     //Defines a DAG of tasks
@@ -232,7 +233,7 @@ int ALTANAL_Runtime_insert_task(ALTANAL_codelet codelet,  ALTANAL_option_t *opti
 
     va_list args_for_size, args_for_rank, args_for_flags;
     parsec_dtd_common_args_t common_args;
-    ALTANAL_Task_Flags task_flag;
+    AL4SAN_Task_Flags task_flag;
 
     common_args.rank = -1; common_args.write_flow_count = 1;
     common_args.flow_count_of_template = 0; common_args.dtd_tp = dtd_tp;
@@ -246,15 +247,15 @@ int ALTANAL_Runtime_insert_task(ALTANAL_codelet codelet,  ALTANAL_option_t *opti
 #endif
      //extracting the flags of the task 
     va_copy(args_for_flags, args);
-    altanal_flags_decode(&task_flag, args_for_flags);
+    al4san_flags_decode(&task_flag, args_for_flags);
     va_end(args_for_flags);
 
      //extracting the rank of the task 
     va_copy(args_for_rank, args);
-    altanal_arg_iterator(args_for_rank, parsec_dtd_iterator_arg_get_rank, (void*)&common_args);
+    al4san_arg_iterator(args_for_rank, parsec_dtd_iterator_arg_get_rank, (void*)&common_args);
     va_end(args_for_rank);
 
-    uint64_t fkey = (uint64_t)(uintptr_t)(altanal_codelet *)codelet+ common_args.flow_count_of_template;
+    uint64_t fkey = (uint64_t)(uintptr_t)(al4san_codelet *)codelet+ common_args.flow_count_of_template;
      //Creating master function structures 
      //Hash table lookup to check if the function structure exists or not 
     parsec_task_class_t *tc = (parsec_task_class_t *)
@@ -262,10 +263,10 @@ int ALTANAL_Runtime_insert_task(ALTANAL_codelet codelet,  ALTANAL_option_t *opti
 
     if( NULL == tc ) {
         va_copy(args_for_size, args);
-        altanal_arg_iterator(args_for_size, parsec_dtd_iterator_arg_get_size, (void*)&common_args);
+        al4san_arg_iterator(args_for_size, parsec_dtd_iterator_arg_get_size, (void*)&common_args);
         va_end(args_for_size);
 
-        tc = parsec_dtd_create_task_class(dtd_tp, (altanal_codelet *)codelet, task_flag.task_label,
+        tc = parsec_dtd_create_task_class(dtd_tp, (parsec_dtd_funcptr_t*)codelet, task_flag.task_label,
           common_args.count_of_params_sent_by_user,
           common_args.size_of_params, common_args.flow_count_of_template);
 
@@ -309,33 +310,33 @@ int ALTANAL_Runtime_insert_task(ALTANAL_codelet codelet,  ALTANAL_option_t *opti
         common_args.value_block        = GET_VALUE_BLOCK(common_args.head_of_param_list, ((parsec_dtd_task_class_t*)tc)->count_of_params);
         common_args.current_val        = common_args.value_block;
 
-        altanal_arg_iterator(args, parsec_dtd_iterator_arg_set_param_local, (void*)&common_args);
+        al4san_arg_iterator(args, parsec_dtd_iterator_arg_set_param_local, (void*)&common_args);
 
         if( common_args.tmp_param != NULL )
             common_args.tmp_param->next = NULL;
     } else {
-        altanal_arg_iterator(args, parsec_dtd_iterator_arg_set_param_remote, (void*)&common_args);
+        al4san_arg_iterator(args, parsec_dtd_iterator_arg_set_param_remote, (void*)&common_args);
     }
 
 #if defined(DISTRIBUTED)
     assert(this_task->rank != -1);
 #endif
 
-    parsec_insert_dtd_task( this_task );
+    parsec_insert_dtd_task( (parsec_task_t *)this_task );
     
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 }
 
 
-void altanal_unpack_arg(ALTANAL_arg_list *altanal_arg, ...)
+void al4san_unpack_arg(AL4SAN_arg_list *al4san_arg, ...)
 {
-    parsec_dtd_task_t *current_task = (parsec_dtd_task_t *)altanal_arg->this_task;
+    parsec_dtd_task_t *current_task = (parsec_dtd_task_t *)al4san_arg->this_task;
     parsec_dtd_task_param_t *current_param = GET_HEAD_OF_PARAM_LIST(current_task);
     int i = 0;
     void *tmp_val; void **tmp_ref;
     va_list varg_list;
 
-    va_start(varg_list, altanal_arg);
+    va_start(varg_list, al4san_arg);
     while(current_param != NULL) {
         if((current_param->op_type & GET_OP_TYPE) == VALUE) {
             tmp_val = va_arg(varg_list, void*);
@@ -348,7 +349,7 @@ void altanal_unpack_arg(ALTANAL_arg_list *altanal_arg, ...)
           (current_param->op_type & GET_OP_TYPE) == INOUT ||
           (current_param->op_type & GET_OP_TYPE) == OUTPUT) {
             tmp_ref = va_arg(varg_list, void**);
-            *tmp_ref = PARSEC_DATA_COPY_GET_PTR(altanal_arg->this_task->data[i].data_in);
+            *tmp_ref = PARSEC_DATA_COPY_GET_PTR(al4san_arg->this_task->data[i].data_in);
             i++;
         } else {
             parsec_warning("/!\\ Flag is not recognized in parsec_dtd_unpack_args /!\\.\n");
@@ -360,10 +361,10 @@ void altanal_unpack_arg(ALTANAL_arg_list *altanal_arg, ...)
 }
 
 
-int ALTANAL_Runtime_unpack_arg(ALTANAL_arg args, va_list varg_list)
+int AL4SAN_Runtime_unpack_arg(AL4SAN_arg args, va_list varg_list)
 {
-    ALTANAL_arg_list *altanal_arg= (ALTANAL_arg_list*)args;
-    parsec_dtd_task_t *current_task = (parsec_dtd_task_t *)altanal_arg->this_task;
+    AL4SAN_arg_list *al4san_arg= (AL4SAN_arg_list*)args;
+    parsec_dtd_task_t *current_task = (parsec_dtd_task_t *)al4san_arg->this_task;
     parsec_dtd_task_param_t *current_param = GET_HEAD_OF_PARAM_LIST(current_task);
     int i = 0;
     void *tmp_val; void **tmp_ref;
@@ -380,7 +381,7 @@ int ALTANAL_Runtime_unpack_arg(ALTANAL_arg args, va_list varg_list)
           (current_param->op_type & GET_OP_TYPE) == INOUT ||
           (current_param->op_type & GET_OP_TYPE) == OUTPUT) {
             tmp_ref = va_arg(varg_list, void**);
-            *tmp_ref = PARSEC_DATA_COPY_GET_PTR(altanal_arg->this_task->data[i].data_in);
+            *tmp_ref = PARSEC_DATA_COPY_GET_PTR(al4san_arg->this_task->data[i].data_in);
             i++;
         } else {
             parsec_warning("/!\\ Flag is not recognized in parsec_dtd_unpack_args /!\\.\n");

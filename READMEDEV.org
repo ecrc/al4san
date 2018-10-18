@@ -3,23 +3,23 @@
 #+OPTIONS: H:3 num:t \n:nil @:t ::t |:t _:nil ^:nil -:t f:t *:t <:t
 #+OPTIONS: TeX:t LaTeX:t skip:nil d:nil pri:nil tags:not-in-toc html-style:nil
 
-This page is dedicated to rules and conventions that ALtanal's
+This page is dedicated to rules and conventions that AL4SAN's
 developers must follow and that should be read by contributors.
 
-* Gitlab flow: how to contribute to ALtanal
+* Gitlab flow: how to contribute to AL4SAN
 
   Please read and follow guidelines given in the [[file:CONTRIBUTING.org][CONTRIBUTING file]].
 
 ** Update submodules
 
-   ALtanal git project depends on a "submodule" git, located in
-   cmake_modules/altanal_cmake and hosted here
+   AL4SAN git project depends on a "submodule" git, located in
+   cmake_modules/al4san_cmake and hosted here
 
    To update this submodule to the last development state, follow
    these steps:
 
    #+begin_src sh
-   git submodule update --remote cmake_modules/altanal_cmake
-   git commit cmake_modules/altanal_cmake -m "update altanal_cmake submodule"
+   git submodule update --remote cmake_modules/al4san_cmake
+   git commit cmake_modules/al4san_cmake -m "update al4san_cmake submodule"
    git push --recurse-submodules=check
    #+end_src

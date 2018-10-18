@@ -62,7 +62,7 @@ ENDMACRO(CONVERT_LIBSTYLE_TO_PKGCONFIG)
 MACRO(CLEAN_LIB_LIST _package)
     list(REMOVE_DUPLICATES ${_package}_PKGCONFIG_LIBS)
     list(REMOVE_DUPLICATES ${_package}_PKGCONFIG_LIBS_PRIVATE)
-    list(REMOVE_DUPLICATES ${_package}_PKGCONFIG_REQUIRED)
+#    list(REMOVE_DUPLICATES ${_package}_PKGCONFIG_REQUIRED)
     list(REMOVE_DUPLICATES ${_package}_PKGCONFIG_REQUIRED_PRIVATE)
     CONVERT_LIBSTYLE_TO_PKGCONFIG(${_package}_PKGCONFIG_LIBS)
     CONVERT_LIBSTYLE_TO_PKGCONFIG(${_package}_PKGCONFIG_LIBS_PRIVATE)
@@ -74,110 +74,66 @@ ENDMACRO(CLEAN_LIB_LIST)
 
 ###
 #
-# GENERATE_PKGCONFIG_FILE: generate files altanal.pc, coreblas.pc and cudablas.pc
+# GENERATE_PKGCONFIG_FILE: generate files al4san.pc
 #
 ###
 MACRO(GENERATE_PKGCONFIG_FILE)
 
     # The definitions that should be given to users (change the API)
-    set(ALTANAL_PKGCONFIG_DEFINITIONS "")
-    set(COREBLAS_PKGCONFIG_DEFINITIONS "")
-    set(CUDABLAS_PKGCONFIG_DEFINITIONS "")
+    set(AL4SAN_PKGCONFIG_DEFINITIONS "")
 
     # The link flags specific to this package and any required libraries
     # that don't support PkgConfig
-    set(ALTANAL_PKGCONFIG_LIBS "-laltanal")
-    set(COREBLAS_PKGCONFIG_LIBS  "-lcoreblas")
-    set(CUDABLAS_PKGCONFIG_LIBS  "-lcudablas")
+    set(AL4SAN_PKGCONFIG_LIBS "-lal4san")
 
     # The link flags for private libraries required by this package but not
     # exposed to applications
-    set(ALTANAL_PKGCONFIG_LIBS_PRIVATE "")
-    set(COREBLAS_PKGCONFIG_LIBS_PRIVATE  "")
-    set(CUDABLAS_PKGCONFIG_LIBS_PRIVATE  "")
+    set(AL4SAN_PKGCONFIG_LIBS_PRIVATE "")
 
     # A list of packages required by this package
-    #set(ALTANAL_PKGCONFIG_REQUIRED "hqr")
-    set(COREBLAS_PKGCONFIG_REQUIRED  "")
-    set(CUDABLAS_PKGCONFIG_REQUIRED  "")
+    #set(AL4SAN_PKGCONFIG_REQUIRED "hqr")
 
     # A list of private packages required by this package but not exposed to
     # applications
-    set(ALTANAL_PKGCONFIG_REQUIRED_PRIVATE "")
-    set(COREBLAS_PKGCONFIG_REQUIRED_PRIVATE  "")
-    set(CUDABLAS_PKGCONFIG_REQUIRED_PRIVATE  "")
+    set(AL4SAN_PKGCONFIG_REQUIRED_PRIVATE "")
 
-    if(ALTANAL_SCHED_STARPU)
-        list(APPEND ALTANAL_PKGCONFIG_LIBS -laltanal_starpu)
-        if ( ALTANAL_USE_MPI )
-            list(APPEND ALTANAL_PKGCONFIG_REQUIRED_PRIVATE starpumpi-${STARPU_VERSION})
+    if(AL4SAN_SCHED_STARPU)
+        list(APPEND AL4SAN_PKGCONFIG_LIBS -lal4san_starpu)
+        if ( AL4SAN_USE_MPI )
+            list(APPEND AL4SAN_PKGCONFIG_REQUIRED_PRIVATE starpumpi-${STARPU_VERSION})
         else()
-            list(APPEND ALTANAL_PKGCONFIG_REQUIRED_PRIVATE starpu-${STARPU_VERSION})
+            list(APPEND AL4SAN_PKGCONFIG_REQUIRED_PRIVATE starpu-${STARPU_VERSION})
         endif()
-    elseif(ALTANAL_SCHED_QUARK)
-        list(APPEND ALTANAL_PKGCONFIG_LIBS -laltanal_quark)
-        list(APPEND ALTANAL_PKGCONFIG_LIBS_PRIVATE "${QUARK_LIBRARIES_DEP}")
-    elseif(ALTANAL_SCHED_PARSEC)
-       list(APPEND ALTANAL_PKGCONFIG_LIBS -laltanal_parsec)
-        list(APPEND ALTANAL_PKGCONFIG_LIBS_PRIVATE "${PARSEC_LIBRARIES_DEP}")
+    elseif(AL4SAN_SCHED_QUARK)
+        list(APPEND AL4SAN_PKGCONFIG_LIBS -lal4san_quark)
+        list(APPEND AL4SAN_PKGCONFIG_LIBS_PRIVATE "${QUARK_LIBRARIES_DEP}")
+    elseif(AL4SAN_SCHED_PARSEC)
+       list(APPEND AL4SAN_PKGCONFIG_LIBS -lal4san_parsec)
+        list(APPEND AL4SAN_PKGCONFIG_LIBS_PRIVATE "${PARSEC_LIBRARIES_DEP}")
+    elseif(AL4SAN_SCHED_OPENMP)
+       list(APPEND AL4SAN_PKGCONFIG_LIBS -lal4san_openmp)
+        list(APPEND AL4SAN_PKGCONFIG_LIBS_PRIVATE "${OPENMP_LIBRARIES_DEP}")
     endif()
 
-    if(NOT ALTANAL_SIMULATION)
 
-        list(APPEND COREBLAS_PKGCONFIG_LIBS_PRIVATE
-        ${LAPACKE_LIBRARIES_DEP}
-        ${CBLAS_LIBRARIES_DEP}
-        )
-        list(APPEND ALTANAL_PKGCONFIG_LIBS_PRIVATE
+    list(APPEND AL4SAN_PKGCONFIG_LIBS_PRIVATE
         ${EXTRA_LIBRARIES}
-        )
-        list(APPEND ALTANAL_PKGCONFIG_REQUIRED "coreblas")
-
-        if(ALTANAL_USE_CUDA)
-            list(APPEND CUDABLAS_PKGCONFIG_LIBS_PRIVATE ${EXTRA_LIBRARIES_CUDA})
-            list(APPEND ALTANAL_PKGCONFIG_REQUIRED "cudablas")
-        endif()
-
-    else(NOT ALTANAL_SIMULATION)
-
-        if(ALTANAL_USE_CUDA)
-            list(APPEND ALTANAL_PKGCONFIG_LIBS -lcudablas)
-        endif()
-        list(APPEND ALTANAL_PKGCONFIG_LIBS
-        -lcoreblas
-        ${EXTRA_LIBRARIES}
-        )
-
-    endif(NOT ALTANAL_SIMULATION)
+    )
 
     # Define required package
     # -----------------------
-    CLEAN_LIB_LIST(ALTANAL)
-    CLEAN_LIB_LIST(COREBLAS)
-    if(ALTANAL_USE_CUDA)
-        CLEAN_LIB_LIST(CUDABLAS)
-    endif()
+    CLEAN_LIB_LIST(AL4SAN)
 
     # Create .pc file
     # ---------------
-    SET(_output_altanal_file "${CMAKE_BINARY_DIR}/altanal.pc")
-    SET(_output_coreblas_file "${CMAKE_BINARY_DIR}/coreblas.pc")
-    if(ALTANAL_USE_CUDA)
-        SET(_output_cudablas_file "${CMAKE_BINARY_DIR}/cudablas.pc")
-    endif()
+    SET(_output_al4san_file "${CMAKE_BINARY_DIR}/al4san.pc")
 
-    # TODO: add url of ALTANAL releases in .pc file
-    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/lib/pkgconfig/altanal.pc.in" "${_output_altanal_file}" @ONLY)
-    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/lib/pkgconfig/coreblas.pc.in"  "${_output_coreblas_file}" @ONLY)
-    if(ALTANAL_USE_CUDA)
-        CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/lib/pkgconfig/cudablas.pc.in"  "${_output_cudablas_file}" @ONLY)
-    endif()
+    # TODO: add url of AL4SAN releases in .pc file
+    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/lib/pkgconfig/al4san.pc.in" "${_output_al4san_file}" @ONLY)
 
     # installation
     # ------------
-    INSTALL(FILES ${_output_altanal_file} DESTINATION lib/pkgconfig)
-    INSTALL(FILES ${_output_coreblas_file}  DESTINATION lib/pkgconfig)
-    INSTALL(FILES ${_output_cudablas_file}  DESTINATION lib/pkgconfig)
+    INSTALL(FILES ${_output_al4san_file} DESTINATION lib/pkgconfig)
 
 ENDMACRO(GENERATE_PKGCONFIG_FILE)
 

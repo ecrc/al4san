@@ -6,35 +6,44 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2016 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
  ***
  *
- * @brief Chameleon control routines
+ * author Jakub Kurzak
+ * author Mathieu Faverge
+ * author Cedric Castagnede
+ * date 2012-09-15
  *
- * @version 1.0.0
- * @author Jakub Kurzak
- * @author Mathieu Faverge
- * @author Cedric Castagnede
- * @date 2012-09-15
  *
- ***
- *
- * @defgroup Control
- * @brief Group routines exposed to users to control ALTANAL state
  *
  */
 
+  /**
+   *
+   * @brief AL4SAN control routines
+   *
+   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+   *
+   * @version 1.0.0
+   * @author Rabab Alomairy
+   * @date 2018-10-18
+   *
+   **/
+
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "control/auxiliary.h"
-#include "control/common.h"
-#include "altanal/altanal_runtime.h"
+#include "control/al4san_auxiliary.h"
+#include "control/al4san_common.h"
+#include "al4san/runtime.h"
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_Init - Initialize ALTANAL.
+ *  AL4SAN_Init - Initialize AL4SAN.
  *
  ******************************************************************************
  *
@@ -47,19 +56,19 @@
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Init(int cores, int gpus)
+AL4SAN_context_t*  AL4SAN_Init(int cores, int gpus)
 {
-    return ALTANAL_InitPar(cores, gpus, -1);
+    return AL4SAN_InitPar(cores, gpus, -1);
 }
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_InitPar - Initialize ALTANAL.
+ *  AL4SAN_InitPar - Initialize AL4SAN.
  *
  ******************************************************************************
  *
@@ -75,29 +84,29 @@ int ALTANAL_Init(int cores, int gpus)
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_InitPar(int ncpus, int ncudas, int nthreads_per_worker)
+AL4SAN_context_t*  AL4SAN_InitPar(int ncpus, int ncudas, int nthreads_per_worker)
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
 
     /* Create context and insert in the context map */
-    altanal = altanal_context_create();
-    if (altanal == NULL) {
-        altanal_fatal_error("ALTANAL_Init", "altanal_context_create() failed");
-        return ALTANAL_ERR_OUT_OF_RESOURCES;
+    al4san = al4san_context_create();
+    if (al4san == NULL) {
+        al4san_fatal_error("AL4SAN_Init", "al4san_context_create() failed");
+        return AL4SAN_ERR_OUT_OF_RESOURCES;
     }
 
-#if defined(ALTANAL_USE_MPI)
-#  if defined(ALTANAL_SIMULATION)
+#if defined(AL4SAN_USE_MPI)
+#  if defined(AL4SAN_SIMULATION)
     /* Assuming that we don't initialize MPI ourself (which SMPI doesn't support anyway) */
-    altanal->mpi_outer_init = 1;
+    al4san->mpi_outer_init = 1;
 #  else
     {
       int flag = 0, provided = 0;
       MPI_Initialized( &flag );
-      altanal->mpi_outer_init = flag;
+      al4san->mpi_outer_init = flag;
       if ( !flag ) {
           MPI_Init_thread( NULL, NULL, MPI_THREAD_MULTIPLE, &provided );
       }
@@ -105,148 +114,148 @@ int ALTANAL_InitPar(int ncpus, int ncudas, int nthreads_per_worker)
 #  endif
 #endif
 
-    ALTANAL_Runtime_init( altanal, ncpus, ncudas, nthreads_per_worker );
+    AL4SAN_Runtime_init( al4san, ncpus, ncudas, nthreads_per_worker );
 
-#if defined(ALTANAL_USE_MPI)
-    altanal->my_mpi_rank   = ALTANAL_Runtime_comm_rank( altanal );
-    altanal->mpi_comm_size = ALTANAL_Runtime_comm_size( altanal );
+#if defined(AL4SAN_USE_MPI)
+    al4san->my_mpi_rank   = AL4SAN_Runtime_comm_rank( al4san );
+    al4san->mpi_comm_size = AL4SAN_Runtime_comm_size( al4san );
 #endif
 
-    return ALTANAL_SUCCESS;
+    return al4san;
 }
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_Finalize - Finalize ALTANAL.
+ *  AL4SAN_Finalize - Finalize AL4SAN.
  *
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Finalize(void)
+int AL4SAN_Finalize(void)
 {
-    ALTANAL_context_t *altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Finalize()", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Finalize()", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    ALTANAL_Runtime_flush();
-#  if !defined(ALTANAL_SIMULATION)
-    ALTANAL_Runtime_barrier(altanal);
+    AL4SAN_Runtime_flush();
+#  if !defined(AL4SAN_SIMULATION)
+    AL4SAN_Runtime_barrier(al4san);
 #  endif
-    ALTANAL_Runtime_finalize( altanal );
+    AL4SAN_Runtime_finalize( al4san );
 
-#if defined(ALTANAL_USE_MPI)
-    if (!altanal->mpi_outer_init)
+#if defined(AL4SAN_USE_MPI)
+    if (!al4san->mpi_outer_init)
         MPI_Finalize();
 #endif
 
-    altanal_context_destroy();
-    return ALTANAL_SUCCESS;
+    al4san_context_destroy();
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_Pause - Suspend ALTANAL runtime to poll for new tasks.
+ *  AL4SAN_Pause - Suspend AL4SAN runtime to poll for new tasks.
  *
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Pause(void)
+int AL4SAN_Pause(void)
 {
-    ALTANAL_context_t *altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Pause()", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Pause()", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    ALTANAL_Runtime_pause(altanal);
-    return ALTANAL_SUCCESS;
+    AL4SAN_Runtime_pause(al4san);
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_Resume - Symmetrical call to ALTANAL_Pause,
+ *  AL4SAN_Resume - Symmetrical call to AL4SAN_Pause,
  *  used to resume the workers polling for new tasks.
  *
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Resume(void)
+int AL4SAN_Resume(void)
 {
-    ALTANAL_context_t *altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Resume()", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Resume()", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    ALTANAL_Runtime_resume(altanal);
-    return ALTANAL_SUCCESS;
+    AL4SAN_Runtime_resume(al4san);
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_Distributed_start - Prepare the distributed processes for computation
+ *  AL4SAN_Distributed_start - Prepare the distributed processes for computation
  *
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Distributed_start(void)
+int AL4SAN_Distributed_start(void)
 {
-    ALTANAL_context_t *altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Finalize()", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Finalize()", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    ALTANAL_Runtime_barrier (altanal);
-    return ALTANAL_SUCCESS;
+    AL4SAN_Runtime_barrier (al4san);
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_Distributed_stop - Clean the distributed processes after computation
+ *  AL4SAN_Distributed_stop - Clean the distributed processes after computation
  *
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Distributed_stop(void)
+int AL4SAN_Distributed_stop(void)
 {
-    ALTANAL_context_t *altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Finalize()", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Finalize()", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    ALTANAL_Runtime_barrier (altanal);
-    return ALTANAL_SUCCESS;
+    AL4SAN_Runtime_barrier (al4san);
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_Comm_size - Return the size of the distributed computation
+ *  AL4SAN_Comm_size - Return the size of the distributed computation
  *
  ******************************************************************************
  *
@@ -254,22 +263,22 @@ int ALTANAL_Distributed_stop(void)
  * @retval -1 if context not initialized
  *
  */
-int ALTANAL_Comm_size()
+int AL4SAN_Comm_size()
 {
-    ALTANAL_context_t *altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Comm_size()", "ALTANAL not initialized");
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Comm_size()", "AL4SAN not initialized");
         return -1;
     }
 
-    return ALTANAL_Runtime_comm_size( altanal );
+    return AL4SAN_Runtime_comm_size( al4san );
 }
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_Comm_rank - Return the rank of the distributed computation
+ *  AL4SAN_Comm_rank - Return the rank of the distributed computation
  *
  ******************************************************************************
  *
@@ -277,22 +286,22 @@ int ALTANAL_Comm_size()
  * @retval -1 if context not initialized
  *
  */
-int ALTANAL_Comm_rank()
+int AL4SAN_Comm_rank()
 {
-    ALTANAL_context_t *altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Comm_rank()", "ALTANAL not initialized");
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Comm_rank()", "AL4SAN not initialized");
         return -1;
     }
 
-    return ALTANAL_Runtime_comm_rank( altanal );
+    return AL4SAN_Runtime_comm_rank( al4san );
 }
 
 /**
  *
  * @ingroup Control
  *
- *  ALTANAL_GetThreadNbr - Return the number of CPU workers initialized by the
+ *  AL4SAN_GetThreadNbr - Return the number of CPU workers initialized by the
  *  runtime
  *
  ******************************************************************************
@@ -301,13 +310,13 @@ int ALTANAL_Comm_rank()
  *          \retval The number of CPU workers started
  *
  */
-int ALTANAL_GetThreadNbr( )
+int AL4SAN_GetThreadNbr( )
 {
-    ALTANAL_context_t *altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_GetThreadNbr()", "ALTANAL not initialized");
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_GetThreadNbr()", "AL4SAN not initialized");
         return -1;
     }
 
-    return ALTANAL_Runtime_thread_size( altanal );
+    return AL4SAN_Runtime_thread_size( al4san );
 }

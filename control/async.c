@@ -6,16 +6,14 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2014 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
- *
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  ***
- *
- * @brief Chameleon asynchronous management routines
- *
- * @version 1.0.0
- * @author Jakub Kurzak
- * @author Mathieu Faverge
- * @author Cedric Castagnede
- * @date 2012-09-15
+ * *
+ * author Jakub Kurzak
+ * author Mathieu Faverge
+ * author Cedric Castagnede
+ * date 2012-09-15
  *
  ***
  *
@@ -23,14 +21,26 @@
  * @brief Group routines exposed to users to handle asynchronous tasks execution
  *
  */
+
+  /**
+   *
+   * @brief AL4SAN asynchronous routines
+   *
+   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+   *
+   * @version 1.0.0
+   * @author Rabab Alomairy
+   * @date 2018-10-18
+   *
+   **/
 #include <stdlib.h>
-#include "control/common.h"
-#include "altanal/altanal_runtime.h"
+#include "control/al4san_common.h"
+#include "al4san/runtime.h"
 
 /**
  *  Register an exception.
  */
-int altanal_request_fail(ALTANAL_sequence_t *sequence, ALTANAL_request_t *request, int status)
+int al4san_request_fail(AL4SAN_sequence_t *sequence, AL4SAN_request_t *request, int status)
 {
     sequence->request = request;
     sequence->status = status;
@@ -38,46 +48,50 @@ int altanal_request_fail(ALTANAL_sequence_t *sequence, ALTANAL_request_t *reques
     return status;
 }
 
+
+
 /**
  *  Create a sequence
  */
-int altanal_sequence_create(ALTANAL_context_t *altanal, ALTANAL_sequence_t **sequence)
+#if !defined(AL4SAN_SCHED_OPENMP)
+AL4SAN_sequence_t* al4san_sequence_create(AL4SAN_context_t *al4san)
 {
-    if ((*sequence = malloc(sizeof(ALTANAL_sequence_t))) == NULL) {
-        altanal_error("ALTANAL_Sequence_Create", "malloc() failed");
-        return ALTANAL_ERR_OUT_OF_RESOURCES;
+    AL4SAN_sequence_t *sequence;
+    if ((sequence = malloc(sizeof(AL4SAN_sequence_t))) == NULL) {
+        al4san_error("AL4SAN_Sequence_Create", "malloc() failed");
+        return AL4SAN_ERR_OUT_OF_RESOURCES;
     }
 
-    ALTANAL_Runtime_sequence_create( altanal, *sequence );
+    AL4SAN_Runtime_sequence_create( al4san, sequence );
 
-    (*sequence)->status = ALTANAL_SUCCESS;
-    return ALTANAL_SUCCESS;
+    sequence->status = AL4SAN_SUCCESS;
+    return sequence;
 }
 
 /**
  *  Destroy a sequence
  */
-int altanal_sequence_destroy(ALTANAL_context_t *altanal, ALTANAL_sequence_t *sequence)
+int al4san_sequence_destroy(AL4SAN_context_t *al4san, AL4SAN_sequence_t *sequence)
 {
-    ALTANAL_Runtime_sequence_destroy( altanal, sequence );
+    AL4SAN_Runtime_sequence_destroy( al4san, sequence );
     free(sequence);
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 }
-
+#endif
 /**
  *  Wait for the completion of a sequence
  */
-int altanal_sequence_wait(ALTANAL_context_t *altanal, ALTANAL_sequence_t *sequence)
+int al4san_sequence_wait(AL4SAN_context_t *al4san, AL4SAN_sequence_t *sequence)
 {
-    ALTANAL_Runtime_sequence_wait( altanal, sequence );
-    return ALTANAL_SUCCESS;
+    AL4SAN_Runtime_sequence_wait( al4san, sequence );
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Sequences
  *
- *  ALTANAL_Sequence_Create - Create a squence.
+ *  AL4SAN_Sequence_Create - Create a squence.
  *
  ******************************************************************************
  *
@@ -87,28 +101,31 @@ int altanal_sequence_wait(ALTANAL_context_t *altanal, ALTANAL_sequence_t *sequen
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Sequence_Create(ALTANAL_sequence_t **sequence)
+#if !defined(AL4SAN_SCHED_OPENMP)
+
+//int AL4SAN_Sequence_Create(AL4SAN_sequence_t **sequence)
+AL4SAN_sequence_t* AL4SAN_Sequence_Create()
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
     int status;
 
-    altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_fatal_error("ALTANAL_Sequence_Create", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_fatal_error("AL4SAN_Sequence_Create", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    status = altanal_sequence_create(altanal, sequence);
-    return status;
+    AL4SAN_sequence_t *sequence= al4san_sequence_create(al4san);
+    return sequence;
 }
 
 /**
  *
  * @ingroup Sequences
  *
- *  ALTANAL_Sequence_Destroy - Destroy a sequence.
+ *  AL4SAN_Sequence_Destroy - Destroy a sequence.
  *
  ******************************************************************************
  *
@@ -118,32 +135,32 @@ int ALTANAL_Sequence_Create(ALTANAL_sequence_t **sequence)
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Sequence_Destroy(ALTANAL_sequence_t *sequence)
+int AL4SAN_Sequence_Destroy(AL4SAN_sequence_t *sequence)
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
     int status;
 
-    altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_fatal_error("ALTANAL_Sequence_Destroy", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_fatal_error("AL4SAN_Sequence_Destroy", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
     if (sequence == NULL) {
-        altanal_fatal_error("ALTANAL_Sequence_Destroy", "NULL sequence");
-        return ALTANAL_ERR_UNALLOCATED;
+        al4san_fatal_error("AL4SAN_Sequence_Destroy", "NULL sequence");
+        return AL4SAN_ERR_UNALLOCATED;
     }
-    status = altanal_sequence_destroy(altanal, sequence);
+    status = al4san_sequence_destroy(al4san, sequence);
     return status;
 }
-
+#endif
 /**
  *
  * @ingroup Sequences
  *
- *  ALTANAL_Sequence_Wait - Wait for the completion of a sequence.
+ *  AL4SAN_Sequence_Wait - Wait for the completion of a sequence.
  *
  ******************************************************************************
  *
@@ -153,24 +170,24 @@ int ALTANAL_Sequence_Destroy(ALTANAL_sequence_t *sequence)
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Sequence_Wait(ALTANAL_sequence_t *sequence)
+int AL4SAN_Sequence_Wait(AL4SAN_sequence_t *sequence)
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
     int status;
 
-    altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_fatal_error("ALTANAL_Sequence_Wait", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_fatal_error("AL4SAN_Sequence_Wait", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
     if (sequence == NULL) {
-        altanal_fatal_error("ALTANAL_Sequence_Wait", "NULL sequence");
-        return ALTANAL_ERR_UNALLOCATED;
+        al4san_fatal_error("AL4SAN_Sequence_Wait", "NULL sequence");
+        return AL4SAN_ERR_UNALLOCATED;
     }
-    status = altanal_sequence_wait(altanal, sequence);
+    status = al4san_sequence_wait(al4san, sequence);
     return status;
 }
 
@@ -178,7 +195,7 @@ int ALTANAL_Sequence_Wait(ALTANAL_sequence_t *sequence)
  *
  * @ingroup Sequences
  *
- *  ALTANAL_Sequence_Flush - Terminate a sequence.
+ *  AL4SAN_Sequence_Flush - Terminate a sequence.
  *
  ******************************************************************************
  *
@@ -191,24 +208,27 @@ int ALTANAL_Sequence_Wait(ALTANAL_sequence_t *sequence)
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Sequence_Flush(ALTANAL_sequence_t *sequence, ALTANAL_request_t *request)
+int AL4SAN_Sequence_Flush(AL4SAN_sequence_t *sequence, AL4SAN_request_t *request)
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
 
-    altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_fatal_error("ALTANAL_Sequence_Flush", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_fatal_error("AL4SAN_Sequence_Flush", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
     if (sequence == NULL) {
-        altanal_fatal_error("ALTANAL_Sequence_Flush", "NULL sequence");
-        return ALTANAL_ERR_UNALLOCATED;
+        al4san_fatal_error("AL4SAN_Sequence_Flush", "NULL sequence");
+        return AL4SAN_ERR_UNALLOCATED;
     }
 
-    ALTANAL_Runtime_sequence_flush( altanal->schedopt, sequence, request, ALTANAL_ERR_SEQUENCE_FLUSHED);
+    AL4SAN_Runtime_sequence_flush( al4san->schedopt, sequence, request, AL4SAN_ERR_SEQUENCE_FLUSHED);
 
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 }
+
+
+

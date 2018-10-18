@@ -6,45 +6,58 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2014 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
  ***
  *
- * @brief Altanal StarPU workspace header
+ * @brief Al4san StarPU workspace header
  *
  * @version 1.0.0
  * @author Cedric Augonnet
- * @date 2011-06-01
+ * @date 2018-10-18
  *
  */
-#ifndef _ALTANAL_STARPU_WORKSPACE_H_
-#define _ALTANAL_STARPU_WORKSPACE_H_
+/**
+ *
+ * @brief AL4SAN StarPU workspace header
+ *
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
+ * @version 1.0.0
+ * @author Rabab Alomairy
+ * @date 2018-10-18
+ *
+**/
+#ifndef _AL4SAN_STARPU_WORKSPACE_H_
+#define _AL4SAN_STARPU_WORKSPACE_H_
 
 /*
  * Allocate workspace in host memory: CPU for any worker
  * or allocate workspace in worker's memory: main memory for cpu workers,
  * and embedded memory for CUDA devices.
  */
-#define ALTANAL_HOST_MEM    0
-#define ALTANAL_WORKER_MEM  1
+#define AL4SAN_HOST_MEM    0
+#define AL4SAN_WORKER_MEM  1
 
-struct altanal_runtime_ws_s {
+struct al4san_runtime_ws_s {
     size_t size;
     int    memory_location;
     int    which_workers;
     void  *workspaces[STARPU_NMAXWORKERS];
 };
 
-typedef struct altanal_runtime_ws_s ALTANAL_starpu_ws_t;
+typedef struct al4san_runtime_ws_s AL4SAN_starpu_ws_t;
 
 /*
  * This function creates a workspace on each type of worker in "which_workers"
- * (eg. ALTANAL_CUDA|ALTANAL_CPU for all CPU and GPU workers).  The
+ * (eg. AL4SAN_CUDA|AL4SAN_CPU for all CPU and GPU workers).  The
  * memory_location argument indicates whether this should be a buffer in host
- * memory or in worker's memory (ALTANAL_HOST_MEM or ALTANAL_WORKER_MEM). This function
+ * memory or in worker's memory (AL4SAN_HOST_MEM or AL4SAN_WORKER_MEM). This function
  * returns 0 upon successful completion.
  */
-int   ALTANAL_Runtime_starpu_ws_alloc   ( ALTANAL_starpu_ws_t **workspace, size_t size, int which_workers, int memory_location);
-int   ALTANAL_Runtime_starpu_ws_free    ( ALTANAL_starpu_ws_t  *workspace);
-void *ALTANAL_Runtime_starpu_ws_getlocal( ALTANAL_starpu_ws_t  *workspace);
+int   AL4SAN_Runtime_starpu_ws_alloc   ( AL4SAN_starpu_ws_t **workspace, size_t size, int which_workers, int memory_location);
+int   AL4SAN_Runtime_starpu_ws_free    ( AL4SAN_starpu_ws_t  *workspace);
+void *AL4SAN_Runtime_starpu_ws_getlocal( AL4SAN_starpu_ws_t  *workspace);
 
-#endif /* _ALTANAL_STARPU_WORKSPACE_H_ */
+#endif /* _AL4SAN_STARPU_WORKSPACE_H_ */

@@ -6,17 +6,16 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2014 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
  ***
  *
- * @brief Chameleon auxiliary routines
- *
- * @version 1.0.0
- * @author Jakub Kurzak
- * @author Piotr Luszczek
- * @author Emmanuel Agullo
- * @author Cedric Castagnede
- * @date 2012-09-15
+ * author Jakub Kurzak
+ * author Piotr Luszczek
+ * author Emmanuel Agullo
+ * author Cedric Castagnede
+ * date 2012-09-15
  *
  ***
  *
@@ -24,9 +23,19 @@
  * @brief Group auxiliary routines exposed to users
  *
  */
-
-#include "control/common.h"
-#include "control/auxiliary.h"
+  /**
+   *
+   * @brief AL4SAN auxiliary routines
+   *
+   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+   *
+   * @version 1.0.0
+   * @author Rabab Alomairy
+   * @date 2018-10-18
+   *
+   **/
+#include "control/al4san_common.h"
+#include "control/al4san_auxiliary.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +45,7 @@
  *
  *  Indicates a recoverable problem.
  *  User's erroneous action without severe consequences.
- *  Problems occuring while ALTANAL is being used correctly.
+ *  Problems occuring while AL4SAN is being used correctly.
  *  Context aware.
  *
  * @param[in] func_name
@@ -46,22 +55,22 @@
  *          Warning message to display.
  *
  */
-void altanal_warning(const char *func_name, const char *msg_text)
+void al4san_warning(const char *func_name, const char *msg_text)
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
 
-    altanal = altanal_context_self();
-    if (altanal == NULL)
-        altanal_fatal_error("altanal_warning", "ALTANAL not initialized");
-    if (altanal->warnings_enabled)
-        fprintf(stderr, "ALTANAL WARNING: %s(): %s\n", func_name, msg_text);
+    al4san = al4san_context_self();
+    if (al4san == NULL)
+        al4san_fatal_error("al4san_warning", "AL4SAN not initialized");
+    if (al4san->warnings_enabled)
+        fprintf(stderr, "AL4SAN WARNING: %s(): %s\n", func_name, msg_text);
 }
 
 /**
  *
  *  Indicates a recoverable problem.
  *  User's erroneous action with potentially severe consequences.
- *  Problems occuring due to incorrect use of ALTANAL.
+ *  Problems occuring due to incorrect use of AL4SAN.
  *  Context aware.
  *
  * @param[in] func_name
@@ -71,9 +80,9 @@ void altanal_warning(const char *func_name, const char *msg_text)
  *          Warning message to display.
  *
  */
-void altanal_error(const char *func_name, const char *msg_text)
+void al4san_error(const char *func_name, const char *msg_text)
 {
-    fprintf(stderr, "ALTANAL ERROR: %s(): %s\n", func_name, msg_text);
+    fprintf(stderr, "AL4SAN ERROR: %s(): %s\n", func_name, msg_text);
 }
 
 /**
@@ -89,94 +98,77 @@ void altanal_error(const char *func_name, const char *msg_text)
  *          Warning message to display.
  *
  */
-void altanal_fatal_error(const char *func_name, const char *msg_text)
+void al4san_fatal_error(const char *func_name, const char *msg_text)
 {
-    fprintf(stderr, "ALTANAL FATAL ERROR: %s(): %s\n", func_name, msg_text);
+    fprintf(stderr, "AL4SAN FATAL ERROR: %s(): %s\n", func_name, msg_text);
     exit(0);
 }
 
 /**
  *  Returns core id
  */
-int altanal_rank(ALTANAL_context_t *altanal)
+int al4san_rank(AL4SAN_context_t *al4san)
 {
-    return ALTANAL_Runtime_thread_rank( altanal );
-}
-
-/**
- *  Tune block size nb and internal block size ib
- */
-int altanal_tune(ALTANAL_enum func, int M, int N, int NRHS)
-{
-    ALTANAL_context_t *altanal;
-    altanal = altanal_context_self();
-    if ( altanal && altanal->autotuning_enabled == ALTANAL_TRUE ) {
-        altanal_warning( "altanal_tune", "Autotunning not available for now" );
-    }
-    (void)func;
-    (void)M;
-    (void)N;
-    (void)NRHS;
-    return ALTANAL_SUCCESS;
+    return AL4SAN_Runtime_thread_rank( al4san );
 }
 
 /**
  *
  * @ingroup Auxiliary
  *
- *  ALTANAL_Version - Reports ALTANAL version number.
+ *  AL4SAN_Version - Reports AL4SAN version number.
  *
  ******************************************************************************
  *
  * @param[out] ver_major
- *          ALTANAL major version number.
+ *          AL4SAN major version number.
  *
  * @param[out] ver_minor
- *          ALTANAL minor version number.
+ *          AL4SAN minor version number.
  *
  * @param[out] ver_micro
- *          ALTANAL micro version number.
+ *          AL4SAN micro version number.
  *
  ******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Version(int *ver_major, int *ver_minor, int *ver_micro)
+int AL4SAN_Version(int *ver_major, int *ver_minor, int *ver_micro)
 {
     if (! ver_major && ! ver_minor && ! ver_micro)
-        return  ALTANAL_ERR_ILLEGAL_VALUE;
+        return  AL4SAN_ERR_ILLEGAL_VALUE;
 
     if (ver_major)
-        *ver_major = ALTANAL_VERSION_MAJOR;
+        *ver_major = AL4SAN_VERSION_MAJOR;
 
     if (ver_minor)
-        *ver_minor = ALTANAL_VERSION_MINOR;
+        *ver_minor = AL4SAN_VERSION_MINOR;
 
     if (ver_micro)
-        *ver_micro = ALTANAL_VERSION_MICRO;
+        *ver_micro = AL4SAN_VERSION_MICRO;
 
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Auxiliary
  *
- *  ALTANAL_Element_Size - Reports the size in bytes of a ALTANAL precision type
- *  (e.g. AltanalInteger, AltanalRealFloat, etc).
+ *  AL4SAN_Element_Size - Reports the size in bytes of a AL4SAN precision type
+ *  (e.g. Al4sanInteger, Al4sanRealFloat, etc).
  *
  ******************************************************************************
  *
  * @param[in] type
- *          ALTANAL element type, can be one of the following:
- *          - AltanalByte
- *          - AltanalInteger
- *          - AltanalRealFloat
- *          - AltanalRealDouble
- *          - AltanalComplexFloat
- *          - AltanalComplexDouble
+ *          AL4SAN element type, can be one of the following:
+ *          - Al4sanByte
+ *          - Al4sanInteger
+ *          - Al4sanRealFloat
+ *          - Al4sanRealDouble
+ *          - Al4sanComplexFloat
+ *          - Al4sanComplexDouble
  *
  ******************************************************************************
  *
@@ -184,17 +176,17 @@ int ALTANAL_Version(int *ver_major, int *ver_minor, int *ver_micro)
  *          \retval Element size in bytes
  *
  */
-int ALTANAL_Element_Size(int type)
+int AL4SAN_Element_Size(int type)
 {
     switch(type) {
-        case AltanalByte:          return          1;
-        case AltanalInteger:       return   sizeof(int);
-        case AltanalRealFloat:     return   sizeof(float);
-        case AltanalRealDouble:    return   sizeof(double);
-        case AltanalComplexFloat:  return 2*sizeof(float);
-        case AltanalComplexDouble: return 2*sizeof(double);
-        default: altanal_fatal_error("ALTANAL_Element_Size", "undefined type");
-                 return ALTANAL_ERR_ILLEGAL_VALUE;
+        case Al4sanByte:          return          1;
+        case Al4sanInteger:       return   sizeof(int);
+        case Al4sanRealFloat:     return   sizeof(float);
+        case Al4sanRealDouble:    return   sizeof(double);
+        case Al4sanComplexFloat:  return 2*sizeof(float);
+        case Al4sanComplexDouble: return 2*sizeof(double);
+        default: al4san_fatal_error("AL4SAN_Element_Size", "undefined type");
+                 return AL4SAN_ERR_ILLEGAL_VALUE;
 
     }
 }
@@ -203,7 +195,7 @@ int ALTANAL_Element_Size(int type)
  *
  * @ingroup Auxiliary
  *
- *  ALTANAL_My_Mpi_Rank - Return the MPI rank of the calling process.
+ *  AL4SAN_My_Mpi_Rank - Return the MPI rank of the calling process.
  *
  ******************************************************************************
  *
@@ -213,24 +205,24 @@ int ALTANAL_Element_Size(int type)
  *          \retval MPI rank
  *
  */
-int ALTANAL_My_Mpi_Rank(void)
+int AL4SAN_My_Mpi_Rank(void)
 {
-#if defined(ALTANAL_USE_MPI)
-    ALTANAL_context_t *altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Finalize()", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+#if defined(AL4SAN_USE_MPI)
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Finalize()", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    return ALTANAL_MPI_RANK;
+    return AL4SAN_MPI_RANK;
 #else
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 #endif
 }
 
 /**
  *  Display a progress percentage in stderr
  */
-void altanal_update_progress(int currentValue, int maximumValue) {
+void al4san_update_progress(int currentValue, int maximumValue) {
     div_t res ;
     static int progress = -1; /* varie de 0 a 100 au cours du calcul concerne */
 
@@ -259,12 +251,12 @@ void altanal_update_progress(int currentValue, int maximumValue) {
 }
 
 // A function to display the progress indicator.
-// By default it is altanal_update_progress()
-// The user can change it with ALTANAL_Set_update_progress_callback()
-void (*altanal_update_progress_callback)(int, int) = altanal_update_progress;
+// By default it is al4san_update_progress()
+// The user can change it with AL4SAN_Set_update_progress_callback()
+void (*al4san_update_progress_callback)(int, int) = al4san_update_progress;
 
-int ALTANAL_Set_update_progress_callback(void (*p)(int, int)) {
-  altanal_update_progress_callback = p;
-  return ALTANAL_SUCCESS;
+int AL4SAN_Set_update_progress_callback(void (*p)(int, int)) {
+  al4san_update_progress_callback = p;
+  return AL4SAN_SUCCESS;
 }
 

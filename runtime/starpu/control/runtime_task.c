@@ -1,32 +1,32 @@
-/**
- *
- * @file runtime_task.c
- *
- * @copyright 2017-2018 King Abdullah University of Science and Technology (KAUST).
- *                     All rights reserved.
- **/
+  /**
+   *
+   * @file runtime_task.c
+   *
+   * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+   *                     All rights reserved.
+   **/
 
-/**
- *
- * @brief ALTANAL StarPU Task routines
- *
- *  ALTANAL is a software package provided by King Abdullah University of Science and Technology (KAUST)
- *
- * @version 0.1.0
- * @author Rabab Alomairy
- * @date 2018-05-19
- *
- **/
+  /**
+   *
+   * @brief AL4SAN StarPU Task routines
+   *
+   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+   *
+   * @version 1.0.0
+   * @author Rabab Alomairy
+   * @date 2018-10-18
+   *
+   **/
 
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "altanal_runtime.h"
+#include "al4san_runtime.h"
 #include <stdarg.h>
 
 typedef void (*_starpu_callback_func_t)(void *);
 
-void altanal_task_info(ALTANAL_task_t* altanal_task, int *codelet_buffers, va_list varg_list)
+void al4san_task_info(AL4SAN_task_t* al4san_task, int *codelet_buffers, va_list varg_list)
 {
   int arg_type, ptr_size;
   void *arg_ptr;
@@ -38,71 +38,39 @@ void altanal_task_info(ALTANAL_task_t* altanal_task, int *codelet_buffers, va_li
   {
     arg_ptr = va_arg(varg_list_copy, void *);
     ptr_size = va_arg(varg_list_copy, int);
-    switch(arg_type){
-      case ALTANAL_VALUE:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=ptr_size;
-      num_arg++;
-      break;
-      case ALTANAL_INPUT:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=1;
-      num_arg++;
-      (*codelet_buffers)++;
-      break;
-      case ALTANAL_OUTPUT:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=1;
-      num_arg++;
-      (*codelet_buffers)++;
-      break;
-      case ALTANAL_INOUT:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=1;
-      num_arg++;
-      (*codelet_buffers)++;
-      break;
-      case ALTANAL_SCRATCH:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=1;
-      num_arg++;
-      (*codelet_buffers)++;
-      break;
-      case ALTANAL_REDUX:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=ptr_size;
-      num_arg++;
-      (*codelet_buffers)++;
-      break;
-      case ALTANAL_DATA_ARRAY:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=ptr_size;
-      num_arg++;
-      break;
-      case ALTANAL_DATA_MODE_ARRAY:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=ptr_size;
-      num_arg++;
-      break;
-      case ALTANAL_CL_ARGS:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=ptr_size;
-      num_arg++;
-      break;
-      case ALTANAL_CL_ARGS_NFREE:
-      altanal_task->arg_depenency[num_arg]=arg_type;
-      altanal_task->arg_size[num_arg]=ptr_size;
-      num_arg++;
-      break;
-    }
+    
+    if ((arg_type & AL4SAN_UNDEFINED_MASK)== AL4SAN_INPUT || 
+     (arg_type & AL4SAN_UNDEFINED_MASK)==AL4SAN_OUTPUT || 
+     (arg_type & AL4SAN_UNDEFINED_MASK)==AL4SAN_INOUT){
+      al4san_task->arg_depenency[num_arg]=(arg_type & AL4SAN_UNDEFINED_MASK);
+    al4san_task->arg_size[num_arg]=1;
+    num_arg++;
+    (*codelet_buffers)++;
   }
-  altanal_task->num_arg=num_arg;
-  va_end(varg_list_copy);
+  else if (arg_type==AL4SAN_SCRATCH || 
+    arg_type==AL4SAN_REDUX){
+    al4san_task->arg_depenency[num_arg]=arg_type;
+  al4san_task->arg_size[num_arg]=1;
+  num_arg++;
+  (*codelet_buffers)++;
+}
+else if (arg_type==AL4SAN_VALUE || 
+  arg_type==AL4SAN_DATA_ARRAY || 
+  arg_type==AL4SAN_DATA_MODE_ARRAY || 
+  arg_type==AL4SAN_CL_ARGS || 
+  arg_type==AL4SAN_CL_ARGS_NFREE){
+  al4san_task->arg_depenency[num_arg]=arg_type;
+al4san_task->arg_size[num_arg]=ptr_size;
+num_arg++;
+}
+}
+al4san_task->num_arg=num_arg;
+va_end(varg_list_copy);
 
 }
 
-//Low level function, it is similar to _starpu_task_insert_create in starpu package
-int altanal_task_create(struct starpu_codelet *cl, struct starpu_task *task, va_list varg_list)
+  //Low level function, it is similar to _starpu_task_insert_create in starpu package
+int al4san_task_create(struct starpu_codelet *cl, struct starpu_task *task, va_list varg_list)
 {
   int arg_type, ptr_size;
   void *arg_ptr;
@@ -121,189 +89,124 @@ int altanal_task_create(struct starpu_codelet *cl, struct starpu_task *task, va_
   struct starpu_codelet_pack_arg_data state;
   starpu_codelet_pack_arg_init(&state);
   
-  ALTANAL_task_t altanal_task;
-  altanal_task_info(&altanal_task, &codelet_buffers, varg_list);
-/*    
-  va_list varg_list_copy; 
-  ALTANAL_task_t altanal_task;
-  va_copy(varg_list_copy, varg_list);
-  while ((arg_type = va_arg(varg_list_copy, int))!=ARG_END)
-    {
-      arg_ptr = va_arg(varg_list_copy, void *);
-      ptr_size = va_arg(varg_list_copy, int);
-      switch(arg_type){
-        case ALTANAL_VALUE:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=ptr_size;
-              num_arg++;
-        break;
-        case ALTANAL_INPUT:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=1;
-              num_arg++;
-              codelet_buffers++;
-        break;
-        case ALTANAL_OUTPUT:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=1;
-              num_arg++;
-              codelet_buffers++;
-        break;
-        case ALTANAL_INOUT:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=1;
-              num_arg++;
-              codelet_buffers++;
-        break;
-        case ALTANAL_SCRATCH:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=1;
-              num_arg++;
-              codelet_buffers++;
-        break;
-        case ALTANAL_REDUX:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=ptr_size;
-              num_arg++;
-              codelet_buffers++;
-        break;
-        case ALTANAL_DATA_ARRAY:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=ptr_size;
-              num_arg++;
-        break;
-        case ALTANAL_DATA_MODE_ARRAY:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=ptr_size;
-              num_arg++;
-        break;
-        case ALTANAL_CL_ARGS:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=ptr_size;
-              num_arg++;
-        break;
-        case ALTANAL_CL_ARGS_NFREE:
-              altanal_task.arg_depenency[num_arg]=arg_type;
-              altanal_task.arg_size[num_arg]=ptr_size;
-              num_arg++;
-        break;
-      }
-    }
-    va_end(varg_list_copy);
-    
-    altanal_task.num_arg=num_arg;
-  */ 
+  AL4SAN_task_t al4san_task;
+  al4san_task_info(&al4san_task, &codelet_buffers, varg_list);
+
   cl->nbuffers=codelet_buffers;
 
-  arg_type=ALTANAL_VALUE;
-  arg_ptr= (void *)&altanal_task;
-  ptr_size=sizeof(ALTANAL_task_t);
+  arg_type=AL4SAN_VALUE;
+  arg_ptr= (void *)&al4san_task;
+  ptr_size=sizeof(AL4SAN_task_t);
   starpu_codelet_pack_arg(&state, arg_ptr, ptr_size);
 
   while((arg_type = va_arg(varg_list, int)) != ARG_END){
-    if (arg_type & STARPU_R || arg_type & STARPU_W || arg_type & STARPU_SCRATCH || arg_type & STARPU_REDUX)
+    if ((arg_type & AL4SAN_UNDEFINED_MASK)==AL4SAN_INPUT || 
+      (arg_type & AL4SAN_UNDEFINED_MASK)==AL4SAN_OUTPUT || 
+      (arg_type & AL4SAN_UNDEFINED_MASK)==AL4SAN_INOUT || 
+      (arg_type & AL4SAN_UNDEFINED_MASK)==AL4SAN_SCRATCH || 
+      (arg_type & AL4SAN_UNDEFINED_MASK)==AL4SAN_REDUX)
     {
-      /* We have an access mode : we expect to find a handle */
+        /* We have an access mode : we expect to find a handle */
       starpu_data_handle_t handle = va_arg(varg_list, starpu_data_handle_t);
-      starpu_task_insert_data_process_arg(cl, task, &allocated_buffers, &current_buffer, arg_type, handle);
+      starpu_task_insert_data_process_arg(cl, task, &allocated_buffers, &current_buffer, (arg_type & AL4SAN_UNDEFINED_MASK), handle);
       ptr_size=va_arg(varg_list, int);
     }
-    else if (arg_type == STARPU_DATA_ARRAY)
+    else if (arg_type == AL4SAN_DATA_ARRAY)
     {
-      // Expect to find a array of handles and its size
+        // Expect to find a array of handles and its size
       starpu_data_handle_t *handles = va_arg(varg_list, starpu_data_handle_t *);
       int nb_handles = va_arg(varg_list, int);
       starpu_task_insert_data_process_array_arg(cl, task, &allocated_buffers, &current_buffer, nb_handles, handles);
     }
-    else if (arg_type==STARPU_DATA_MODE_ARRAY)
+    else if (arg_type==AL4SAN_DATA_MODE_ARRAY)
     {
-      // Expect to find a array of descr and its size
+        // Expect to find a array of descr and its size
       struct starpu_data_descr *descrs = va_arg(varg_list, struct starpu_data_descr *);
       int nb_descrs = va_arg(varg_list, int);
       starpu_task_insert_data_process_mode_array_arg(cl, task, &allocated_buffers, &current_buffer, nb_descrs, descrs);
     }
-    else if (arg_type==STARPU_VALUE)
+    else if (arg_type==AL4SAN_VALUE)
     {
       void *ptr = va_arg(varg_list, void *);
       size_t arg_size = va_arg(varg_list, size_t);
       starpu_codelet_pack_arg(&state, ptr, arg_size);
     }
-    else if (arg_type==STARPU_CL_ARGS)
+    else if (arg_type==AL4SAN_CL_ARGS)
     {
       task->cl_arg = va_arg(varg_list, void *);
       task->cl_arg_size = va_arg(varg_list, size_t);
       task->cl_arg_free = 1;
     }
-    else if (arg_type==STARPU_CL_ARGS_NFREE)
+    else if (arg_type==AL4SAN_CL_ARGS_NFREE)
     {
       task->cl_arg = va_arg(varg_list, void *);
       task->cl_arg_size = va_arg(varg_list, size_t);
       task->cl_arg_free = 0;
     }
-    else if (arg_type==STARPU_TASK_DEPS_ARRAY)
+    else if (arg_type==AL4SAN_TASK_DEPS_ARRAY)
     {
       STARPU_ASSERT_MSG(task_deps_array == NULL, "Parameter 'STARPU_TASK_DEPS_ARRAY' cannot be set twice");
       ndeps = va_arg(varg_list, unsigned);
       task_deps_array = va_arg(varg_list, struct starpu_task **);
     }
-    else if (arg_type==STARPU_CALLBACK)
+    else if (arg_type==AL4SAN_CALLBACK)
     {
       task->callback_func = va_arg(varg_list, _starpu_callback_func_t);
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_CALLBACK_WITH_ARG)
+    else if (arg_type==AL4SAN_CALLBACK_WITH_ARG)
     {
       task->callback_func = va_arg(varg_list, _starpu_callback_func_t);
       task->callback_arg = va_arg(varg_list, void *);
     }
-    else if (arg_type==STARPU_CALLBACK_ARG)
+    else if (arg_type==AL4SAN_CALLBACK_ARG)
     {
       task->callback_arg = va_arg(varg_list, void *);
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_PROLOGUE_CALLBACK)
+    else if (arg_type==AL4SAN_PROLOGUE_CALLBACK)
     {
       task->prologue_callback_func = va_arg(varg_list, _starpu_callback_func_t);
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_PROLOGUE_CALLBACK_ARG)
+    else if (arg_type==AL4SAN_PROLOGUE_CALLBACK_ARG)
     {
       task->prologue_callback_arg = va_arg(varg_list, void *);
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_PROLOGUE_CALLBACK_POP)
+    else if (arg_type==AL4SAN_PROLOGUE_CALLBACK_POP)
     {
       task->prologue_callback_pop_func = va_arg(varg_list, _starpu_callback_func_t);
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_PROLOGUE_CALLBACK_POP_ARG)
+    else if (arg_type==AL4SAN_PROLOGUE_CALLBACK_POP_ARG)
     {
       task->prologue_callback_pop_arg = va_arg(varg_list, void *);
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_PRIORITY)
+    else if (arg_type==AL4SAN_PRIORITY)
     {
-      /* Followed by a priority level */
+        /* Followed by a priority level */
       int prio = va_arg(varg_list, int);
       task->priority = prio;
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_EXECUTE_ON_NODE)
+    else if (arg_type==AL4SAN_EXECUTE_ON_NODE)
     {
       (void)va_arg(varg_list, int);
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_EXECUTE_ON_DATA)
+    else if (arg_type==AL4SAN_EXECUTE_ON_DATA)
     {
       (void)va_arg(varg_list, starpu_data_handle_t);
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_EXECUTE_WHERE)
+   /* else if (arg_type==AL4SAN_EXECUTE_WHERE)
     {
       task->where = va_arg(varg_list, unsigned long long);
       (void)va_arg(varg_list, int);
-    }
-    else if (arg_type==STARPU_EXECUTE_ON_WORKER)
+    }*/
+    else if (arg_type==AL4SAN_EXECUTE_ON_WORKER)
     {
       int worker = va_arg(varg_list, int);
       if (worker != -1)
@@ -313,7 +216,7 @@ int altanal_task_create(struct starpu_codelet *cl, struct starpu_task *task, va_
       }
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_WORKER_ORDER)
+    else if (arg_type==AL4SAN_WORKER_ORDER)
     {
       unsigned order = va_arg(varg_list, unsigned);
       if (order != 0)
@@ -323,69 +226,71 @@ int altanal_task_create(struct starpu_codelet *cl, struct starpu_task *task, va_
       }
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_SCHED_CTX)
+    else if (arg_type==AL4SAN_SCHED_CTX)
     {
       unsigned sched_ctx = va_arg(varg_list, unsigned);
       task->sched_ctx = sched_ctx;
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_HYPERVISOR_TAG)
+    else if (arg_type==AL4SAN_HYPERVISOR_TAG)
     {
       int hypervisor_tag = va_arg(varg_list, int);
       task->hypervisor_tag = hypervisor_tag;
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_POSSIBLY_PARALLEL)
+    else if (arg_type==AL4SAN_POSSIBLY_PARALLEL)
     {
       unsigned possibly_parallel = va_arg(varg_list, unsigned);
       task->possibly_parallel = possibly_parallel;
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_FLOPS)
+    else if (arg_type==AL4SAN_FLOPS)
     {
       double flops = va_arg(varg_list, double);
       task->flops = flops;
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_TAG)
+    else if (arg_type==AL4SAN_TAG)
     {
       starpu_tag_t tag = va_arg(varg_list, starpu_tag_t);
       task->tag_id = tag;
       task->use_tag = 1;
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_TAG_ONLY)
+    else if (arg_type==AL4SAN_TAG_ONLY)
     {
       starpu_tag_t tag = va_arg(varg_list, starpu_tag_t);
       task->tag_id = tag;
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_NAME)
+  #if defined(AL4SAN_CODELETS_HAVE_NAME)
+    else if (arg_type==AL4SAN_LABEL)
     {
       const char *name = va_arg(varg_list, const char *);
       task->name = name;
       (void)va_arg(varg_list, int);
     }
-    else if (arg_type==STARPU_NODE_SELECTION_POLICY)
+  #endif
+    else if (arg_type==AL4SAN_NODE_SELECTION_POLICY)
     {
       (void)va_arg(varg_list, int);
       (void)va_arg(varg_list, int);
     }
-    else if(arg_type==ALTANAL_CUDA_FLG)
+    else if(arg_type==AL4SAN_CUDA_FLG)
     {
-#ifdef ALTANAL_USE_CUDA
+  #ifdef AL4SAN_USE_CUDA
      if ( va_arg(varg_list, int)== ON){
-      cl->cuda_flags[0]=ALTANAL_CUDA_ASYNC;
+      cl->cuda_flags[0]=AL4SAN_CUDA_ASYNC;
       (void)va_arg(varg_list, int);
     }
     else
       (void)va_arg(varg_list, int);
-#else
+  #else
     (void)va_arg(varg_list, int);
     (void)va_arg(varg_list, int);          
-#endif
+  #endif
   }
-  else if (arg_type!=ALTANAL_undefined)
+  else if (arg_type!=AL4SAN_UNDEFINED)
   {
     STARPU_ABORT_MSG("Unrecognized argument %d, did you perhaps forget to end arguments with 0?\n", arg_type);
   }
@@ -404,11 +309,11 @@ if (cl)
 
 if (state.nargs) {
   if (task->cl_arg != NULL) {
-    _STARPU_DISP("Parameters STARPU_CL_ARGS and STARPU_VALUE cannot be used in the same call\n");
-    free(state.arg_buffer);
-    return -EINVAL;
-  }
-  starpu_codelet_pack_arg_fini(&state, &task->cl_arg, &task->cl_arg_size);
+   _STARPU_DISP("Parameters AL4SAN_CL_ARGS and AL4SAN_VALUE cannot be used in the same call\n");
+   free(state.arg_buffer);
+   return -EINVAL;
+ }
+ starpu_codelet_pack_arg_fini(&state, &task->cl_arg, &task->cl_arg_size);
 }
 
 if (task_deps_array)
@@ -419,8 +324,8 @@ _STARPU_TRACE_TASK_BUILD_END();
 return 0;
 }
 
-//Low level function, it is _starpu_task_build_v in starpu package
-static struct starpu_task *altanal_task_build(struct starpu_codelet *cl, const char* task_name, int cl_arg_free, va_list varg_list)
+  //Low level function, it is _starpu_task_build_v in starpu package
+static struct starpu_task *al4san_task_build(struct starpu_codelet *cl, const char* task_name, int cl_arg_free, va_list varg_list)
 {
   va_list varg_list_copy;
   int ret;
@@ -430,7 +335,7 @@ static struct starpu_task *altanal_task_build(struct starpu_codelet *cl, const c
   task->cl_arg_free= cl_arg_free;
 
   va_copy(varg_list_copy, varg_list);
-  ret=altanal_task_create(cl, task, varg_list_copy);
+  ret=al4san_task_create(cl, task, varg_list_copy);
   va_end(varg_list_copy);
 
   if(ret != 0)
@@ -441,10 +346,10 @@ static struct starpu_task *altanal_task_build(struct starpu_codelet *cl, const c
   return (ret==0) ? task: NULL;
 }
 
-#if defined(ALTANAL_USE_MPI)
-int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes, int *xrank, int *do_execute, struct starpu_data_descr **descrs_p, int *nb_data_p, int *prio_p, va_list varg_list)
+  #if defined(AL4SAN_USE_MPI)
+int al4san_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes, int *xrank, int *do_execute, struct starpu_data_descr **descrs_p, int *nb_data_p, int *prio_p, va_list varg_list)
 {
-    /* XXX: _fstarpu_mpi_task_decode_v needs to be updated at the same time */
+      /* XXX: _fstarpu_mpi_task_decode_v needs to be updated at the same time */
   va_list varg_list_copy;
   int inconsistent_execute = 0;
   int arg_type;
@@ -465,8 +370,8 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
   va_copy(varg_list_copy, varg_list);
   while ((arg_type = va_arg(varg_list_copy, int)) != ARG_END)
   {
-    int arg_type_nocommute = arg_type & ~STARPU_COMMUTE;
-    if (arg_type==STARPU_EXECUTE_ON_NODE)
+    int arg_type_nocommute = (arg_type & AL4SAN_UNDEFINED_MASK) & ~AL4SAN_COMMUTE;
+    if (arg_type==AL4SAN_EXECUTE_ON_NODE)
     {
       *xrank = va_arg(varg_list_copy, int);
       if (node_selected == 0)
@@ -478,7 +383,7 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
       }
       (void)va_arg(varg_list_copy, int);  
     }
-    else if (arg_type==STARPU_EXECUTE_ON_DATA)
+    else if (arg_type==AL4SAN_EXECUTE_ON_DATA)
     {
       starpu_data_handle_t data = va_arg(varg_list_copy, starpu_data_handle_t);
       if (node_selected == 0)
@@ -493,10 +398,10 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
       }
       (void)va_arg(varg_list_copy, int);  
     }
-    else if (arg_type_nocommute & STARPU_R || arg_type_nocommute & STARPU_W || arg_type_nocommute & STARPU_RW || arg_type & STARPU_SCRATCH || arg_type & STARPU_REDUX)
+    else if (arg_type_nocommute==AL4SAN_INPUT || arg_type_nocommute==AL4SAN_OUTPUT || arg_type_nocommute==AL4SAN_INOUT || arg_type==AL4SAN_SCRATCH || arg_type==AL4SAN_REDUX)
     {
       starpu_data_handle_t data = va_arg(varg_list_copy, starpu_data_handle_t);
-      enum starpu_data_access_mode mode = (enum starpu_data_access_mode) arg_type;
+      enum starpu_data_access_mode mode = (enum starpu_data_access_mode) (arg_type & AL4SAN_UNDEFINED_MASK);
       if (node_selected == 0)
       {
         int ret = _starpu_mpi_find_executee_node(data, mode, me, do_execute, &inconsistent_execute, xrank);
@@ -519,7 +424,7 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
 
       (void)va_arg(varg_list_copy, int);  
     }
-    else if (arg_type == STARPU_DATA_ARRAY)
+    else if (arg_type == AL4SAN_DATA_ARRAY)
     {
       starpu_data_handle_t *datas = va_arg(varg_list_copy, starpu_data_handle_t *);
       int nb_handles = va_arg(varg_list_copy, int);
@@ -552,7 +457,7 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
 
       (void)va_arg(varg_list_copy, int);  
     }
-    else if (arg_type == STARPU_DATA_MODE_ARRAY)
+    else if (arg_type == AL4SAN_DATA_MODE_ARRAY)
     {
       struct starpu_data_descr *_descrs = va_arg(varg_list_copy, struct starpu_data_descr*);
       int nb_handles = va_arg(varg_list_copy, int);
@@ -583,137 +488,137 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
       }
       (void)va_arg(varg_list_copy, int);  
     }
-    else if (arg_type==STARPU_VALUE)
+    else if (arg_type==AL4SAN_VALUE)
     {
       (void)va_arg(varg_list_copy, void *);
       (void)va_arg(varg_list_copy, size_t);
     }
-    else if (arg_type==STARPU_CL_ARGS)
+    else if (arg_type==AL4SAN_CL_ARGS)
     {
       (void)va_arg(varg_list_copy, void *);
       (void)va_arg(varg_list_copy, size_t);
     }
-    else if (arg_type==STARPU_CL_ARGS_NFREE)
+    else if (arg_type==AL4SAN_CL_ARGS_NFREE)
     {
       (void)va_arg(varg_list_copy, void *);
       (void)va_arg(varg_list_copy, size_t);
     }
-    else if (arg_type==STARPU_TASK_DEPS_ARRAY)
+    else if (arg_type==AL4SAN_TASK_DEPS_ARRAY)
     {
       (void)va_arg(varg_list_copy, unsigned);
       (void)va_arg(varg_list_copy, struct starpu_task **);
     }
-    else if (arg_type==STARPU_CALLBACK)
+    else if (arg_type==AL4SAN_CALLBACK)
     {
       (void)va_arg(varg_list_copy, _starpu_callback_func_t);
       (void)va_arg(varg_list_copy, int);  
     }
-    else if (arg_type==STARPU_CALLBACK_WITH_ARG)
+    else if (arg_type==AL4SAN_CALLBACK_WITH_ARG)
     {
       (void)va_arg(varg_list_copy, _starpu_callback_func_t);
       (void)va_arg(varg_list_copy, void *);
     }
-    else if (arg_type==STARPU_CALLBACK_ARG)
+    else if (arg_type==AL4SAN_CALLBACK_ARG)
     {
       (void)va_arg(varg_list_copy, void *);
       (void)va_arg(varg_list_copy, int);      }
-      else if (arg_type==STARPU_PRIORITY)
+      else if (arg_type==AL4SAN_PRIORITY)
       {
         prio = va_arg(varg_list_copy, int);
         (void)va_arg(varg_list_copy, int);  
       }
-    /* STARPU_EXECUTE_ON_NODE handled above */
-    /* STARPU_EXECUTE_ON_DATA handled above */
-    /* STARPU_DATA_ARRAY handled above */
-    /* STARPU_DATA_MODE_ARRAY handled above */
-      else if (arg_type==STARPU_TAG)
+      /* STARPU_EXECUTE_ON_NODE handled above */
+      /* STARPU_EXECUTE_ON_DATA handled above */
+      /* STARPU_DATA_ARRAY handled above */
+      /* STARPU_DATA_MODE_ARRAY handled above */
+      else if (arg_type==AL4SAN_TAG)
       {
         (void)va_arg(varg_list_copy, starpu_tag_t);
         (void)va_arg(varg_list_copy, int);  
 
       }
-      else if (arg_type==STARPU_HYPERVISOR_TAG)
+      else if (arg_type==AL4SAN_HYPERVISOR_TAG)
       {
         (void)va_arg(varg_list_copy, int);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_FLOPS)
+      else if (arg_type==AL4SAN_FLOPS)
       {
         (void)va_arg(varg_list_copy, double);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_SCHED_CTX)
+      else if (arg_type==AL4SAN_SCHED_CTX)
       {
         (void)va_arg(varg_list_copy, unsigned);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_PROLOGUE_CALLBACK)
+      else if (arg_type==AL4SAN_PROLOGUE_CALLBACK)
       {
         (void)va_arg(varg_list_copy, _starpu_callback_func_t);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_PROLOGUE_CALLBACK_ARG)
+      else if (arg_type==AL4SAN_PROLOGUE_CALLBACK_ARG)
       {
         (void)va_arg(varg_list_copy, void *);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_PROLOGUE_CALLBACK_POP)
+      else if (arg_type==AL4SAN_PROLOGUE_CALLBACK_POP)
       {
         (void)va_arg(varg_list_copy, _starpu_callback_func_t);
         (void)va_arg(varg_list_copy, int);      
       }
-      else if (arg_type==STARPU_PROLOGUE_CALLBACK_POP_ARG)
+      else if (arg_type==AL4SAN_PROLOGUE_CALLBACK_POP_ARG)
       {
         (void)va_arg(varg_list_copy, void *);
         (void)va_arg(varg_list_copy, int);      
       }
-      else if (arg_type==STARPU_EXECUTE_WHERE)
+      else if (arg_type==AL4SAN_EXECUTE_WHERE)
       {
-      // the flag is decoded and set later when
-      // calling function _starpu_task_insert_create()
+        // the flag is decoded and set later when
+        // calling function _starpu_task_insert_create()
         (void)va_arg(varg_list_copy, unsigned long long);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_EXECUTE_ON_WORKER)
+      else if (arg_type==AL4SAN_EXECUTE_ON_WORKER)
       {
-      // the flag is decoded and set later when
-      // calling function _starpu_task_insert_create()
+        // the flag is decoded and set later when
+        // calling function _starpu_task_insert_create()
         (void)va_arg(varg_list_copy, int);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_TAG_ONLY)
+      else if (arg_type==AL4SAN_TAG_ONLY)
       {
         (void)va_arg(varg_list_copy, starpu_tag_t);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_NAME)
+      else if (arg_type==AL4SAN_LABEL)
       {
         (void)va_arg(varg_list_copy, const char *);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_POSSIBLY_PARALLEL)
+      else if (arg_type==AL4SAN_POSSIBLY_PARALLEL)
       {
         (void)va_arg(varg_list_copy, unsigned);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_WORKER_ORDER)
+      else if (arg_type==AL4SAN_WORKER_ORDER)
       {
-      // the flag is decoded and set later when
-      // calling function _starpu_task_insert_create()
+        // the flag is decoded and set later when
+        // calling function _starpu_task_insert_create()
         (void)va_arg(varg_list_copy, unsigned);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==STARPU_NODE_SELECTION_POLICY)
+      else if (arg_type==AL4SAN_NODE_SELECTION_POLICY)
       {
         select_node_policy = va_arg(varg_list_copy, int);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==ALTANAL_CUDA_FLG)
+      else if (arg_type==AL4SAN_CUDA_FLG)
       {
         (void)va_arg(varg_list_copy, unsigned);
         (void)va_arg(varg_list_copy, int);
       }
-      else if (arg_type!=ALTANAL_undefined)
+      else if (arg_type!=AL4SAN_UNDEFINED)
       {
         STARPU_ABORT_MSG("Unrecognized argument %d, did you perhaps forget to end arguments with 0?\n", arg_type);
       }
@@ -723,7 +628,7 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
 
     if (inconsistent_execute == 1 || *xrank == -1)
     {
-    // We need to find out which node is going to execute the codelet.
+      // We need to find out which node is going to execute the codelet.
       _STARPU_MPI_DEBUG(100, "Different nodes are owning W data. The node to execute the codelet is going to be selected with the current selection node policy. See starpu_mpi_node_selection_set_current_policy() to change the policy, or use STARPU_EXECUTE_ON_NODE or STARPU_EXECUTE_ON_DATA to specify the node\n");
       *xrank = _starpu_mpi_select_node(me, nb_nodes, descrs, nb_data, select_node_policy);
       *do_execute = *xrank == STARPU_MPI_PER_NODE || (me == *xrank);
@@ -743,7 +648,7 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
     return 0;
   }
 
-  int altanal_task_build_mpi(MPI_Comm comm, struct starpu_codelet *codelet, struct starpu_task **task, int *xrank_p, struct starpu_data_descr **descrs_p, int *nb_data_p, int *prio_p, va_list varg_list)
+  int al4san_task_build_mpi(MPI_Comm comm, struct starpu_codelet *codelet, struct starpu_task **task, int *xrank_p, struct starpu_data_descr **descrs_p, int *nb_data_p, int *prio_p, va_list varg_list)
   {
     int me, do_execute, xrank, nb_nodes;
     int ret;
@@ -757,13 +662,13 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
     starpu_mpi_comm_rank(comm, &me);
     starpu_mpi_comm_size(comm, &nb_nodes);
 
-  /* Find out whether we are to execute the data because we own the data to be written to. */
-    ret = altanal_mpi_task_decode(codelet, me, nb_nodes, &xrank, &do_execute, &descrs, &nb_data, &prio, varg_list);
+    /* Find out whether we are to execute the data because we own the data to be written to. */
+    ret = al4san_mpi_task_decode(codelet, me, nb_nodes, &xrank, &do_execute, &descrs, &nb_data, &prio, varg_list);
     if (ret < 0)
       return ret;
 
     _STARPU_TRACE_TASK_MPI_PRE_START();
-  /* Send and receive data as requested */
+    /* Send and receive data as requested */
     for(i=0 ; i<nb_data ; i++)
     {
       _starpu_mpi_exchange_data_before_execution(descrs[i].handle, descrs[i].mode, me, xrank, do_execute, prio, comm);
@@ -799,14 +704,14 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
       (*task)->cl_arg_free = 1;
 
       va_copy(varg_list_copy, varg_list);
-      altanal_task_create(codelet, *task, varg_list_copy);
+      al4san_task_create(codelet, *task, varg_list_copy);
       va_end(varg_list_copy);
 
       return 0;
     }
   }
 
-  void altanal_insert_task(altanal_codelet *codelet,  ALTANAL_option_t *options, ...) 
+  void al4san_insert_task(al4san_codelet *codelet,  AL4SAN_option_t *options, ...) 
   {
     va_list varg_list;
     int ret;
@@ -818,16 +723,16 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
     struct starpu_task *task;
     int arg_type, ptr_size;
     void *arg_ptr;
-    ALTANAL_task_t altanal_task;
+    AL4SAN_task_t al4san_task;
 
     va_start(varg_list, options);
     
 
-    ret=altanal_task_build_mpi(starpu_mpi_codelet(codelet), &task, &xrank, &descrs, &nb_data, &prio, varg_list);
+    ret=al4san_task_build_mpi(starpu_mpi_codelet(codelet), &task, &xrank, &descrs, &nb_data, &prio, varg_list);
 
     
-    if (ret < 0)
-      return ret;
+    //if (ret < 0)
+      //return ret;
 
     if (ret == 0)
     {
@@ -854,10 +759,10 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
       pre_submit_hook(task);
 
     va_end(varg_list);
-    return val;
+    //return val;
   }
 
-  int ALTANAL_Runtime_insert_task(ALTANAL_codelet codelet,  ALTANAL_option_t *options, va_list varg_list)
+  int AL4SAN_Runtime_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list)
   {
     int ret;
     int xrank;
@@ -868,9 +773,9 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
     struct starpu_task *task;
     int arg_type, ptr_size;
     void *arg_ptr;
-    ALTANAL_task_t altanal_task; 
+    AL4SAN_task_t al4san_task; 
 
-    ret=altanal_task_build_mpi(starpu_mpi_codelet((altanal_codelet *)codelet), &task, &xrank, &descrs, &nb_data, &prio, varg_list);
+    ret=al4san_task_build_mpi(starpu_mpi_codelet((al4san_codelet *)codelet), &task, &xrank, &descrs, &nb_data, &prio, varg_list);
 
     
     if (ret < 0)
@@ -886,7 +791,7 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
 
         _STARPU_MSG("submission of task %p wih codelet %p failed (symbol `%s') (err: ENODEV)\n",
           task, task->cl,
-          ((altanal_codelet *)codelet == NULL) ? "none" :
+          ((al4san_codelet *)codelet == NULL) ? "none" :
           task->cl->name ? task->cl->name :
           (task->cl->model && task->cl->model->symbol)?task->cl->model->symbol:"none");
 
@@ -903,19 +808,19 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
     return val;
   }
 
-#else
-  void altanal_insert_task(altanal_codelet *codelet,  ALTANAL_option_t *options, ...) 
+  #else
+  void al4san_insert_task(al4san_codelet *codelet,  AL4SAN_option_t *options, ...) 
   {
     va_list varg_list;
     int ret;
     struct starpu_task *task;
     int arg_type, ptr_size;
     void *arg_ptr;
-    ALTANAL_task_t altanal_task;
+    AL4SAN_task_t al4san_task;
 
     va_start(varg_list, options);
 
-    task=altanal_task_build(starpu_mpi_codelet(codelet), NULL, 1, varg_list);
+    task=al4san_task_build(starpu_mpi_codelet(codelet), NULL, 1, varg_list);
     ret=starpu_task_submit(task);
     
     if (STARPU_UNLIKELY(ret == -ENODEV))
@@ -931,26 +836,25 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
 
 
     va_end(varg_list);
-    return ret;
   }
 
-  int ALTANAL_Runtime_insert_task(ALTANAL_codelet codelet,  ALTANAL_option_t *options, va_list varg_list)
+  int AL4SAN_Runtime_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list)
   {
     int ret;
     struct starpu_task *task;
     int arg_type, ptr_size;
     void *arg_ptr; 
-    ALTANAL_task_t altanal_task;
+    AL4SAN_task_t al4san_task;
     
     
-    task=altanal_task_build(starpu_mpi_codelet((altanal_codelet *)codelet), NULL, 1, varg_list);
+    task=al4san_task_build(starpu_mpi_codelet((al4san_codelet *)codelet), NULL, 1, varg_list);
     ret=starpu_task_submit(task);
     
     if (STARPU_UNLIKELY(ret == -ENODEV))
     { 
       _STARPU_MSG("submission of task %p wih codelet %p failed (symbol `%s') (err: ENODEV)\n",
         task, task->cl,
-        ((altanal_codelet *)codelet == NULL) ? "none" :
+        ((al4san_codelet *)codelet == NULL) ? "none" :
         task->cl->name ? task->cl->name :
         (task->cl->model && task->cl->model->symbol)?task->cl->model->symbol:"none");
       task->destroy = 0;
@@ -958,21 +862,21 @@ int altanal_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes
     }  
     return ret;
   }
-#endif
-  void altanal_task_init(ALTANAL_task_t **altanal_task)
+  #endif
+  void al4san_task_init(AL4SAN_task_t **al4san_task)
   {
 
-   if (*altanal_task==NULL){
-    *altanal_task = (ALTANAL_task_t*)malloc(sizeof(ALTANAL_task_t));
+   if (*al4san_task==NULL){
+    *al4san_task = (AL4SAN_task_t*)malloc(sizeof(AL4SAN_task_t));
   }
 }
 
 
-void altanal_unpack_arg(ALTANAL_arg_list *altanal_arg, ...)
+void al4san_unpack_arg(AL4SAN_arg_list *al4san_arg, ...)
 {
 
-  char *cl_arg = (char *) altanal_arg->cl_arg;
-  ALTANAL_task_t altanal_task;
+  char *cl_arg = (char *) al4san_arg->cl_arg;
+  AL4SAN_task_t al4san_task;
   va_list varg_list;
   size_t current_arg_offset = 0;
   int nargs, arg;
@@ -984,28 +888,28 @@ void altanal_unpack_arg(ALTANAL_arg_list *altanal_arg, ...)
   void **tmp_ref;
   size_t arg_size;
   
-      /* We fill the different pointers with the appropriate arguments */
+        /* We fill the different pointers with the appropriate arguments */
   memcpy(&nargs, cl_arg, sizeof(nargs));
   current_arg_offset += sizeof(nargs);
 
   memcpy(&arg_size, cl_arg+current_arg_offset, sizeof(arg_size));
   current_arg_offset += sizeof(arg_size);
 
-  memcpy(&altanal_task, cl_arg+current_arg_offset, arg_size);
+  memcpy(&al4san_task, cl_arg+current_arg_offset, arg_size);
   current_arg_offset += arg_size;
 
-  va_start(varg_list, altanal_arg);
+  va_start(varg_list, al4san_arg);
 
-  for (int i=0;i<altanal_task.num_arg;i++)
+  for (int i=0;i<al4san_task.num_arg;i++)
   {
-   if (altanal_task.arg_depenency[i]==ALTANAL_INPUT  || 
-     altanal_task.arg_depenency[i]==ALTANAL_OUTPUT || 
-     altanal_task.arg_depenency[i]==ALTANAL_INOUT  || 
-     altanal_task.arg_depenency[i]==ALTANAL_SCRATCH)
+   if (al4san_task.arg_depenency[i]==AL4SAN_INPUT  || 
+     al4san_task.arg_depenency[i]==AL4SAN_OUTPUT || 
+     al4san_task.arg_depenency[i]==AL4SAN_INOUT  || 
+     al4san_task.arg_depenency[i]==AL4SAN_SCRATCH)
 
    {
      tmp_ref = va_arg(varg_list, void**);
-     *tmp_ref = STARPU_MATRIX_GET_PTR(altanal_arg->descr[ptr_index]); 
+     *tmp_ref = (void*)STARPU_MATRIX_GET_PTR(al4san_arg->descr[ptr_index]); 
      ptr_index++;
 
    }
@@ -1014,11 +918,11 @@ void altanal_unpack_arg(ALTANAL_arg_list *altanal_arg, ...)
      
     argptr = va_arg(varg_list, void *);
 
-    /* If not reading all cl_args */
-    // NULL was the initial end marker, we now use 0
-    // 0 and NULL should be the same value, but we
-    // keep both equalities for systems on which they could be different
-    // cppcheck-suppress duplicateExpression
+      /* If not reading all cl_args */
+      // NULL was the initial end marker, we now use 0
+      // 0 and NULL should be the same value, but we
+      // keep both equalities for systems on which they could be different
+      // cppcheck-suppress duplicateExpression
     if(argptr == 0 || argptr == NULL)
       break;
 
@@ -1033,11 +937,11 @@ va_end(varg_list);
 }
 
 
-int ALTANAL_Runtime_unpack_arg(ALTANAL_arg args, va_list varg_list)
+int AL4SAN_Runtime_unpack_arg(AL4SAN_arg args, va_list varg_list)
 {
-  ALTANAL_arg_list *altanal_arg= (ALTANAL_arg_list*)args;
-  char *cl_arg = (char *) altanal_arg->cl_arg;
-  ALTANAL_task_t altanal_task;
+  AL4SAN_arg_list *al4san_arg= (AL4SAN_arg_list*)args;
+  char *cl_arg = (char *) al4san_arg->cl_arg;
+  AL4SAN_task_t al4san_task;
   size_t current_arg_offset = 0;
   int nargs, arg;
   void *_buffer=NULL;
@@ -1048,26 +952,26 @@ int ALTANAL_Runtime_unpack_arg(ALTANAL_arg args, va_list varg_list)
   void **tmp_ref;
   size_t arg_size;
   
-      /* We fill the different pointers with the appropriate arguments */
+        /* We fill the different pointers with the appropriate arguments */
   memcpy(&nargs, cl_arg, sizeof(nargs));
   current_arg_offset += sizeof(nargs);
 
   memcpy(&arg_size, cl_arg+current_arg_offset, sizeof(arg_size));
   current_arg_offset += sizeof(arg_size);
 
-  memcpy(&altanal_task, cl_arg+current_arg_offset, arg_size);
+  memcpy(&al4san_task, cl_arg+current_arg_offset, arg_size);
   current_arg_offset += arg_size;
   
-  for (int i=0;i<altanal_task.num_arg;i++)
+  for (int i=0;i<al4san_task.num_arg;i++)
   {
-   if (altanal_task.arg_depenency[i]==ALTANAL_INPUT  || 
-     altanal_task.arg_depenency[i]==ALTANAL_OUTPUT || 
-     altanal_task.arg_depenency[i]==ALTANAL_INOUT  || 
-     altanal_task.arg_depenency[i]==ALTANAL_SCRATCH)
+   if (al4san_task.arg_depenency[i]==AL4SAN_INPUT  || 
+     al4san_task.arg_depenency[i]==AL4SAN_OUTPUT || 
+     al4san_task.arg_depenency[i]==AL4SAN_INOUT  || 
+     al4san_task.arg_depenency[i]==AL4SAN_SCRATCH)
 
    {
      tmp_ref = va_arg(varg_list, void**);
-     *tmp_ref = STARPU_MATRIX_GET_PTR(altanal_arg->descr[ptr_index]); 
+     *tmp_ref = (void*)STARPU_MATRIX_GET_PTR(al4san_arg->descr[ptr_index]); 
      ptr_index++;
 
    }
@@ -1076,11 +980,11 @@ int ALTANAL_Runtime_unpack_arg(ALTANAL_arg args, va_list varg_list)
      
     argptr = va_arg(varg_list, void *);
 
-    /* If not reading all cl_args */
-    // NULL was the initial end marker, we now use 0
-    // 0 and NULL should be the same value, but we
-    // keep both equalities for systems on which they could be different
-    // cppcheck-suppress duplicateExpression
+      /* If not reading all cl_args */
+      // NULL was the initial end marker, we now use 0
+      // 0 and NULL should be the same value, but we
+      // keep both equalities for systems on which they could be different
+      // cppcheck-suppress duplicateExpression
     if(argptr == 0 || argptr == NULL)
       break;
 

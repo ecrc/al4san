@@ -6,31 +6,42 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2017 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
  ***
  *
- * @brief Altanal StarPU options routines
  *
- * @version 1.0.0
- * @author Cedric Augonnet
- * @author Mathieu Faverge
- * @author Cedric Castagnede
- * @date 2010-11-15
+ * author Cedric Augonnet
+ * author Mathieu Faverge
+ * author Cedric Castagnede
+ * date 2010-11-15
  *
  */
+/**
+ *
+ * @brief AL4SAN StarPU options routines
+ *
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
+ * @version 1.0.0
+ * @author Rabab Alomairy
+ * @date 2018-10-18
+ *
+**/
 #include <stdio.h>
 #include <stdlib.h>
-#include "altanal_runtime.h"
+#include "al4san_runtime.h"
 
-void ALTANAL_Runtime_options_init( ALTANAL_option_t *option, ALTANAL_context_t *altanal,
-                           ALTANAL_sequence_t *sequence, ALTANAL_request_t *request )
+void AL4SAN_Runtime_options_init( AL4SAN_option_t *option, AL4SAN_context_t *al4san,
+                           AL4SAN_sequence_t *sequence, AL4SAN_request_t *request )
 {
     option->sequence   = sequence;
     option->request    = request;
-    option->profiling  = ALTANAL_PROFILING == ALTANAL_TRUE;
-    option->parallel   = ALTANAL_PARALLEL == ALTANAL_TRUE;
-    option->priority   = ALTANAL_PRIORITY_MIN;
-    //option->nb         = ALTANAL_NB;
+    option->profiling  = AL4SAN_PROFILING == AL4SAN_TRUE;
+    option->parallel   = AL4SAN_PARALLEL == AL4SAN_TRUE;
+    option->priority   = AL4SAN_PRIORITY_MIN;
+    //option->nb         = AL4SAN_NB;
     option->ws_wsize   = 0;
     option->ws_hsize   = 0;
     option->ws_worker  = NULL;
@@ -38,14 +49,14 @@ void ALTANAL_Runtime_options_init( ALTANAL_option_t *option, ALTANAL_context_t *
     return;
 }
 
-void ALTANAL_Runtime_options_finalize( ALTANAL_option_t *option, ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_options_finalize( AL4SAN_option_t *option, AL4SAN_context_t *al4san )
 {
     (void)option;
-    (void)altanal;
+    (void)al4san;
     return;
 }
 
-int ALTANAL_Runtime_options_ws_alloc( ALTANAL_option_t *options, size_t worker_size, size_t host_size )
+int AL4SAN_Runtime_options_ws_alloc( AL4SAN_option_t *options, size_t worker_size, size_t host_size )
 {
     int ret = 0;
     if ( worker_size > 0 ) {
@@ -56,13 +67,13 @@ int ALTANAL_Runtime_options_ws_alloc( ALTANAL_option_t *options, size_t worker_s
     }
     if ( host_size > 0 ) {
         options->ws_hsize = host_size;
-        ret = ALTANAL_Runtime_starpu_ws_alloc((ALTANAL_starpu_ws_t**)&(options->ws_host),
-                                      host_size, ALTANAL_CUDA, ALTANAL_HOST_MEM);
+        ret = AL4SAN_Runtime_starpu_ws_alloc((AL4SAN_starpu_ws_t**)&(options->ws_host),
+                                      host_size, AL4SAN_CUDA, AL4SAN_HOST_MEM);
     }
     return ret;
 }
 
-int ALTANAL_Runtime_options_ws_free( ALTANAL_option_t *options )
+int AL4SAN_Runtime_options_ws_free( AL4SAN_option_t *options )
 {
     int ret = 0;
     if ( options->ws_worker != NULL ) {
@@ -71,8 +82,20 @@ int ALTANAL_Runtime_options_ws_free( ALTANAL_option_t *options )
     }
     if ( options->ws_host != NULL ) {
         starpu_task_wait_for_all();
-        ret = ALTANAL_Runtime_starpu_ws_free( (ALTANAL_starpu_ws_t*)(options->ws_host) );
+        ret = AL4SAN_Runtime_starpu_ws_free( (AL4SAN_starpu_ws_t*)(options->ws_host) );
         options->ws_host = NULL;
     }
     return ret;
 }
+
+int AL4SAN_Workspace_Create(AL4SAN_workspace_t *workspace, size_t lworkspace,
+                            size_t dtyp)
+{
+
+}
+int AL4SAN_Workspace_Destroy(AL4SAN_workspace_t *workspace)
+{
+
+}
+
+

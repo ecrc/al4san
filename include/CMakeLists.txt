@@ -6,10 +6,12 @@
 #                      Tennessee Research Foundation. All rights reserved.
 # @copyright 2012-2017 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
 #                      Univ. Bordeaux. All rights reserved.
+# @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+#                     All rights reserved.
 #
 ###
 #
-#  @project CHAMELEON
+#  project CHAMELEON
 #  CHAMELEON is a software package provided by:
 #     Inria Bordeaux - Sud-Ouest,
 #     Univ. of Tennessee,
@@ -17,48 +19,59 @@
 #     Univ. of California Berkeley,
 #     Univ. of Colorado Denver.
 #
-# @version 1.0.0
-#  @author Cedric Castagnede
-#  @author Emmanuel Agullo
-#  @author Mathieu Faverge
-#  @author Florent Pruvost
-#  @date 2012-07-13
+# version 1.0.0
+# author Cedric Castagnede
+# author Emmanuel Agullo
+# author Mathieu Faverge
+# author Florent Pruvost
+# date 2012-07-13
 #
 ###
-
-# Generate the altanal headers for all possible precisions
+###
+#
+#  @project AL4SAN
+#  AL4SAN is a software package provided by:
+#     King Abdullah Univesity of Science and Technology
+#
+# @version 1.0.0
+#  @author Rabab Alomairy
+#  @date 2018-10-18
+#
+###
+# Generate the al4san headers for all possible precisions
 # ------------------------------------------------------
 
-configure_file("altanal/altanal_config.h.in"
-               "altanal/altanal_config.h"
+configure_file("al4san/config.h.in"
+               "al4san/config.h"
                @ONLY)
 
 # Define the list of headers
 # --------------------------
-set(ALTANAL_HDRS
-  ${CMAKE_CURRENT_BINARY_DIR}/altanal/altanal_config.h
-  ${CMAKE_CURRENT_BINARY_DIR}/altanal/altanal_mangling.h
-  altanal/altanal_constants.h
-  altanal/altanal_kernels.h
-  altanal/altanal_runtime.h
-  altanal/altanal_simulate.h
-  altanal/altanal_struct.h
-  altanal/altanal_types.h
+set(AL4SAN_HDRS
+  ${CMAKE_CURRENT_BINARY_DIR}/al4san/config.h
+  ${CMAKE_CURRENT_BINARY_DIR}/al4san/al4san_mangling.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/al4san/constants.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/al4san/runtime.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/al4san/struct.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/al4san/types.h
   )
 
 # Force generation of headers
 # ---------------------------
-add_custom_target(altanal_include
-  ALL SOURCES altanal.h ${ALTANAL_HDRS} )
-set(ALTANAL_SOURCES_TARGETS "${ALTANAL_SOURCES_TARGETS};altanal_include" CACHE INTERNAL "List of targets of sources")
+add_custom_target(al4san_include
+  ALL SOURCES al4san.h ${AL4SAN_HDRS} )
+set(AL4SAN_SOURCES_TARGETS "${AL4SAN_SOURCES_TARGETS};al4san_include" CACHE INTERNAL "List of targets of sources")
 
 # Installation
 # ------------
-install( FILES altanal.h
+install( FILES al4san.h
          DESTINATION include )
 
-install( FILES ${ALTANAL_HDRS}
-         DESTINATION include/altanal )
+install( FILES ${AL4SAN_HDRS}
+         DESTINATION include/al4san )
+
+# Put doxygen input to parent scope
+set(DOXYGEN_INPUT ${DOXYGEN_INPUT} ${AL4SAN_HDRS} PARENT_SCOPE )
 
 ###
 ### END CMakeLists.txt

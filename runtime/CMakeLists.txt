@@ -6,11 +6,11 @@
 #                      Tennessee Research Foundation. All rights reserved.
 # @copyright 2012-2014 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
 #                      Univ. Bordeaux. All rights reserved.
-# @copyright 2017-2018 King Abdullah University of Science and Technology (KAUST). 
+# @copyright 2018 King Abdullah University of Science and Technology (KAUST). 
 #                      All rights reserved.
 ###
 #
-#  @project CHAMELEON
+#  project CHAMELEON
 #  CHAMELEON is a software package provided by:
 #     Inria Bordeaux - Sud-Ouest,
 #     Univ. of Tennessee,
@@ -18,34 +18,39 @@
 #     Univ. of California Berkeley,
 #     Univ. of Colorado Denver.
 #
-# @version 1.0.0
-#  @author Cedric Castagnede
-#  @author Emmanuel Agullo
-#  @author Mathieu Faverge
-#  @date 2012-07-13
+# version 1.0.0
+# author Cedric Castagnede
+# author Emmanuel Agullo
+# author Mathieu Faverge
+# date 2012-07-13
 #
 ###
 ###
 #
-#  @project ALTANAL
-#  ALTANAL is a software package provided by:
+#  @project AL4SAN
+#  AL4SAN is a software package provided by:
 #     King Abdullah Univesity of Science and Technology
 #
-# @version 0.1.0
+# @version 1.0.0
 #  @author Rabab Alomairy
-#  @date 2018-05-19
+#  @date 2018-10-18
 #
 ###
 
 # Check for the subdirectories
 # ----------------------------
-if( ALTANAL_SCHED_QUARK )
+if( AL4SAN_SCHED_QUARK )
     add_subdirectory(quark)
-elseif( ALTANAL_SCHED_PARSEC )
+elseif( AL4SAN_SCHED_PARSEC )
     add_subdirectory(parsec)
-elseif( ALTANAL_SCHED_STARPU )
+elseif( AL4SAN_SCHED_STARPU )
     add_subdirectory(starpu)
+elseif( AL4SAN_SCHED_OPENMP)
+    add_subdirectory(openmp)
 endif()
+
+# Put doxygen input to parent scope
+set(DOXYGEN_INPUT ${DOXYGEN_INPUT} PARENT_SCOPE )
 
 ###
 ### END CMakeLists.txt

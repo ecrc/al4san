@@ -23,13 +23,13 @@
 #
 ###
 
-set(dep_message "\nConfiguration of Altanal:\n"
+set(dep_message "\nConfiguration of Al4san:\n"
         "       BUILDNAME ...........: ${BUILDNAME}\n"
         "       SITE ................: ${SITE}\n"
         "\n"
         "       Compiler: C .........: ${CMAKE_C_COMPILER} (${CMAKE_C_COMPILER_ID})\n"
         "       Compiler: Fortran ...: ${CMAKE_Fortran_COMPILER} (${CMAKE_Fortran_COMPILER_ID})\n")
-if(ALTANAL_USE_MPI)
+if(AL4SAN_USE_MPI)
   set(dep_message "${dep_message}"
   "       Compiler: MPI .......: ${MPI_C_COMPILER}\n"
   "       compiler flags ......: ${MPI_C_COMPILE_FLAGS}\n")
@@ -44,29 +44,29 @@ set(dep_message "${dep_message}"
 "       EXE LDFlags .........: ${CMAKE_EXE_LINKER_FLAGS}\n"
 "\n"
 "       Implementation paradigm\n"
-"       CUDA ................: ${ALTANAL_USE_CUDA}\n"
-"       MPI .................: ${ALTANAL_USE_MPI}\n"
+"       CUDA ................: ${AL4SAN_USE_CUDA}\n"
+"       MPI .................: ${AL4SAN_USE_MPI}\n"
 "\n"
 "       Runtime specific\n"
-"       PARSEC ..............: ${ALTANAL_SCHED_PARSEC}\n"
-"       QUARK ...............: ${ALTANAL_SCHED_QUARK}\n"
-"       STARPU ..............: ${ALTANAL_SCHED_STARPU}\n"
+"       PARSEC ..............: ${AL4SAN_SCHED_PARSEC}\n"
+"       QUARK ...............: ${AL4SAN_SCHED_QUARK}\n"
+"       STARPU ..............: ${AL4SAN_SCHED_STARPU}\n"
 "\n"
 "       Kernels specific\n"
 "       BLAS ................: ${BLAS_VENDOR_FOUND}\n"
 "       LAPACK...............: ${LAPACK_VENDOR_FOUND}\n"
 "\n"
-"       Trace ...............: ${ALTANAL_ENABLE_TRACING}\n"
-"       Simulation mode .....: ${ALTANAL_SIMULATION}\n"
+"       Trace ...............: ${AL4SAN_ENABLE_TRACING}\n"
+"       Simulation mode .....: ${AL4SAN_SIMULATION}\n"
 "\n"
 "       Binaries to build\n"
-"       documentation ........: ${ALTANAL_ENABLE_DOC}\n"
-"       example ..............: ${ALTANAL_ENABLE_EXAMPLE}\n"
-"       testing ..............: ${ALTANAL_ENABLE_TESTING}\n"
-"       timing ...............: ${ALTANAL_ENABLE_TIMING}\n"
+"       documentation ........: ${AL4SAN_ENABLE_DOC}\n"
+"       example ..............: ${AL4SAN_ENABLE_EXAMPLE}\n"
+"       testing ..............: ${AL4SAN_ENABLE_TESTING}\n"
+"       timing ...............: ${AL4SAN_ENABLE_TIMING}\n"
 "\n"
-"       ALTANAL dependencies :\n")
-foreach (_dep ${ALTANAL_LIBRARIES_DEP})
+"       AL4SAN dependencies :\n")
+foreach (_dep ${AL4SAN_LIBRARIES_DEP})
     set(dep_message "${dep_message}"
     "                                 ${_dep}\n")
 endforeach ()
@@ -81,4 +81,4 @@ message(STATUS "Configuration is done - A summary of the current configuration"
 "\n   has been written in ${CMAKE_CURRENT_BINARY_DIR}/config.log")
 # installation
 # ------------
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/config.log DESTINATION share/altanal)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/config.log DESTINATION share/al4san)

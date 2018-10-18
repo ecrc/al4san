@@ -2,19 +2,19 @@
  *
  * @file runtime_task.h
  *
- * @copyright 2017-2018 King Abdullah University of Science and Technology (KAUST).
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
  **/
 
 /**
  *
- * @brief ALTANAL PaRSEC task header
+ * @brief AL4SAN PaRSEC task header
  *
- *  ALTANAL is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 0.1.0
+ * @version 1.0.0
  * @author Rabab Alomairy
- * @date 2018-05-19
+ * @date 2018-10-18
  *
  **/
 
@@ -22,125 +22,143 @@
 #define _TASKS_H_
 
 
-#include "control/common.h"
+#include "control/al4san_common.h"
 
 
 BEGIN_C_DECLS
-#define ALTANAL_undefined 1<<35
+#define AL4SAN_UNDEFINED 0x0000FF
+#define AL4SAN_UNDEFINED_MASK 0XFF0000
+#define AL4SAN_DEP 101
 #define ON 1
 #define OFF 0
 #define ARG_END PARSEC_DTD_ARG_END 
 
 
-typedef enum { ALTANAL_INPUT=INPUT,
-     ALTANAL_OUTPUT=OUTPUT,
-     ALTANAL_INOUT=INOUT,
-     ALTANAL_VALUE=VALUE,
-     ALTANAL_REF=REF,
-     ALTANAL_SCRATCH=SCRATCH,
-     ALTANAL_AFFINITY=AFFINITY, 
-     ALTANAL_DONT_TRACK=DONT_TRACK, 
-     ALTANAL_PASSED_BY_REF=PASSED_BY_REF}
-     altanal_dependency_t;
+typedef enum { AL4SAN_INPUT=INPUT,
+     AL4SAN_OUTPUT=OUTPUT,
+     AL4SAN_INOUT=INOUT,
+     AL4SAN_VALUE=VALUE,
+     AL4SAN_REF=REF,
+     AL4SAN_SCRATCH=SCRATCH,
+     AL4SAN_AFFINITY=AFFINITY, 
+     AL4SAN_DONT_TRACK=DONT_TRACK, 
+     AL4SAN_PASSED_BY_REF=PASSED_BY_REF
+    }al4san_dependency_t;
 
-     typedef enum { ALTANAL_PRIORITY=1<<30,
-          ALTANAL_LABEL=1<<31
-     }altanal_task_flags_t;
+typedef enum { AL4SAN_PRIORITY=1<<30,
+     AL4SAN_LABEL=1<<31
+     }al4san_task_flags_t;
 
-     typedef enum { 
+typedef enum { 
                //Data region
-          ALTANAL_REGION_0=ALTANAL_undefined,
-          ALTANAL_REGION_1=ALTANAL_undefined,
-          ALTANAL_REGION_2=ALTANAL_undefined,
-          ALTANAL_REGION_3=ALTANAL_undefined,
-          ALTANAL_REGION_4=ALTANAL_undefined,
-          ALTANAL_REGION_5=ALTANAL_undefined,
-          ALTANAL_REGION_6=ALTANAL_undefined,
-          ALTANAL_REGION_7=ALTANAL_undefined,
+     AL4SAN_REGION_0=AL4SAN_UNDEFINED,
+     AL4SAN_REGION_1=AL4SAN_UNDEFINED,
+     AL4SAN_REGION_2=AL4SAN_UNDEFINED,
+     AL4SAN_REGION_3=AL4SAN_UNDEFINED,
+     AL4SAN_REGION_4=AL4SAN_UNDEFINED,
+     AL4SAN_REGION_5=AL4SAN_UNDEFINED,
+     AL4SAN_REGION_6=AL4SAN_UNDEFINED,
+     AL4SAN_REGION_7=AL4SAN_UNDEFINED,
                //ldu region
-          ALTANAL_REGION_L=ALTANAL_undefined,
-          ALTANAL_REGION_D=ALTANAL_undefined,
-          ALTANAL_REGION_U=ALTANAL_undefined,
+     AL4SAN_REGION_L=AL4SAN_UNDEFINED,
+     AL4SAN_REGION_D=AL4SAN_UNDEFINED,
+     AL4SAN_REGION_U=AL4SAN_UNDEFINED,
                //flags
-          ALTANAL_LOCK_TO_THREAD=ALTANAL_undefined,
-          ALTANAL_SEQUENCE=ALTANAL_undefined,
-          ALTANAL_THREAD_COUNT=ALTANAL_undefined,
-          ALTANAL_THREAD_SET_TO_MANUAL_SCHEDULING=ALTANAL_undefined,
-          ALTANAL_LOCK_TO_THREAD_MASK=ALTANAL_undefined,
-          ALTANAL_COLOR=ALTANAL_undefined,
+     AL4SAN_LOCK_TO_THREAD=AL4SAN_UNDEFINED,
+     AL4SAN_SEQUENCE=AL4SAN_UNDEFINED,
+     AL4SAN_THREAD_COUNT=AL4SAN_UNDEFINED,
+     AL4SAN_THREAD_SET_TO_MANUAL_SCHEDULING=AL4SAN_UNDEFINED,
+     AL4SAN_LOCK_TO_THREAD_MASK=AL4SAN_UNDEFINED,
+     AL4SAN_COLOR=AL4SAN_UNDEFINED,
                //data dep
-          ALTANAL_NODEP=ALTANAL_undefined,
-          ALTANAL_NOLOCALITY=ALTANAL_undefined,
-          ALTANAL_ACCUMULATOR=ALTANAL_undefined,
-          ALTANAL_NOACCUMULATOR=ALTANAL_undefined,
-          ALTANAL_GATHERV=ALTANAL_undefined,
-          ALTANAL_NOGATHERV=ALTANAL_undefined,
+     AL4SAN_NODEP=AL4SAN_UNDEFINED,
+     AL4SAN_NOLOCALITY=AL4SAN_UNDEFINED,
+     AL4SAN_ACCUMULATOR=AL4SAN_UNDEFINED,
+     AL4SAN_NOACCUMULATOR=AL4SAN_UNDEFINED,
+     AL4SAN_GATHERV=AL4SAN_UNDEFINED,
+     AL4SAN_NOGATHERV=AL4SAN_UNDEFINED,
           
                 //arry
-          ALTANAL_DATA_ARRAY=ALTANAL_undefined,
-          ALTANAL_DATA_MODE_ARRAY=ALTANAL_undefined,
+     AL4SAN_DATA_ARRAY=AL4SAN_UNDEFINED,
+     AL4SAN_DATA_MODE_ARRAY=AL4SAN_UNDEFINED,
                //args
-          ALTANAL_CL_ARGS_NFREE=ALTANAL_undefined,
-          ALTANAL_CL_ARGS=ALTANAL_undefined,
+     AL4SAN_CL_ARGS_NFREE=AL4SAN_UNDEFINED,
+     AL4SAN_CL_ARGS=AL4SAN_UNDEFINED,
 
-          ALTANAL_REDUX=ALTANAL_undefined,
-          ALTANAL_COMMUTE=ALTANAL_undefined,
-          ALTANAL_SSEND=ALTANAL_undefined,
-          ALTANAL_ACCESS_MODE_MAX=ALTANAL_undefined,
+     AL4SAN_REDUX=AL4SAN_UNDEFINED,
+     AL4SAN_COMMUTE=AL4SAN_UNDEFINED,
+     AL4SAN_SSEND=AL4SAN_UNDEFINED,
+     AL4SAN_ACCESS_MODE_MAX=AL4SAN_UNDEFINED,
                //callback
-          ALTANAL_CALLBACK=ALTANAL_undefined,
-          ALTANAL_CALLBACK_WITH_ARG=ALTANAL_undefined,
-          ALTANAL_CALLBACK_ARG=ALTANAL_undefined,
-          ALTANAL_PROLOGUE_CALLBACK=ALTANAL_undefined,
-          ALTANAL_PROLOGUE_CALLBACK_ARG=ALTANAL_undefined,
-          ALTANAL_PROLOGUE_CALLBACK_POP=ALTANAL_undefined,
-          ALTANAL_PROLOGUE_CALLBACK_POP_ARG=ALTANAL_undefined,
+     AL4SAN_CALLBACK=AL4SAN_UNDEFINED,
+     AL4SAN_CALLBACK_WITH_ARG=AL4SAN_UNDEFINED,
+     AL4SAN_CALLBACK_ARG=AL4SAN_UNDEFINED,
+     AL4SAN_PROLOGUE_CALLBACK=AL4SAN_UNDEFINED,
+     AL4SAN_PROLOGUE_CALLBACK_ARG=AL4SAN_UNDEFINED,
+     AL4SAN_PROLOGUE_CALLBACK_POP=AL4SAN_UNDEFINED,
+     AL4SAN_PROLOGUE_CALLBACK_POP_ARG=AL4SAN_UNDEFINED,
                //rank
-          ALTANAL_EXECUTE_ON_NODE=ALTANAL_undefined,
-          ALTANAL_EXECUTE_ON_DATA=ALTANAL_undefined,
-          ALTANAL_EXECUTE_ON_WORKER=ALTANAL_undefined,
-          ALTANAL_WORKER_ORDER=ALTANAL_undefined,
+     AL4SAN_EXECUTE_ON_NODE=AL4SAN_UNDEFINED,
+     AL4SAN_EXECUTE_ON_DATA=AL4SAN_UNDEFINED,
+     AL4SAN_EXECUTE_ON_WORKER=AL4SAN_UNDEFINED,
+     AL4SAN_WORKER_ORDER=AL4SAN_UNDEFINED,
 
-          ALTANAL_SCHED_CTX=ALTANAL_undefined,
-          ALTANAL_HYPERVISOR_TAG=ALTANAL_undefined,
-          ALTANAL_POSSIBLY_PARALLEL=ALTANAL_undefined,
-          ALTANAL_FLOPS=ALTANAL_undefined,
-          ALTANAL_TAG=ALTANAL_undefined,
-          ALTANAL_TAG_ONLY=ALTANAL_undefined,
-          ALTANAL_NODE_SELECTION_POLICY=ALTANAL_undefined,
-          
-               //CUDA async option
-          ALTANAL_CUDA_FLG=ALTANAL_undefined
-     } altanal_runtime_undefined;
+     AL4SAN_SCHED_CTX=AL4SAN_UNDEFINED,
+     AL4SAN_HYPERVISOR_TAG=AL4SAN_UNDEFINED,
+     AL4SAN_POSSIBLY_PARALLEL=AL4SAN_UNDEFINED,
+     AL4SAN_FLOPS=AL4SAN_UNDEFINED,
+     AL4SAN_TAG=AL4SAN_UNDEFINED,
+     AL4SAN_TAG_ONLY=AL4SAN_UNDEFINED,
+     AL4SAN_NODE_SELECTION_POLICY=AL4SAN_UNDEFINED,
+           //CUDA async option
+     AL4SAN_CUDA_FLG=AL4SAN_UNDEFINED,
+     AL4SAN_LOCALITY=AL4SAN_UNDEFINED
+     } al4san_runtime_undefined;
 
 
-     typedef struct altanal_arg_list_s
+typedef struct al4san_arg_list_s
      {
-          parsec_task_t *this_task
-     } ALTANAL_arg_list;
+          parsec_task_t *this_task;
+     } AL4SAN_arg_list;
 
-     typedef struct ALTANAL_Task_Flags_s {
+typedef struct AL4SAN_Task_Flags_s {
       int task_priority;
       char *task_label;
- }ALTANAL_Task_Flags;
+ }AL4SAN_Task_Flags;
 
-#define ALTANAL_CODELETS_NAME(name) CORE_##name##_func
+#define AL4SAN_CODELETS_NAME(name) CORE_##name##_func
+
+ //TO be used instead of AL4SAN_CODELETS_NAME
+#define AL4SAN_TASK(name) PARSEC_##name##_func
+
+#define AL4SAN_TASK_HEADER(name)
 
 //callback
-#define ALTANAL_CALLBACK(name) NULL
-#define altanal_matrix_get_nx(num) NULL
-#define altanal_matrix_get_ny(num) NULL
+#define AL4SAN_CALLBACK(name) NULL
+#define al4san_matrix_get_nx(num) NULL
+#define al4san_matrix_get_ny(num) NULL
 
 #define GET_MACRO(_1,_2,_3,NAME,...) NAME
-#define ALTANAL_CODELETS(...) GET_MACRO(__VA_ARGS__, ALTANAL_CODELETS3, ALTANAL_CODELETS2)(__VA_ARGS__)
+#define AL4SAN_CODELETS(...) GET_MACRO(__VA_ARGS__, AL4SAN_CODELETS3, AL4SAN_CODELETS2)(__VA_ARGS__)
 
-#define ALTANAL_CODELETS3(name,  cpu_func_name, cuda_func_name) \
- void cpu_func_name(ALTANAL); \
- int CORE_##name##_func (parsec_execution_stream_t *es, parsec_task_t *this_task) {   (void)es; ALTANAL_arg_list altanal_arg; altanal_arg.this_task=this_task; cpu_func_name(&altanal_arg); return PARSEC_HOOK_RETURN_DONE;} 
+#define AL4SAN_CODELETS3(name,  cpu_func_name, cuda_func_name) \
+ void cpu_func_name(AL4SAN_arg_list *al4san_arg); \
+ int CORE_##name##_func (parsec_execution_stream_t *es, parsec_task_t *this_task) {   (void)es; AL4SAN_arg_list al4san_arg; al4san_arg.this_task=this_task; cpu_func_name(&al4san_arg); return PARSEC_HOOK_RETURN_DONE;} 
 
-#define ALTANAL_CODELETS2(name,  cpu_func_name) \
- void cpu_func_name(ALTANAL); \
- int CORE_##name##_func (parsec_execution_stream_t *es, parsec_task_t *this_task) {   (void)es; ALTANAL_arg_list altanal_arg; altanal_arg.this_task=this_task; cpu_func_name(&altanal_arg); return PARSEC_HOOK_RETURN_DONE;} 
+#define AL4SAN_CODELETS2(name,  cpu_func_name) \
+ void cpu_func_name(AL4SAN_arg_list *al4san_arg); \
+ int CORE_##name##_func (parsec_execution_stream_t *es, parsec_task_t *this_task) {   (void)es; AL4SAN_arg_list al4san_arg; al4san_arg.this_task=this_task; cpu_func_name(&al4san_arg); return PARSEC_HOOK_RETURN_DONE;} 
+
+ //TO be used instead of AL4SAN_CODELETS
+#define AL4SAN_TASK_CPU(name, cpu_func_name)\
+void cpu_func_name(AL4SAN_arg_list *al4san_arg); \
+ int PARSEC_##name##_func (parsec_execution_stream_t *es, parsec_task_t *this_task) {   (void)es; AL4SAN_arg_list al4san_arg; al4san_arg.this_task=this_task; cpu_func_name(&al4san_arg); return PARSEC_HOOK_RETURN_DONE;} 
+
+#define AL4SAN_TASK_GPU(name, gpu_func_name)
+ 
+#define AL4SAN_TASK_CPU_GPU(name, cpu_func_name, gpu_func_name)\
+void cpu_func_name(AL4SAN_arg_list *al4san_arg); \
+ int PARSEC_##name##_func (parsec_execution_stream_t *es, parsec_task_t *this_task) {   (void)es; AL4SAN_arg_list al4san_arg; al4san_arg.this_task=this_task; cpu_func_name(&al4san_arg); return PARSEC_HOOK_RETURN_DONE;} 
 
  END_C_DECLS
 

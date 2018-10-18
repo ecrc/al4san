@@ -6,39 +6,50 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2017 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
  ***
  *
- * @brief Chameleon Quark control routines
  *
- * @version 1.0.0
- * @author Vijay Joshi
- * @author Cedric Castagnede
- * @date 2012-09-15
+ * author Vijay Joshi
+ * author Cedric Castagnede
+ * date 2012-09-15
  *
  */
+/**
+ *
+ * @brief AL4SAN Quark control routines
+ *  
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
+ * @version 1.0.0
+ * @author Rabab Alomairy
+ * @date 2018-10-18
+ *
+ **/
 #include <stdio.h>
 #include <stdlib.h>
-#include "altanal_runtime.h"
+#include "al4san_runtime.h"
 
 /**
  *
  */
-int ALTANAL_Runtime_init( ALTANAL_context_t *altanal,
+int AL4SAN_Runtime_init( AL4SAN_context_t *al4san,
                   int ncpus,
                   int ncudas,
                   int nthreads_per_worker )
 {
     int hres = 0;
     if ( ncudas > 0 ) {
-        altanal_warning( "ALTANAL_Runtime_init_scheduler(quark)", "GPUs are not supported for now");
+        al4san_warning( "AL4SAN_Runtime_init_scheduler(quark)", "GPUs are not supported for now");
     }
 
     if ( nthreads_per_worker > 0 ) {
-        altanal_warning( "ALTANAL_Runtime_init_scheduler(quark)", "Multi-threaded kernels are not supported for now");
+        al4san_warning( "AL4SAN_Runtime_init_scheduler(quark)", "Multi-threaded kernels are not supported for now");
     }
 
-    altanal->schedopt = (void*)QUARK_New( ncpus );
+    al4san->schedopt = (void*)QUARK_New( ncpus );
 
     return hres;
 }
@@ -46,62 +57,62 @@ int ALTANAL_Runtime_init( ALTANAL_context_t *altanal,
 /**
  *
  */
-void ALTANAL_Runtime_finalize( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_finalize( AL4SAN_context_t *al4san )
 {
-    QUARK_Delete((Quark*)(altanal->schedopt));
+    QUARK_Delete((Quark*)(al4san->schedopt));
     return;
 }
 
 /**
  *  To suspend the processing of new tasks by workers
  */
-void ALTANAL_Runtime_pause( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_pause( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return;
 }
 
 /**
- *  This is the symmetrical call to ALTANAL_Runtime_pause,
+ *  This is the symmetrical call to AL4SAN_Runtime_pause,
  *  used to resume the workers polling for new tasks.
  */
-void ALTANAL_Runtime_resume( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_resume( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return;
 }
 
 /**
  *  Busy-waiting barrier
  */
-void ALTANAL_Runtime_barrier( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_barrier( AL4SAN_context_t *al4san )
 {
-    QUARK_Barrier((Quark*)(altanal->schedopt));
+    QUARK_Barrier((Quark*)(al4san->schedopt));
 }
 
 /**
  *  Display a progress information when executing the tasks
  */
-void ALTANAL_Runtime_progress( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_progress( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return;
 }
 
 /**
  * Thread rank.
  */
-int ALTANAL_Runtime_thread_rank( ALTANAL_context_t *altanal )
+int AL4SAN_Runtime_thread_rank( AL4SAN_context_t *al4san )
 {
-    return QUARK_Thread_Rank((Quark*)(altanal->schedopt));
+    return QUARK_Thread_Rank((Quark*)(al4san->schedopt));
 }
 
 /**
  * Number of threads.
  */
-int ALTANAL_Runtime_thread_size( ALTANAL_context_t *altanal )
+int AL4SAN_Runtime_thread_size( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     /*
      * TODO: should add a function to Quark to get the number of thread from the
      * data structure and not from the system function
@@ -112,18 +123,18 @@ int ALTANAL_Runtime_thread_size( ALTANAL_context_t *altanal )
 /**
  *  The process rank
  */
-int ALTANAL_Runtime_comm_rank( ALTANAL_context_t *altanal )
+int AL4SAN_Runtime_comm_rank( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return 0;
 }
 
 /**
  *  This returns the size of the distributed computation
  */
-int ALTANAL_Runtime_comm_size( ALTANAL_context_t *altanal )
+int AL4SAN_Runtime_comm_size( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return 1;
 }
 
@@ -131,7 +142,7 @@ int ALTANAL_Runtime_comm_size( ALTANAL_context_t *altanal )
 /**
  *  Flush cached data from runtime descriptor
  */
-void ALTANAL_Runtime_flush()
+void AL4SAN_Runtime_flush()
 {
  return;
 }

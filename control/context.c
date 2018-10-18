@@ -6,248 +6,230 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2016 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
  ***
  *
- * @brief Chameleon context management routines
  *
- * @version 1.0.0
- * @author Jakub Kurzak
- * @author Mathieu Faverge
- * @author Cedric Castagnede
- * @date 2012-09-15
+ * author Jakub Kurzak
+ * author Mathieu Faverge
+ * author Cedric Castagnede
+ * date 2012-09-15
  *
- ***
- *
- * @defgroup Options
- * @brief Group routines exposed to users to handle options
  *
  */
+  /**
+   *
+   * @brief AL4SAN context management  routines
+   *
+   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+   *
+   * @version 1.0.0
+   * @author Rabab Alomairy
+   * @date 2018-10-18
+   *
+   **/
 
 #include <stdlib.h>
-#if defined( _WIN32 ) || defined( _WIN64 )
-#include "control/altanalwinthread.h"
-#else
 #include <pthread.h>
-#endif
 
-#include "control/common.h"
-#include "control/auxiliary.h"
-#include "control/context.h"
-#include "altanal/altanal_runtime.h"
-
-//#if !defined(ALTANAL_SIMULATION)
-//#include "coreblas.h"
-//#endif
+#include "control/al4san_common.h"
+#include "control/al4san_auxiliary.h"
+#include "control/al4san_context.h"
+#include "al4san/runtime.h"
 
 /**
  *  Global data
  */
 /* master threads context lookup table */
-static ALTANAL_context_t *altanal_ctxt = NULL;
+static AL4SAN_context_t *al4san_ctxt = NULL;
 
 /**
  *  Create new context
  */
-ALTANAL_context_t *altanal_context_create()
+AL4SAN_context_t *al4san_context_create()
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
 
-    if ( altanal_ctxt != NULL ) {
-        altanal_error("altanal_context_create", "a context is already existing\n");
+    if ( al4san_ctxt != NULL ) {
+        al4san_error("al4san_context_create", "a context is already existing\n");
         return NULL;
     }
 
-    altanal = (ALTANAL_context_t*)malloc(sizeof(ALTANAL_context_t));
-    if (altanal == NULL) {
-        altanal_error("altanal_context_create", "malloc() failed");
+    al4san = (AL4SAN_context_t*)malloc(sizeof(AL4SAN_context_t));
+    if (al4san == NULL) {
+        al4san_error("al4san_context_create", "malloc() failed");
         return NULL;
     }
 
-    altanal->nworkers           = 1;
-    altanal->ncudas             = 0;
-    altanal->nthreads_per_worker= 1;
+    al4san->nworkers           = 1;
+    al4san->ncudas             = 0;
+    al4san->nthreads_per_worker= 1;
 
-    altanal->warnings_enabled     = ALTANAL_TRUE;
-    altanal->autotuning_enabled   = ALTANAL_TRUE;
-    altanal->parallel_enabled     = ALTANAL_FALSE;
-    altanal->profiling_enabled    = ALTANAL_FALSE;
-    altanal->progress_enabled     = ALTANAL_FALSE;
+    al4san->warnings_enabled     = AL4SAN_TRUE;
+    al4san->autotuning_enabled   = AL4SAN_TRUE;
+    al4san->parallel_enabled     = AL4SAN_FALSE;
+    al4san->profiling_enabled    = AL4SAN_FALSE;
+    al4san->progress_enabled     = AL4SAN_FALSE;
 
 
     /* Initialize scheduler */
-    ALTANAL_Runtime_context_create(altanal);
+    AL4SAN_Runtime_context_create(al4san);
 
-    altanal_ctxt = altanal;
-    return altanal;
+    al4san_ctxt = al4san;
+    return al4san;
 }
 
 
 /**
  *  Return context for a thread
  */
-ALTANAL_context_t *altanal_context_self()
+AL4SAN_context_t *al4san_context_self()
 {
-    return altanal_ctxt;
+    return al4san_ctxt;
 }
 
 /**
  *  Clean the context
  */
-int altanal_context_destroy(){
+int al4san_context_destroy(){
 
-    ALTANAL_Runtime_context_destroy(altanal_ctxt);
-    free(altanal_ctxt);
-    altanal_ctxt = NULL;
+    AL4SAN_Runtime_context_destroy(al4san_ctxt);
+    free(al4san_ctxt);
+    al4san_ctxt = NULL;
 
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Options
  *
- *  ALTANAL_Enable - Enable ALTANAL feature.
+ *  AL4SAN_Enable - Enable AL4SAN feature.
  *
  *******************************************************************************
  *
  * @param[in] option
  *          Feature to be enabled:
- *          @arg ALTANAL_WARNINGS   printing of warning messages,
- *          @arg ALTANAL_AUTOTUNING autotuning for tile size and inner block size.
- *          @arg ALTANAL_PROFILING_MODE  activate profiling of kernels
- *          @arg ALTANAL_PROGRESS  activate progress indicator
- *          @arg ALTANAL_GEMM3M  Use z/cgemm3m for complexe matrix-matrix products
+ *          @arg AL4SAN_WARNINGS   printing of warning messages,
+ *          @arg AL4SAN_AUTOTUNING autotuning for tile size and inner block size.
+ *          @arg AL4SAN_PROFILING_MODE  activate profiling of kernels
+ *          @arg AL4SAN_PROGRESS  activate progress indicator
  *
  *******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Enable(ALTANAL_enum option)
+int AL4SAN_Enable(AL4SAN_enum option)
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
 
-    altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Enable", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Enable", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
 
     switch (option)
     {
-        case ALTANAL_WARNINGS:
-            altanal->warnings_enabled = ALTANAL_TRUE;
+        case AL4SAN_WARNINGS:
+            al4san->warnings_enabled = AL4SAN_TRUE;
             break;
-        case ALTANAL_AUTOTUNING:
-            altanal->autotuning_enabled = ALTANAL_TRUE;
+        case AL4SAN_AUTOTUNING:
+            al4san->autotuning_enabled = AL4SAN_TRUE;
             break;
-        case ALTANAL_PROFILING_MODE:
-            altanal->profiling_enabled = ALTANAL_TRUE;
+        case AL4SAN_PROFILING_MODE:
+            al4san->profiling_enabled = AL4SAN_TRUE;
             break;
-        case ALTANAL_PROGRESS:
-            altanal->progress_enabled = ALTANAL_TRUE;
+        case AL4SAN_PROGRESS:
+            al4san->progress_enabled = AL4SAN_TRUE;
             break;
-/*        case ALTANAL_GEMM3M:
-#if defined(CBLAS_HAS_ZGEMM3M) && !defined(ALTANAL_SIMULATION)
-            set_coreblas_gemm3m_enabled(1);
-#else
-            altanal_error("ALTANAL_Enable", "cannot enable GEMM3M (not available in cblas)");
-#endif
-            break;*/
-        /* case ALTANAL_PARALLEL: */
-        /*     altanal->parallel_enabled = ALTANAL_TRUE; */
-        /*     break; */
         default:
-            altanal_error("ALTANAL_Enable", "illegal parameter value");
-            return ALTANAL_ERR_ILLEGAL_VALUE;
-        case ALTANAL_BOUND:
+            al4san_error("AL4SAN_Enable", "illegal parameter value");
+            return AL4SAN_ERR_ILLEGAL_VALUE;
+        case AL4SAN_BOUND:
             break;
     }
 
     /* Enable at the lower level if required */
-    ALTANAL_Runtime_enable( option );
+    AL4SAN_Runtime_enable( option );
 
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Options
  *
- *  ALTANAL_Disable - Disable ALTANAL feature.
+ *  AL4SAN_Disable - Disable AL4SAN feature.
  *
  *******************************************************************************
  *
  * @param[in] option
  *          Feature to be disabled:
- *          @arg ALTANAL_WARNINGS   printing of warning messages,
- *          @arg ALTANAL_AUTOTUNING autotuning for tile size and inner block size.
- *          @arg ALTANAL_PROFILING_MODE  deactivate profiling of kernels
- *          @arg ALTANAL_PROGRESS  deactivate progress indicator
- *          @arg ALTANAL_GEMM3M  Use z/cgemm3m for complexe matrix-matrix products
+ *          @arg AL4SAN_WARNINGS   printing of warning messages,
+ *          @arg AL4SAN_AUTOTUNING autotuning for tile size and inner block size.
+ *          @arg AL4SAN_PROFILING_MODE  deactivate profiling of kernels
+ *          @arg AL4SAN_PROGRESS  deactivate progress indicator
  *
  *******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Disable(ALTANAL_enum option)
+int AL4SAN_Disable(AL4SAN_enum option)
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
 
-    altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Disable", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Disable", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
     switch ( option )
     {
-        case ALTANAL_WARNINGS:
-            altanal->warnings_enabled = ALTANAL_FALSE;
+        case AL4SAN_WARNINGS:
+            al4san->warnings_enabled = AL4SAN_FALSE;
             break;
-        case ALTANAL_AUTOTUNING:
-            altanal->autotuning_enabled = ALTANAL_FALSE;
+        case AL4SAN_AUTOTUNING:
+            al4san->autotuning_enabled = AL4SAN_FALSE;
             break;
-        case ALTANAL_PROFILING_MODE:
-            altanal->profiling_enabled = ALTANAL_FALSE;
+        case AL4SAN_PROFILING_MODE:
+            al4san->profiling_enabled = AL4SAN_FALSE;
             break;
-        case ALTANAL_PROGRESS:
-            altanal->progress_enabled = ALTANAL_FALSE;
+        case AL4SAN_PROGRESS:
+            al4san->progress_enabled = AL4SAN_FALSE;
             break;
-/*        case ALTANAL_GEMM3M:
-#if defined(CBLAS_HAS_ZGEMM3M) && !defined(ALTANAL_SIMULATION)
-            set_coreblas_gemm3m_enabled(0);
-#endif
-            break;*/
-        case ALTANAL_PARALLEL_MODE:
-            altanal->parallel_enabled = ALTANAL_FALSE;
+        case AL4SAN_PARALLEL_MODE:
+            al4san->parallel_enabled = AL4SAN_FALSE;
             break;
         default:
-            altanal_error("ALTANAL_Disable", "illegal parameter value");
-            return ALTANAL_ERR_ILLEGAL_VALUE;
+            al4san_error("AL4SAN_Disable", "illegal parameter value");
+            return AL4SAN_ERR_ILLEGAL_VALUE;
     }
 
     /* Disable at the lower level if required */
-    ALTANAL_Runtime_disable( option );
+    AL4SAN_Runtime_disable( option );
 
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Options
  *
- *  ALTANAL_Set - Set ALTANAL parameter.
+ *  AL4SAN_Set - Set AL4SAN parameter.
  *
  *******************************************************************************
  *
  * @param[in] param
  *          Feature to be enabled:
- *          @arg ALTANAL_TILE_SIZE:        size matrix tile,
- *          @arg ALTANAL_INNER_BLOCK_SIZE: size of tile inner block,
+ *          @arg AL4SAN_TILE_SIZE:        size matrix tile,
+ *          @arg AL4SAN_INNER_BLOCK_SIZE: size of tile inner block,
  *
  * @param[in] value
  *          Value of the parameter.
@@ -255,39 +237,39 @@ int ALTANAL_Disable(ALTANAL_enum option)
  *******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Set(ALTANAL_enum param, int value)
+int AL4SAN_Set(AL4SAN_enum param, int value)
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
 
-    altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Set", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Set", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
     switch (param) {
         default:
-            altanal_error("ALTANAL_Set", "unknown parameter");
-            return ALTANAL_ERR_ILLEGAL_VALUE;
+            al4san_error("AL4SAN_Set", "unknown parameter");
+            return AL4SAN_ERR_ILLEGAL_VALUE;
     }
 
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 }
 
 /**
  *
  * @ingroup Options
  *
- *  ALTANAL_Get - Get value of ALTANAL parameter.
+ *  AL4SAN_Get - Get value of AL4SAN parameter.
  *
  *******************************************************************************
  *
  * @param[in] param
  *          Feature to be enabled:
- *          @arg ALTANAL_TILE_SIZE:        size matrix tile,
- *          @arg ALTANAL_INNER_BLOCK_SIZE: size of tile inner block,
+ *          @arg AL4SAN_TILE_SIZE:        size matrix tile,
+ *          @arg AL4SAN_INNER_BLOCK_SIZE: size of tile inner block,
  *
  * @param[out] value
  *          Value of the parameter.
@@ -295,23 +277,23 @@ int ALTANAL_Set(ALTANAL_enum param, int value)
  *******************************************************************************
  *
  * @return
- *          \retval ALTANAL_SUCCESS successful exit
+ *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int ALTANAL_Get(ALTANAL_enum param, int *value)
+int AL4SAN_Get(AL4SAN_enum param, int *value)
 {
-    ALTANAL_context_t *altanal;
+    AL4SAN_context_t *al4san;
 
-    altanal = altanal_context_self();
-    if (altanal == NULL) {
-        altanal_error("ALTANAL_Get", "ALTANAL not initialized");
-        return ALTANAL_ERR_NOT_INITIALIZED;
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Get", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
     }
     switch (param) {
         default:
-            altanal_error("ALTANAL_Get", "unknown parameter");
-            return ALTANAL_ERR_ILLEGAL_VALUE;
+            al4san_error("AL4SAN_Get", "unknown parameter");
+            return AL4SAN_ERR_ILLEGAL_VALUE;
     }
 
-    return ALTANAL_SUCCESS;
+    return AL4SAN_SUCCESS;
 }

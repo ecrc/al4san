@@ -1,40 +1,16 @@
-###
 #
-# @file CMakeLists.txt
-#
-# @copyright 2009-2014 The University of Tennessee and The University of
-#                      Tennessee Research Foundation. All rights reserved.
-# @copyright 2012-2017 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
-#                      Univ. Bordeaux. All rights reserved.
-#
-###
-#
-#  @project CHAMELEON
-#  CHAMELEON is a software package provided by:
-#     Inria Bordeaux - Sud-Ouest,
-#     Univ. of Tennessee,
-#     King Abdullah Univesity of Science and Technology
-#     Univ. of California Berkeley,
-#     Univ. of Colorado Denver.
-#
-# @version 1.0.0
-#  @author Cedric Castagnede
-#  @author Emmanuel Agullo
-#  @author Mathieu Faverge
-#  @author Florent Pruvost
-#  @date 2012-07-13
-#
-###
+# @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+#                     All rights reserved.
+find_package( Doxygen )
+if( DOXYGEN_FOUND )
+    # Collect Doxygen enabled sections
+    #set(DOXYGEN_ENABLED_SECTIONS OPENMP MPI STARPU GSL)
 
-cmake_minimum_required(VERSION 2.8)
+    # Make DOXYGEN_INPUT appropriate for config file
+    string( REPLACE ";" "\"\\\n    \"" DOXYGEN_INPUT "${DOXYGEN_INPUT}" )
 
-#############################################
-#                                           #
-#      Compilation of documentation         #
-#                                           #
-#############################################
-add_subdirectory(doxygen)
-add_subdirectory(orgmode)
-###
-### END CMakeLists.txt
-###
+    configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/config.in"
+                    "${CMAKE_CURRENT_BINARY_DIR}/config" )
+    add_custom_target( docs COMMAND
+                       "${DOXYGEN_EXECUTABLE}" "${CMAKE_CURRENT_BINARY_DIR}/config" )
+endif()

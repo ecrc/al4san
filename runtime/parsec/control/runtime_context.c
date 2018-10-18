@@ -6,47 +6,58 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2017 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
  ***
  *
  * @brief Chameleon PaRSEC context routines
  *
- * @version 1.0.0
- * @author Reazul Hoque
- * @author Mathieu Faverge
- * @date 2017-01-12
+ * author Reazul Hoque
+ * author Mathieu Faverge
+ * date 2017-01-12
  *
  */
+/**
+ *
+ * @brief AL4SAN PaRSEC asynchronous context routines
+ *
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
+ * @version 1.0.0
+ * @author Rabab Alomairy
+ * @date 2018-10-18
+**/
 #include <stdlib.h>
-#include "altanal_runtime.h"
+#include "al4san_runtime.h"
 
 /**
  *  Create new context
  */
-void ALTANAL_Runtime_context_create( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_context_create( AL4SAN_context_t *al4san )
 {
     /* In case of PaRSEC, this is done in init */
-    altanal->scheduler = ALTANAL_RUNTIME_SCHED_PARSEC;
+    al4san->scheduler = AL4SAN_RUNTIME_SCHED_PARSEC;
     return;
 }
 
 /**
  *  Clean the context
  */
-void ALTANAL_Runtime_context_destroy( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_context_destroy( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return;
 }
 
 /**
  *
  */
-void ALTANAL_Runtime_enable(ALTANAL_enum lever)
+void AL4SAN_Runtime_enable(AL4SAN_enum lever)
 {
     switch (lever)
     {
-    case ALTANAL_PROFILING_MODE:
+    case AL4SAN_PROFILING_MODE:
         break;
     default:
         return;
@@ -57,11 +68,11 @@ void ALTANAL_Runtime_enable(ALTANAL_enum lever)
 /**
  *
  */
-void ALTANAL_Runtime_disable(ALTANAL_enum lever)
+void AL4SAN_Runtime_disable(AL4SAN_enum lever)
 {
     switch (lever)
     {
-    case ALTANAL_PROFILING_MODE:
+    case AL4SAN_PROFILING_MODE:
         break;
     default:
         return;

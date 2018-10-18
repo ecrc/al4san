@@ -1,4 +1,4 @@
-* Enabling auto-completion for altanal in spacemacs
+* Enabling auto-completion for al4san in spacemacs
 ** Install clang compiler on the system
 #+begin_src sh :results output :exports both
 sudo aptitude install clang
@@ -16,19 +16,19 @@ Enable [[https://github.com/syl20bnr/spacemacs/tree/master/layers/%2Blang/c-c%2B
 (setq-default dotspacemacs-configuration-layers
   '((c-c++ :variables c-c++-enable-clang-support t)))
 #+end_src
-** Installing Altanal
+** Installing Al4san
 #+begin_src sh :results output :exports both
-export ALTANAL_DIR=/path/to/altanal-src/
-spack install -v altanal~simu@src ^mkl
+export AL4SAN_DIR=/path/to/al4san-src/
+spack install -v al4san~simu@src ^mkl
 #+end_src
 ** Loading modules
 #+begin_src sh :results output :exports both
 module purge
-spack load altanal ; spack load cmake ; spack load fxt ; spack load openmpi ; spack load hwloc ; spack load starpu
+spack load al4san ; spack load cmake ; spack load fxt ; spack load openmpi ; spack load hwloc ; spack load starpu
 #+end_src
-** Building altanal with cc_args.py
+** Building al4san with cc_args.py
 #+begin_src sh :results output :exports both
-cd $ALTANAL_DIR
+cd $AL4SAN_DIR
 mkdir spack-cc_args-build
 cd spack-cc_args-build
 CC='cc_args.py gcc' cmake ..

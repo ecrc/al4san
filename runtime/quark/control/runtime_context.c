@@ -6,26 +6,38 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2017 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
  ***
  *
- * @brief Chameleon Quark context routines
  *
- * @version 1.0.0
- * @author Vijay Joshi
- * @author Cedric Castagnede
- * @date 2011-10-29
+ * author Vijay Joshi
+ * author Cedric Castagnede
+ * date 2011-10-29
  *
  */
+ 
+/**
+ *
+ * @brief AL4SAN Quark context routines
+ *  
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
+ * @version 1.0.0
+ * @author Rabab Alomairy
+ * @date 2018-10-18
+ *
+ **/
 #include <stdlib.h>
-#include "altanal_runtime.h"
+#include "al4san_runtime.h"
 
 /**
  *  Create new context
  */
-void ALTANAL_Runtime_context_create( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_context_create( AL4SAN_context_t *al4san )
 {
-    altanal->scheduler = ALTANAL_RUNTIME_SCHED_QUARK;
+    al4san->scheduler = AL4SAN_RUNTIME_SCHED_QUARK;
     /* Will require the static initialization if we want to use it in this code */
     return;
 }
@@ -33,23 +45,23 @@ void ALTANAL_Runtime_context_create( ALTANAL_context_t *altanal )
 /**
  *  Clean the context
  */
-void ALTANAL_Runtime_context_destroy( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_context_destroy( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return;
 }
 
 /**
  *
  */
-void ALTANAL_Runtime_enable( ALTANAL_enum lever )
+void AL4SAN_Runtime_enable( AL4SAN_enum lever )
 {
     switch (lever)
     {
-        case ALTANAL_PROFILING_MODE:
+        case AL4SAN_PROFILING_MODE:
             fprintf(stderr, "Profiling is not available with Quark\n");
             break;
-        case ALTANAL_BOUND:
+        case AL4SAN_BOUND:
             fprintf(stderr, "Bound computation is not available with Quark\n");
             break;
         default:
@@ -61,14 +73,14 @@ void ALTANAL_Runtime_enable( ALTANAL_enum lever )
 /**
  *
  */
-void ALTANAL_Runtime_disable( ALTANAL_enum lever )
+void AL4SAN_Runtime_disable( AL4SAN_enum lever )
 {
     switch (lever)
     {
-        case ALTANAL_PROFILING_MODE:
+        case AL4SAN_PROFILING_MODE:
             fprintf(stderr, "Profiling is not available with Quark\n");
             break;
-        case ALTANAL_BOUND:
+        case AL4SAN_BOUND:
             fprintf(stderr, "Bound computation is not available with Quark\n");
             break;
         default:

@@ -1,0 +1,82 @@
+/**
+ *
+ * @file config.h
+ *
+ * @copyright 2009-2014 The University of Tennessee and The University of
+ *                      Tennessee Research Foundation. All rights reserved.
+ * @copyright 2012-2017 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
+ *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
+ *
+ ***
+ *
+ * author Florent Pruvost
+ * date 2017-01-06
+ *
+ */
+
+  /**
+   *
+   * @brief AL4SAN configuration file
+   *
+   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+   *
+   * @version 0.1.0
+   * @author Rabab Alomairy
+   * @date 2018-05-19
+   *
+   **/
+
+#ifndef AL4SAN_CONFIG_H_HAS_BEEN_INCLUDED
+#define AL4SAN_CONFIG_H_HAS_BEEN_INCLUDED
+
+#define AL4SAN_VERSION_MAJOR @AL4SAN_VERSION_MAJOR@
+#define AL4SAN_VERSION_MINOR @AL4SAN_VERSION_MINOR@
+#define AL4SAN_VERSION_MICRO @AL4SAN_VERSION_MICRO@
+
+/* Scheduling engine */
+#cmakedefine AL4SAN_SCHED_QUARK
+#cmakedefine AL4SAN_SCHED_PARSEC
+#cmakedefine AL4SAN_SCHED_STARPU
+#cmakedefine AL4SAN_SCHED_OPENMP
+
+/* Communication engine */
+#cmakedefine AL4SAN_USE_MPI
+#cmakedefine AL4SAN_USE_MIGRATE
+#if !defined(AL4SAN_USE_MPI) && defined(AL4SAN_USE_MIGRATE)
+#undef AL4SAN_USE_MIGRATE
+#endif
+
+/* GPU Support */
+#cmakedefine AL4SAN_USE_CUDA
+#cmakedefine AL4SAN_USE_CUBLAS
+#cmakedefine AL4SAN_USE_CUBLAS_V2
+
+/* Simulation */
+#cmakedefine AL4SAN_SIMULATION
+
+/* Tracing support */
+#cmakedefine AL4SAN_ENABLE_TRACING
+
+/* getopt */
+#cmakedefine AL4SAN_HAVE_GETOPT_H
+#cmakedefine AL4SAN_HAVE_GETOPT_LONG
+
+#ifdef BEGIN_C_DECLS
+#undef BEGIN_C_DECLS
+#endif
+
+#ifdef END_C_DECLS
+#undef END_C_DECLS
+#endif
+
+#if defined(c_plusplus) || defined(__cplusplus)
+# define BEGIN_C_DECLS extern "C" {
+# define END_C_DECLS }
+#else
+# define BEGIN_C_DECLS          /* empty */
+# define END_C_DECLS            /* empty */
+#endif
+
+#endif  /* AL4SAN_CONFIG_H_HAS_BEEN_INCLUDED */

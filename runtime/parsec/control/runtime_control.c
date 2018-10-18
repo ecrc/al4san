@@ -6,29 +6,39 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2017 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
  ***
  *
- * @brief Chameleon PaRSEC control routines
  *
- * @version 1.0.0
- * @author Reazul Hoque
- * @author Mathieu Faverge
- * @date 2017-01-12
+ * author Reazul Hoque
+ * author Mathieu Faverge
+ * date 2017-01-12
  *
  */
+/**
+ *
+ * @brief AL4SAN PaRSEC control routines
+ *
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
+ * @version 1.0.0
+ * @author Rabab Alomairy
+ * @date 2018-10-18
+**/
 #include <stdio.h>
 #include <stdlib.h>
-#include "altanal_runtime.h"
+#include "al4san_runtime.h"
 
-#if defined(ALTANAL_USE_MPI)
+#if defined(AL4SAN_USE_MPI)
 #include <mpi.h>
 #endif
 
 /**
- * Initialize ALTANAL
+ * Initialize AL4SAN
  */
-int ALTANAL_Runtime_init( ALTANAL_context_t *altanal,
+int AL4SAN_Runtime_init( AL4SAN_context_t *al4san,
                   int ncpus,
                   int ncudas,
                   int nthreads_per_worker )
@@ -41,12 +51,12 @@ int ALTANAL_Runtime_init( ALTANAL_context_t *altanal,
     if( 0 < ncpus ) {
         default_ncores = ncpus;
     }
-    altanal->parallel_enabled = ALTANAL_TRUE;
-    altanal->schedopt = (void *)parsec_init(default_ncores, argc, NULL);
+    al4san->parallel_enabled = AL4SAN_TRUE;
+    al4san->schedopt = (void *)parsec_init(default_ncores, argc, NULL);
 
-    if(NULL != altanal->schedopt) {
-        altanal->nworkers = ncpus;
-        altanal->nthreads_per_worker = nthreads_per_worker;
+    if(NULL != al4san->schedopt) {
+        al4san->nworkers = ncpus;
+        al4san->nthreads_per_worker = nthreads_per_worker;
         hres = 0;
     }
 
@@ -57,11 +67,11 @@ int ALTANAL_Runtime_init( ALTANAL_context_t *altanal,
 }
 
 /**
- * Finalize ALTANAL
+ * Finalize AL4SAN
  */
-void ALTANAL_Runtime_finalize( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_finalize( AL4SAN_context_t *al4san )
 {
-    parsec_context_t *parsec = (parsec_context_t*)altanal->schedopt;
+    parsec_context_t *parsec = (parsec_context_t*)al4san->schedopt;
     parsec_fini(&parsec);
     return;
 }
@@ -69,28 +79,28 @@ void ALTANAL_Runtime_finalize( ALTANAL_context_t *altanal )
 /**
  *  To suspend the processing of new tasks by workers
  */
-void ALTANAL_Runtime_pause( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_pause( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return;
 }
 
 /**
- *  This is the symmetrical call to ALTANAL_Runtime_pause,
+ *  This is the symmetrical call to AL4SAN_Runtime_pause,
  *  used to resume the workers polling for new tasks.
  */
-void ALTANAL_Runtime_resume( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_resume( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return;
 }
 
 /**
- * Barrier ALTANAL.
+ * Barrier AL4SAN.
  */
-void ALTANAL_Runtime_barrier( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_barrier( AL4SAN_context_t *al4san )
 {
-    parsec_context_t *parsec = (parsec_context_t*)(altanal->schedopt);
+    parsec_context_t *parsec = (parsec_context_t*)(al4san->schedopt);
     // This will be a problem with the fake tasks inserted to detect end of DTD algorithms
     parsec_context_wait( parsec );
     return;
@@ -99,64 +109,64 @@ void ALTANAL_Runtime_barrier( ALTANAL_context_t *altanal )
 /**
  *  Display a progress information when executing the tasks
  */
-void ALTANAL_Runtime_progress( ALTANAL_context_t *altanal )
+void AL4SAN_Runtime_progress( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return;
 }
 
 /**
  * Thread rank.
  */
-int ALTANAL_Runtime_thread_rank( ALTANAL_context_t *altanal )
+int AL4SAN_Runtime_thread_rank( AL4SAN_context_t *al4san )
 {
-    (void)altanal;
+    (void)al4san;
     return 0;
 }
 
 /**
  * Thread rank.
  */
-int ALTANAL_Runtime_thread_size( ALTANAL_context_t *altanal )
+int AL4SAN_Runtime_thread_size( AL4SAN_context_t *al4san )
 {
     // TODO: fixme
     //return vpmap_get_nb_total_threads();
-    (void)altanal;
+    (void)al4san;
     return 1;
 }
 
 /**
  *  This returns the rank of this process
  */
-int ALTANAL_Runtime_comm_rank( ALTANAL_context_t *altanal )
+int AL4SAN_Runtime_comm_rank( AL4SAN_context_t *al4san )
 {
     int rank = 0;
-#if defined(ALTANAL_USE_MPI)
+#if defined(AL4SAN_USE_MPI)
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 #endif
 
-    (void)altanal;
+    (void)al4san;
     return rank;
 }
 
 /**
  *  This returns the size of the distributed computation
  */
-int ALTANAL_Runtime_comm_size( ALTANAL_context_t *altanal )
+int AL4SAN_Runtime_comm_size( AL4SAN_context_t *al4san )
 {
     int size = 0;
-#if defined(ALTANAL_USE_MPI)
+#if defined(AL4SAN_USE_MPI)
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 #endif
 
-    (void)altanal;
+    (void)al4san;
     return size;
 }
 
 /**
  *  Flush cached data from runtime descriptor
  */
-void ALTANAL_Runtime_flush()
+void AL4SAN_Runtime_flush()
 {
  return;
 }
