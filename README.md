@@ -1,4 +1,4 @@
-# AL4san:  Abstraction Layer library For Standardizing APIs of task-based eNgines.
+# AL4SAN:  Abstraction Layer For Standardizing APIs of task-based eNgines.
 AL4SAN stands for an Abstraction Layer library For Standardizing APIs of task-based eNgines. 
 AL4SAN is designed as a lightweight software library, which provides a collection of APIs to unify the expression of tasks and their data dependencies from existing dynamic engines. AL4SAN supports various dynamic runtime systems relying on compiler infrastructure technology and on library-defined APIs. It features an abstraction of task-based engines and, therefore, enables a single-code application to assess various runtimes and their respective scheduling components, while further leveraging the user-obliviousness of the underlying complex hardware configurations. 
 
