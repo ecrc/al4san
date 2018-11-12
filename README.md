@@ -5,7 +5,7 @@ AL4SAN is designed as a lightweight software library, which provides a collectio
 This abstraction paradigm improves user productivity by facilitating the design of high performance algorithms on different type of architectures:
 shared-memory systems, GPU-based nodes, distributed-memory hardware configurations, etc.
 
-![Handout](docs/al4san-handout-final.pdf)
+![Handout](doc/al4san-handout.png)
 
 ## Get AL4SAN
 
