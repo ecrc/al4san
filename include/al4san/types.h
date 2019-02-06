@@ -1,36 +1,35 @@
 /**
  *
- * @file types.h
+ * @file al4san_types.h
  *
  * @copyright 2009-2014 The University of Tennessee and The University of
  *                      Tennessee Research Foundation. All rights reserved.
- * @copyright 2012-2014 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
+ * @copyright 2012-2018 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
- * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
- *                     All rights reserved.
  *
  ***
  *
+ * @brief Al4san basic datatypes header
  *
- * version 1.0.0
- * author Cedric Augonnet
- * author Mathieu Faverge
- * author Cedric Castagnede
- * date 2011-06-01
+ * @version 1.0.1
+ * @author Cedric Augonnet
+ * @author Mathieu Faverge
+ * @author Cedric Castagnede
+ * @date 2019-02-06
  *
  */
-
-/**
+  /**
    *
    * @brief AL4SAN basic datatypes header
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.0
+   * @version 1.0.1
    * @author Rabab Alomairy
-   * @date 2018-10-18
+   * @date 2019-02-06
    *
-  **/
+   **/
+
 #ifndef _AL4SAN_TYPES_H_
 #define _AL4SAN_TYPES_H_
 
@@ -49,16 +48,15 @@
   #include <inttypes.h>
 #endif /* _WIN32 */
 
-#include <stdarg.h>
 
 /**
  *  AL4SAN types
  */
+typedef int8_t al4san_bool_t;
 typedef int  AL4SAN_enum;
 typedef int  AL4SAN_bool;
 typedef long AL4SAN_index;
 typedef long AL4SAN_size;
-
 
 /**
  * AL4SAN Complex numbers
@@ -141,4 +139,4 @@ static inline int al4san_min( int a, int b ) {
 
 END_C_DECLS
 
-#endif /* __AL4SAN_H__ */
+#endif /* _AL4SAN_TYPES_H_ */

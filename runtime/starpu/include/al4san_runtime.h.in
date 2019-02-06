@@ -21,9 +21,9 @@
  *
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 0.1.0
+ * @version 1.0.1
  * @author Rabab Alomairy
- * @date 2018-05-19
+ * @date 2019-02-06
  *
  **/
 #ifndef _AL4SAN_STARPU_H_
@@ -122,6 +122,152 @@ typedef struct starpu_conf starpu_conf_t;
 
 typedef struct starpu_codelet al4san_codelet;
 
+
+/**
+ * Access to block pointer and leading dimension
+ */
+#define GET_MACRO_ADDR(_1,_2,_3,_4, NAME,...) NAME
+#define AL4SAN_ADDR(...) GET_MACRO_ADDR(__VA_ARGS__, AL4SAN_ADDR4, AL4SAN_ADDR3, AL4SAN_ADDR2)(__VA_ARGS__)
+
+#define AL4SAN_ADDR4( desc, type, m, n ) ( (type*)AL4SAN_Runtime_data_getaddr( desc, m, n ) )
+#define AL4SAN_ADDR3( desc, type, m) ( (type*)AL4SAN_Runtime_data_getaddr( desc, m, 0 ) )
+#define AL4SAN_ADDR2( desc, type) ( (type*)AL4SAN_Runtime_data_getaddr( desc, 0, 0 ) )
+
+
+//void AL4SAN_Runtime_set_reduction_methods(starpu_data_handle_t handle, al4san_flttype_t dtyp);
+
+#define GET_MACRO_RUNTIME_ACCESS_WRITE_CACHED(_1,_2,_3, NAME,...) NAME
+#define AL4SAN_RUNTIME_ACCESS_WRITE_CACHED(...) GET_MACRO_RUNTIME_ACCESS_WRITE_CACHED(__VA_ARGS__, AL4SAN_RUNTIME_ACCESS_WRITE_CACHED3, AL4SAN_RUNTIME_ACCESS_WRITE_CACHED2, AL4SAN_RUNTIME_ACCESS_WRITE_CACHED1)(__VA_ARGS__)
+
+#if defined(AL4SAN_USE_MPI) && defined(HAVE_STARPU_MPI_CACHED_RECEIVE)
+static inline int
+al4san_starpu_data_iscached(const AL4SAN_desc_t *A, int m, int n)
+{
+    int64_t mm = m + (A->i / A->mb);
+    int64_t nn = n + (A->j / A->nb);
+
+    starpu_data_handle_t *ptrtile = A->schedopt;
+    ptrtile += ((int64_t)A->lmt) * nn + mm;
+
+    if (!(*ptrtile))
+        return 0;
+
+    return starpu_mpi_cached_receive(*ptrtile);
+}
+
+
+#define AL4SAN_RUNTIME_ACCESS_WRITE_CACHED3(A, Am, An) do {                 \
+        if (al4san_starpu_data_iscached(A, Am, An)) __al4san_need_submit = 1; } while(0)
+
+#define AL4SAN_RUNTIME_ACCESS_WRITE_CACHED2(A, Am) do {                 \
+        if (al4san_starpu_data_iscached(A, Am, 0)) __al4san_need_submit = 1; } while(0)
+
+#define AL4SAN_RUNTIME_ACCESS_WRITE_CACHED1(A) do {                 \
+        if (al4san_starpu_data_iscached(A, 0, 0)) __al4san_need_submit = 1; } while(0)        
+
+#else
+
+#if defined(AL4SAN_USE_MPI)
+#warning "WAR dependencies need starpu_mpi_cached_receive support from StarPU 1.2.1 or greater"
+#endif
+#define AL4SAN_RUNTIME_ACCESS_WRITE_CACHED3(A, Am, An) do {} while (0)
+#define AL4SAN_RUNTIME_ACCESS_WRITE_CACHED2(A, Am) do {} while (0)
+#define AL4SAN_RUNTIME_ACCESS_WRITE_CACHED1(A) do {} while (0)
+
+#endif
+
+#define GET_MACRO_RUNTIME_ACCESS_R(_1,_2,_3, NAME,...) NAME
+#define AL4SAN_RUNTIME_ACCESS_R(...) GET_MACRO_RUNTIME_ACCESS_R(__VA_ARGS__, AL4SAN_RUNTIME_ACCESS_R3, AL4SAN_RUNTIME_ACCESS_R2, AL4SAN_RUNTIME_ACCESS_R1)(__VA_ARGS__)
+
+#define GET_MACRO_RUNTIME_ACCESS_W(_1,_2,_3, NAME,...) NAME
+#define AL4SAN_RUNTIME_ACCESS_W(...) GET_MACRO_RUNTIME_ACCESS_W(__VA_ARGS__, AL4SAN_RUNTIME_ACCESS_W3, AL4SAN_RUNTIME_ACCESS_W2, AL4SAN_RUNTIME_ACCESS_W1)(__VA_ARGS__)
+
+#define GET_MACRO_RUNTIME_ACCESS_RW(_1,_2,_3, NAME,...) NAME
+#define AL4SAN_RUNTIME_ACCESS_RW(...) GET_MACRO_RUNTIME_ACCESS_RW(__VA_ARGS__, AL4SAN_RUNTIME_ACCESS_RW3, AL4SAN_RUNTIME_ACCESS_RW2, AL4SAN_RUNTIME_ACCESS_RW1)(__VA_ARGS__)
+
+#define GET_MACRO_RUNTIME_PRUNING_STATS_ACCESS_W(_1,_2,_3, NAME,...) NAME
+#define AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W(...) GET_MACRO_RUNTIME_PRUNING_STATS_ACCESS_W(__VA_ARGS__, AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W3, AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W2, AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W1)(__VA_ARGS__)
+
+
+#ifdef AL4SAN_ENABLE_PRUNING_STATS
+
+#define AL4SAN_RUNTIME_PRUNING_STATS_BEGIN_ACCESS_DECLARATION \
+    int __al4san_exec = 0; \
+    int __al4san_changed = 0;
+
+#define AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W3(A, Am, An) \
+    if (al4san_desc_islocal(A, Am, An)) \
+        __al4san_exec = 1;
+
+#define AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W2(A, Am) \
+    if (al4san_desc_islocal(A, Am, 0)) \
+        __al4san_exec = 1;
+
+#define AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W1(A) \
+    if (al4san_desc_islocal(A, 0, 0)) \
+        __al4san_exec = 1;        
+
+#define AL4SAN_RUNTIME_PRUNING_STATS_END_ACCESS_DECLARATION \
+    RUNTIME_total_tasks++; \
+    if (__al4san_exec) \
+        RUNTIME_exec_tasks++; \
+    else if (__al4san_need_submit) \
+        RUNTIME_comm_tasks++; \
+    else if (__al4san_changed) \
+        RUNTIME_changed_tasks++;
+
+#define AL4SAN_RUNTIME_PRUNING_STATS_RANK_CHANGED(rank) \
+    int __al4san_myrank; \
+    AL4SAN_Runtime_comm_rank(&__al4san_myrank); \
+    __al4san_exec = (rank) == __al4san_myrank; \
+    __al4san_changed = 1; \
+
+#else
+#define AL4SAN_RUNTIME_PRUNING_STATS_BEGIN_ACCESS_DECLARATION
+#define AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W3(A, Am, An)
+#define AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W2(A, Am)
+#define AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W1(A)
+#define AL4SAN_RUNTIME_PRUNING_STATS_END_ACCESS_DECLARATION
+#define AL4SAN_RUNTIME_PRUNING_STATS_RANK_CHANGED(rank)
+#endif
+
+#define AL4SAN_RUNTIME_BEGIN_ACCESS_DECLARATION        \
+    AL4SAN_RUNTIME_PRUNING_STATS_BEGIN_ACCESS_DECLARATION
+
+#define AL4SAN_RUNTIME_ACCESS_R3(A, Am, An)
+#define AL4SAN_RUNTIME_ACCESS_R2(A, Am)
+#define AL4SAN_RUNTIME_ACCESS_R1(A)
+
+
+#define AL4SAN_RUNTIME_ACCESS_W3(A, Am, An)             \
+    AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W(A, Am, An);  \
+    AL4SAN_RUNTIME_ACCESS_WRITE_CACHED(A, Am, An)
+
+#define AL4SAN_RUNTIME_ACCESS_W2(A, Am)             \
+    AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W(A, Am, 0);  \
+    AL4SAN_RUNTIME_ACCESS_WRITE_CACHED(A, Am, 0)
+
+#define AL4SAN_RUNTIME_ACCESS_W1(A)             \
+    AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W(A, 0, 0);  \
+    AL4SAN_RUNTIME_ACCESS_WRITE_CACHED(A, 0, 0)
+
+#define AL4SAN_RUNTIME_ACCESS_RW3(A, Am, An)            \
+    AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W(A, Am, An);  \
+    AL4SAN_RUNTIME_ACCESS_WRITE_CACHED(A, Am, An)
+
+#define AL4SAN_RUNTIME_ACCESS_RW2(A, Am)            \
+    AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W(A, Am, 0);  \
+    AL4SAN_RUNTIME_ACCESS_WRITE_CACHED(A, Am, 0)
+
+#define AL4SAN_RUNTIME_ACCESS_RW1(A)            \
+    AL4SAN_RUNTIME_PRUNING_STATS_ACCESS_W(A, 0, 0);  \
+    AL4SAN_RUNTIME_ACCESS_WRITE_CACHED(A, 0, 0)
+
+#define AL4SAN_RUNTIME_RANK_CHANGED(rank)              \
+    AL4SAN_RUNTIME_PRUNING_STATS_RANK_CHANGED(rank)
+
+#define AL4SAN_RUNTIME_END_ACCESS_DECLARATION          \
+    AL4SAN_RUNTIME_PRUNING_STATS_END_ACCESS_DECLARATION;
 END_C_DECLS
 
 #endif /* _AL4SAN_STARPU_H_ */

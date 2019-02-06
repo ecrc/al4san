@@ -6,7 +6,7 @@ includedir=${exec_prefix}/include
 Name: AL4SAN
 Description: AL4SAN stands for an Abstraction Layer library For Standardizing APIs of task-based eNgines.
 Version: @AL4SAN_VERSION_MAJOR@.@AL4SAN_VERSION_MINOR@.@AL4SAN_VERSION_MICRO@
-Cflags: @AL4SAN_PKGCONFIG_DEFINITIONS@ -I${includedir}
+Cflags: @AL4SAN_PKGCONFIG_DEFINITIONS@ -I${includedir} -I@DIR_INC@
 Libs: -L${libdir} @AL4SAN_PKGCONFIG_LIBS@
 Libs.private: @AL4SAN_PKGCONFIG_LIBS_PRIVATE@
 Requires: @AL4SAN_PKGCONFIG_REQUIRED@

@@ -24,9 +24,9 @@
  *
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @author Rabab Alomairy
- * @date 2018-10-18
+ * @date 2019-02-06
  *
 **/
 #include <stdio.h>
@@ -36,6 +36,38 @@
 /**
  *
  */
+static int al4san_starpu_init( starpu_conf_t *conf )
+{
+    int hres;
+
+#if defined(AL4SAN_USE_MPI)
+
+    {
+        int flag = 0;
+#  if !defined(AL4SAN_SIMULATION)
+        MPI_Initialized( &flag );
+#  endif
+
+#  ifdef HAVE_STARPU_MPI_INIT_CONF
+        hres = starpu_mpi_init_conf(NULL, NULL, !flag, MPI_COMM_WORLD, conf);
+#  else
+        hres = starpu_init(conf);
+        if (hres < 0) {
+            return hres;
+        }
+        starpu_mpi_init(NULL, NULL, !flag);
+    }
+#  endif
+
+#else
+
+    hres = starpu_init(conf);
+
+#endif
+
+    return hres;
+}
+
 int AL4SAN_Runtime_init( AL4SAN_context_t *al4san,
                   int ncpus,
                   int ncudas,
@@ -77,7 +109,7 @@ int AL4SAN_Runtime_init( AL4SAN_context_t *al4san,
     {
         al4san->parallel_enabled = AL4SAN_FALSE;
 
-        hres = starpu_init( conf );
+        hres = al4san_starpu_init( conf );
     }
     else {
         int worker;
@@ -92,7 +124,7 @@ int AL4SAN_Runtime_init( AL4SAN_context_t *al4san,
 
         conf->use_explicit_workers_bindid = 1;
 
-        hres = starpu_init( conf );
+        hres = al4san_starpu_init( conf );
 
         al4san->nworkers = ncpus;
         al4san->nthreads_per_worker = nthreads_per_worker;
@@ -106,22 +138,13 @@ int AL4SAN_Runtime_init( AL4SAN_context_t *al4san,
             );
 #endif
 
-#if defined(AL4SAN_USE_MPI)
-    {
-        int flag = 0;
-#if !defined(AL4SAN_SIMULATION)
-        MPI_Initialized( &flag );
-#endif
-        starpu_mpi_init(NULL, NULL, !flag);
-    }
-#endif
-
 #if defined(AL4SAN_USE_CUDA) && !defined(AL4SAN_SIMULATION)
     starpu_cublas_init();
 #endif
 
     return hres;
 }
+
 
 /**
  *
@@ -277,14 +300,4 @@ int AL4SAN_Runtime_comm_size( AL4SAN_context_t *al4san )
 
     (void)al4san;
     return size;
-}
-
-/**
- *  Flush cached data from runtime descriptor
- */
-void AL4SAN_Runtime_flush()
-{
-#if defined(AL4SAN_USE_MPI)
-    starpu_mpi_cache_flush_all_data(MPI_COMM_WORLD);
-#endif
 }

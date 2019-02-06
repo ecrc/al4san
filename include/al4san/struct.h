@@ -23,9 +23,9 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.0
+   * @version 1.0.1
    * @author Rabab Alomairy
-   * @date 2018-10-18
+   * @date 2019-02-06
    *
   **/
 #ifndef _AL4SAN_STRUCT_H_
@@ -33,7 +33,7 @@
 
 #include "al4san/config.h"
 #include "al4san/types.h"
-
+#include "al4san/constants.h"
 BEGIN_C_DECLS
 
 /**
@@ -76,11 +76,84 @@ typedef struct al4san_context_s {
     AL4SAN_bool         parallel_enabled;
     AL4SAN_bool         profiling_enabled;
     AL4SAN_bool         progress_enabled;
+    int householder;        // "domino" (flat) or tree-based (reduction) Householder
+    int translation;        // In place or Out of place layout conversion
 
+    int                nb;
+    int                ib;
     void              *schedopt;           // structure for runtimes
     int                mpi_outer_init;     // MPI has been initialized outside our functions
 } AL4SAN_context_t;
 
+/**
+ *  Tile matrix descriptor
+ *
+ *  Matrices are stored in a contiguous data chunk containning in order
+ *  A11, A21, A12, A22 with :
+ *
+ *           n1      n2
+ *      +----------+---+
+ *      |          |   |    With m1 = lm - (lm%mb)
+ *      |          |   |         m2 = lm%mb
+ *  m1  |    A11   |A12|         n1 = ln - (ln%nb)
+ *      |          |   |         n2 = ln%nb
+ *      |          |   |
+ *      +----------+---+
+ *  m2  |    A21   |A22|
+ *      +----------+---+
+ *
+ */
+struct al4san_desc_s;
+typedef struct al4san_desc_s AL4SAN_desc_t;
+
+struct al4san_desc_s {
+    // function to get chameleon tiles address
+    void *(*get_blkaddr)( const AL4SAN_desc_t*, int, int );
+    // function to get chameleon tiles leading dimension
+    int   (*get_blkldd )( const AL4SAN_desc_t*, int );
+    // function to get chameleon tiles MPI rank
+    int   (*get_rankof) ( const AL4SAN_desc_t*, int, int );
+    void *mat;        // pointer to the beginning of the matrix
+    size_t A21;       // pointer to the beginning of the matrix A21
+    size_t A12;       // pointer to the beginning of the matrix A12
+    size_t A22;       // pointer to the beginning of the matrix A22
+    //cham_storage_t styp;  // storage layout of the matrix
+    //cham_flttype_t dtyp;  // precision of the matrix
+    unsigned int styp;
+    unsigned int dtyp;
+    int mb;           // number of rows in a tile
+    int nb;           // number of columns in a tile
+    int bsiz;         // size in elements including padding
+    int lm;         // number of rows of the entire matrix
+    int ln;           // number of columns of the entire matrix
+    int lmt;          // number of tile rows of the entire matrix - derived parameter
+    int lnt;          // number of tile columns of the entire matrix - derived parameter
+    int i;            // row index to the beginning of the submatrix
+    int j;            // column index to the beginning of the submatrix
+    int m;            // number of rows of the submatrix
+    int n;            // number of columns of the submatrix
+    int mt;           // number of tile rows of the submatrix - derived parameter
+    int nt;           // number of tile columns of the submatrix - derived parameter
+                      // Data for distributed cases
+    int p;            // number of rows of the 2D distribution grid
+    int q;            // number of columns of the 2D distribution grid
+    int llm;          // number of rows of the 2D distribution grid
+    int lln;          // number of columns of the 2D distribution grid
+    int llm1;         // number of tile rows of the A11 matrix - derived parameter
+    int lln1;         // number of tile columns of the A11 matrix - derived parameter
+    int llmt;         // number of tile rows of the local (to a node) matrix
+    int llnt;         // number of tile columns of the local (to a node) matrix
+    int id;           // identification number of the descriptor
+    int occurences;   // identify main matrix desc (occurances=1) or
+                      // submatrix desc (occurances>1) to avoid unregistering
+                      // GPU data twice
+    int use_mat;      // 1 if we have a pointer to the overall data mat - else 0
+    int alloc_mat;    // 1 if we handle the allocation of mat - else 0
+    int register_mat; // 1 if we have to register mat - else 0 (handled by the application)
+    int myrank;       // MPI rank of the descriptor
+    int ooc;          // 1 if the matrix is not to fit in memory
+    void *schedopt;   // scheduler (QUARK|StarPU) specific structure
+};
 
 /**
  *  AL4SAN request uniquely identifies each asynchronous function call.

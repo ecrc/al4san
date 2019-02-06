@@ -32,9 +32,9 @@
 #  AL4SAN is a software package provided by:
 #     King Abdullah Univesity of Science and Technology
 #
-# @version 1.0.0
+# @version 1.0.1
 #  @author Rabab Alomairy
-#  @date 2018-10-18
+#  @date 2019-02-06
 #
 ###
 cmake_minimum_required(VERSION 2.8)
@@ -75,6 +75,7 @@ set(AL4SAN_RUNTIME_COMMON
   ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_control.c
   ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_options.c
   ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_task.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_descriptor.c
   ${AL4SAN_RUNTIME_COMMON_GENERATED}
   )
 

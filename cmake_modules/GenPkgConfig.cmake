@@ -17,12 +17,12 @@
 #     Univ. of California Berkeley,
 #     Univ. of Colorado Denver.
 #
-# @version 1.0.0
+# @version 1.0.1
 #  @author Cedric Castagnede
 #  @author Emmanuel Agullo
 #  @author Mathieu Faverge
 #  @author Florent Pruvost
-#  @date 2014-11-10
+#  @date 2019-02-06
 #
 ###
 
@@ -81,7 +81,24 @@ MACRO(GENERATE_PKGCONFIG_FILE)
 
     # The definitions that should be given to users (change the API)
     set(AL4SAN_PKGCONFIG_DEFINITIONS "")
+    set(DIR_INC "")
+    if(AL4SAN_SCHED_STARPU)
+       list(APPEND DIR_INC "${STARPU_INCLUDE_DIRS_DEP}")
+    elseif(AL4SAN_SCHED_QUARK)
+       list(APPEND DIR_INC "${QUARK_INCLUDE_DIRS}")
+    elseif(AL4SAN_SCHED_PARSEC)
+       list(APPEND DIR_INC "${PARSEC_INCLUDE_DIRS_DEP}")
+    elseif(AL4SAN_SCHED_OPENMP)
+       list(APPEND DIR_INC "${OPENMP_INCLUDE_DIRS}")
+    endif()
+    if(AL4SAN_USE_MPI)
+       list(APPEND DIR_INC "${MPI_C_INCLUDE_PATH}")
+    endif()
+    if(AL4SAN_USE_CUDA)
+       list(APPEND DIR_INC "${${CUDA_INCLUDE_DIRS}}")
+    endif()
 
+    #set(DIR_INC "${QUARK_INCLUDE_DIRS}")
     # The link flags specific to this package and any required libraries
     # that don't support PkgConfig
     set(AL4SAN_PKGCONFIG_LIBS "-lal4san")
@@ -100,23 +117,26 @@ MACRO(GENERATE_PKGCONFIG_FILE)
     if(AL4SAN_SCHED_STARPU)
         list(APPEND AL4SAN_PKGCONFIG_LIBS -lal4san_starpu)
         if ( AL4SAN_USE_MPI )
-            list(APPEND AL4SAN_PKGCONFIG_REQUIRED_PRIVATE starpumpi-${STARPU_VERSION})
-        else()
-            list(APPEND AL4SAN_PKGCONFIG_REQUIRED_PRIVATE starpu-${STARPU_VERSION})
+            list(APPEND AL4SAN_PKGCONFIG_LIBS "${STARPU_LIBRARY_DIRS_DEP}")
+            list(APPEND AL4SAN_PKGCONFIG_LIBS -lstarpumpi-${STARPU_VERSION})
+            list(APPEND AL4SAN_PKGCONFIG_REQUIRED starpumpi-${STARPU_VERSION})            
+         else()
+            list(APPEND AL4SAN_PKGCONFIG_LIBS "${STARPU_LIBRARIES}") 
+#           list(APPEND AL4SAN_PKGCONFIG_REQUIRED starpu-${STARPU_VERSION})
         endif()
     elseif(AL4SAN_SCHED_QUARK)
         list(APPEND AL4SAN_PKGCONFIG_LIBS -lal4san_quark)
-        list(APPEND AL4SAN_PKGCONFIG_LIBS_PRIVATE "${QUARK_LIBRARIES_DEP}")
+        list(APPEND AL4SAN_PKGCONFIG_LIBS "${QUARK_LIBRARIES_DEP}")
     elseif(AL4SAN_SCHED_PARSEC)
        list(APPEND AL4SAN_PKGCONFIG_LIBS -lal4san_parsec)
-        list(APPEND AL4SAN_PKGCONFIG_LIBS_PRIVATE "${PARSEC_LIBRARIES_DEP}")
+        list(APPEND AL4SAN_PKGCONFIG_LIBS "${PARSEC_LIBRARIES_DEP}")
     elseif(AL4SAN_SCHED_OPENMP)
        list(APPEND AL4SAN_PKGCONFIG_LIBS -lal4san_openmp)
-        list(APPEND AL4SAN_PKGCONFIG_LIBS_PRIVATE "${OPENMP_LIBRARIES_DEP}")
+        list(APPEND AL4SAN_PKGCONFIG_LIBS "${OPENMP_LIBRARIES_DEP}")
     endif()
 
 
-    list(APPEND AL4SAN_PKGCONFIG_LIBS_PRIVATE
+    list(APPEND AL4SAN_PKGCONFIG_LIBS
         ${EXTRA_LIBRARIES}
     )
 

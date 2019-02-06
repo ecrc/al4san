@@ -23,9 +23,9 @@
  *  
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @author Rabab Alomairy
- * @date 2018-10-18
+ * @date 2019-02-06
  *
  **/
 #include <stdio.h>
@@ -48,7 +48,7 @@ int AL4SAN_Runtime_init( AL4SAN_context_t *al4san,
     if ( nthreads_per_worker > 0 ) {
         al4san_warning( "AL4SAN_Runtime_init_scheduler(quark)", "Multi-threaded kernels are not supported for now");
     }
-
+    al4san->parallel_enabled = AL4SAN_TRUE;
     al4san->schedopt = (void*)QUARK_New( ncpus );
 
     return hres;
@@ -142,7 +142,7 @@ int AL4SAN_Runtime_comm_size( AL4SAN_context_t *al4san )
 /**
  *  Flush cached data from runtime descriptor
  */
-void AL4SAN_Runtime_flush()
+/*void AL4SAN_Runtime_flush()
 {
  return;
-}
+}*/

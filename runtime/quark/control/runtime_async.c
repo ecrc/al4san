@@ -22,9 +22,9 @@
  *
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @author Rabab Alomairy
- * @date 2018-10-18
+ * @date 2019-02-06
  *
  **/
 #include <stdlib.h>
@@ -44,7 +44,8 @@ int AL4SAN_Runtime_sequence_create( AL4SAN_context_t  *al4san,
     }
     sequence->status = AL4SAN_SUCCESS;
     return AL4SAN_SUCCESS;
-}
+} 
+
 
 /**
  *  Destroy a sequence

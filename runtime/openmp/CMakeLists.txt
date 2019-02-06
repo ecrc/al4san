@@ -60,6 +60,7 @@ set(AL4SAN_RUNTIME_COMMON
     ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_options.c
     ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_task.c
     ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_workspace.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_descriptor.c
     ${AL4SAN_runtime_COMMON_GENERATED}
     )
 

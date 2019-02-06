@@ -28,9 +28,9 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.0
+   * @version 1.0.1
    * @author Rabab Alomairy
-   * @date 2018-10-18
+   * @date 2019-02-06
    *
    **/
 #include <stdlib.h>
@@ -59,11 +59,11 @@ AL4SAN_sequence_t* al4san_sequence_create(AL4SAN_context_t *al4san)
     AL4SAN_sequence_t *sequence;
     if ((sequence = malloc(sizeof(AL4SAN_sequence_t))) == NULL) {
         al4san_error("AL4SAN_Sequence_Create", "malloc() failed");
-        return AL4SAN_ERR_OUT_OF_RESOURCES;
+     //   return AL4SAN_ERR_OUT_OF_RESOURCES;
     }
 
     AL4SAN_Runtime_sequence_create( al4san, sequence );
-
+    
     sequence->status = AL4SAN_SUCCESS;
     return sequence;
 }
@@ -113,9 +113,10 @@ AL4SAN_sequence_t* AL4SAN_Sequence_Create()
     int status;
 
     al4san = al4san_context_self();
+
     if (al4san == NULL) {
         al4san_fatal_error("AL4SAN_Sequence_Create", "AL4SAN not initialized");
-        return AL4SAN_ERR_NOT_INITIALIZED;
+        //return AL4SAN_ERR_NOT_INITIALIZED;
     }
     AL4SAN_sequence_t *sequence= al4san_sequence_create(al4san);
     return sequence;
@@ -146,11 +147,11 @@ int AL4SAN_Sequence_Destroy(AL4SAN_sequence_t *sequence)
     al4san = al4san_context_self();
     if (al4san == NULL) {
         al4san_fatal_error("AL4SAN_Sequence_Destroy", "AL4SAN not initialized");
-        return AL4SAN_ERR_NOT_INITIALIZED;
+ //       return AL4SAN_ERR_NOT_INITIALIZED;
     }
     if (sequence == NULL) {
         al4san_fatal_error("AL4SAN_Sequence_Destroy", "NULL sequence");
-        return AL4SAN_ERR_UNALLOCATED;
+   //     return AL4SAN_ERR_UNALLOCATED;
     }
     status = al4san_sequence_destroy(al4san, sequence);
     return status;

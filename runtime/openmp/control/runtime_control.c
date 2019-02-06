@@ -24,9 +24,9 @@
 *
 *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
 *
-* @version 1.0.0
+* @version 1.0.1
 * @author Rabab Alomairy
-* @date 2018-05-19
+* @date 2019-02-06
 *
 **/
 #include <stdio.h>
@@ -115,7 +115,6 @@ void AL4SAN_Runtime_progress( AL4SAN_context_t *al4san )
  **/
 int AL4SAN_Runtime_thread_rank(AL4SAN_context_t *al4san)
 {
-    //return QUARK_Thread_Rank((Quark*)(al4san->schedopt));
 
     int thread_rank = omp_get_thread_num();
     (void)al4san;
@@ -152,12 +151,4 @@ int AL4SAN_Runtime_comm_size( AL4SAN_context_t *al4san )
 {
     (void)al4san;
     return 1;
-}
-
-/**
- *  Flush cached data from runtime descriptor
- */
-void AL4SAN_Runtime_flush()
-{
- return;
 }

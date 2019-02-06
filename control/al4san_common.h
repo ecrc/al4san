@@ -22,9 +22,9 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.0
+   * @version 1.0.1
    * @author Rabab Alomairy
-   * @date 2018-10-18
+   * @date 2019-02-06
    *
    **/
 #ifndef _AL4SAN_COMMON_H_
@@ -71,6 +71,7 @@
 #include "control/al4san_auxiliary.h"
 #include "control/al4san_context.h"
 #include "control/al4san_async.h"
+#include "control/al4san_descriptor.h"
 
 /**
  *  Global shortcuts

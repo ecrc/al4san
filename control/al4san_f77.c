@@ -30,8 +30,8 @@ extern "C" {
     /**
      *  FORTRAN API - auxiliary function prototypes
      */
-    void AL4SAN_INIT(int *CORES, int *NGPUS, int *INFO)
-    {   *INFO = AL4SAN_Init(*CORES, *NGPUS); }
+    void AL4SAN_INIT(int *CORES, int *NGPUS, void *ctxt)
+    {   ctxt = AL4SAN_Init(*CORES, *NGPUS); }
 
     void AL4SAN_FINALIZE(int *INFO)
     {   *INFO = AL4SAN_Finalize(); }

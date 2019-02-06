@@ -22,9 +22,9 @@
 *
 *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
 *
-* @version 1.0.0
+* @version 1.0.1
 * @author Rabab Alomairy
-* @date 2018-10-18
+* @date 2019-02-06
 *
 **/
 
@@ -39,25 +39,6 @@ void AL4SAN_Runtime_options_init( AL4SAN_option_t *options, AL4SAN_context_t *al
     /* Initialize options */
     options->sequence   = sequence;
     options->request    = request;
-    options->profiling  = AL4SAN_PROFILING == AL4SAN_TRUE;
-    options->parallel   = AL4SAN_PARALLEL == AL4SAN_TRUE;
-    options->priority   = AL4SAN_PRIORITY_MIN;
-    options->ws_wsize   = 0;
-    options->ws_hsize   = 0;
-    options->ws_worker  = NULL;
-    options->ws_host    = NULL;
-
-
-
-    return;
-}
-
-void AL4SAN_Runtime_options_init_v2( AL4SAN_option_t *options, AL4SAN_context_t *al4san,
-                           AL4SAN_sequence_t *sequence)
-{
-
-    /* Initialize options */
-    options->sequence   = sequence;
     options->profiling  = AL4SAN_PROFILING == AL4SAN_TRUE;
     options->parallel   = AL4SAN_PARALLEL == AL4SAN_TRUE;
     options->priority   = AL4SAN_PRIORITY_MIN;

@@ -29,9 +29,9 @@
 #  AL4SAN is a software package provided by:
 #     King Abdullah Univesity of Science and Technology
 #
-# @version 1.0.0
+# @version 1.0.1
 #  @author Rabab Alomairy
-#  @date 2018-10-18
+#  @date 2019-02-06
 #
 ###
 cmake_minimum_required(VERSION 2.8)
@@ -187,6 +187,7 @@ math(EXPR number_of_active_runtime 0)
 foreach (runtime ${AL4SAN_SCHED_list})
     if (AL4SAN_SCHED_${runtime})
         math(EXPR number_of_active_runtime "${number_of_active_runtime}+1")
+        set( AL4SAN_SCHED_name "${runtime}" )
     endif()
 endforeach()
 if (NOT number_of_active_runtime STREQUAL 1)
@@ -799,7 +800,28 @@ add_subdirectory(runtime)
 enable_testing()
 include(CTest)
 
-if( AL4SAN_ENABLE_EXAMPLE AND ( AL4SAN_SCHED_QUARK OR AL4SAN_SCHED_OPENMP ) )
+if( AL4SAN_ENABLE_EXAMPLE )
+    find_package(BLASEXT)
+    find_package(CHAMELEON COMPONENTS ${AL4SAN_SCHED_name})
+    if( CHAMELEON_FOUND )
+    include_directories( AFTER ${CHAMELEON_INCLUDE_DIRS_DEP})
+    include_directories( AFTER ${CHAMELEON_DIR_FOUND}/include/coreblas)
+    if(CHAMELEON_LINKER_FLAGS)
+        list(APPEND CMAKE_EXE_LINKER_FLAGS "${CHAMELEON_LINKER_FLAGS}")
+    endif()
+    if(CHAMELEON_LIBRARY_DIRS)
+        # the RPATH to be used when installing
+        list(APPEND CMAKE_INSTALL_RPATH "${CHAMELEON_LIBRARY_DIRS}")
+    endif()
+    if (CHAMELEON_LIBRARIES)
+        if (CHAMELEON_LIBRARIES_DEP)
+            list(INSERT AL4SAN_DEP 0 ${CHAMELEON_LIBRARIES_DEP})
+        else()
+            list(INSERT AL4SAN_DEP 0 ${CHAMELEON_LIBRARIES})
+        endif()
+    endif()
+endif()
+
     add_subdirectory( example )
 endif()
 

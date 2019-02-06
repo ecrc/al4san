@@ -24,9 +24,9 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.0
+   * @version 1.0.1
    * @author Rabab Alomairy
-   * @date 2018-10-18
+   * @date 2019-02-06
    *
   **/
 #ifndef _AL4SAN_H_
@@ -46,7 +46,6 @@
  */
 #include "al4san/runtime.h"
 
-
 /* ****************************************************************************
  * AL4SAN Functions
  */
@@ -60,14 +59,16 @@ AL4SAN_context_t* AL4SAN_InitPar           (int nworkers, int ncudas, int nthrea
 int AL4SAN_Finalize          (void);
 int AL4SAN_Pause             (void);
 int AL4SAN_Resume            (void);
-int AL4SAN_Distributed_start (void);
-int AL4SAN_Distributed_stop  (void);
-int AL4SAN_Comm_size         (void);
-int AL4SAN_Comm_rank         (void);
-int AL4SAN_Distributed_start (void);
-int AL4SAN_Distributed_stop  (void);
-int AL4SAN_Distributed_size  (int *size);
-int AL4SAN_Distributed_rank  (int *rank);
+int AL4SAN_Distributed_Start (void);
+int AL4SAN_Distributed_Stop  (void);
+int AL4SAN_Barrier           (void);
+int AL4SAN_Progress          (void);
+int AL4SAN_Thread_Rank       (void);
+int AL4SAN_Thread_Size       (void);
+int AL4SAN_Comm_Size         (void);
+int AL4SAN_Comm_Sank         (void);
+int AL4SAN_Distributed_Size  (int *size);
+int AL4SAN_Distributed_Rank  (int *rank);
 int AL4SAN_GetThreadNbr      (void);
 
 //typedef void al4san_func;
@@ -92,15 +93,62 @@ int AL4SAN_Unpack_Arg(AL4SAN_arg args, ...);
 
 /* Descriptor */
 int AL4SAN_Element_Size(int type);
-void AL4SAN_user_tag_size(int, int) ;
+void AL4SAN_User_Tag_Size(int, int) ;
+
+int AL4SAN_Desc_Create  (AL4SAN_desc_t **desc, void *mat, al4san_flttype_t dtyp,
+                        int mb, int nb, int bsiz, int lm, int ln,
+                        int i, int j, int m, int n, int p, int q);
+int AL4SAN_Matrix_Create( AL4SAN_desc_t **descptr, void *mat, al4san_flttype_t dtyp, int mb, int nb, int bsiz,
+                           int lm, int ln, int i, int j, int m, int n, int p, int q );
+int AL4SAN_Vector_Create( AL4SAN_desc_t **descptr, void *vec, al4san_flttype_t dtyp, int mb, int bsiz,
+                           int lm, int i, int m, int p, int q );
+int AL4SAN_Scaler_Create( AL4SAN_desc_t **descptr, void *scaler, al4san_flttype_t dtyp, int i);
+
+int AL4SAN_Desc_Create_User(AL4SAN_desc_t **desc, void *mat, al4san_flttype_t dtyp, int mb, int nb, int bsiz,
+                           int lm, int ln, int i, int j, int m, int n, int p, int q,
+                           void* (*get_blkaddr)( const AL4SAN_desc_t*, int, int ),
+                           int (*get_blkldd)( const AL4SAN_desc_t*, int ),
+                           int (*get_rankof)( const AL4SAN_desc_t*, int, int ));
+int AL4SAN_Desc_Create_OOC(AL4SAN_desc_t **desc, al4san_flttype_t dtyp,
+                          int mb, int nb, int bsiz, int lm, int ln,
+                          int i, int j, int m, int n, int p, int q);
+int AL4SAN_Desc_Create_OOC_User(AL4SAN_desc_t **desc, al4san_flttype_t dtyp,
+                               int mb, int nb, int bsiz, int lm, int ln,
+                               int i, int j, int m, int n, int p, int q,
+                               int (*get_rankof)( const AL4SAN_desc_t*, int, int ));
+int AL4SAN_Desc_Destroy (AL4SAN_desc_t **desc);
+void AL4SAN_Malloc(void**A, size_t size);
+void AL4SAN_Free( void  *ptr, size_t size );
+int AL4SAN_Desc_Acquire (AL4SAN_desc_t  *desc);
+int AL4SAN_Desc_Release (AL4SAN_desc_t  *desc);
+void AL4SAN_Flush();
+int AL4SAN_Desc_Flush   (AL4SAN_desc_t  *desc, AL4SAN_sequence_t *sequence);
+void AL4SAN_Data_flush( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am, int An );
+void AL4SAN_Matrix_Flush( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am, int An );
+void AL4SAN_Vector_Flush( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am);
+void AL4SAN_Scaler_Flush( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A);
+void AL4SAN_Data_Migrate( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+void AL4SAN_Matrix_Migrate( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+void AL4SAN_Vector_Migrate( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am, int new_rank );
+void AL4SAN_Scaler_Migrate( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am, int new_rank );
+void AL4SAN_Data_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
+void AL4SAN_Matrix_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
+void AL4SAN_Vector_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m);
+void AL4SAN_Scaler_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m);
 
 
-/* Options */
+/* Context options */
 int AL4SAN_Enable  (AL4SAN_enum option);
 int AL4SAN_Disable (AL4SAN_enum option);
 int AL4SAN_Set     (AL4SAN_enum param, int  value);
 int AL4SAN_Get     (AL4SAN_enum param, int *value);
 int AL4SAN_Set_update_progress_callback(void (*p)(int, int)) ;
+
+/* Options */
+int AL4SAN_Options_Init(AL4SAN_option_t *options, AL4SAN_sequence_t *sequence, AL4SAN_request_t *request);
+int AL4SAN_Options_Finalize(AL4SAN_option_t *options);
+int AL4SAN_Options_Workspace_Alloc( AL4SAN_option_t *options, size_t worker_size, size_t host_size );
+int AL4SAN_Options_Workspace_Free(AL4SAN_option_t *options );
 
 
 /* Sequences */
@@ -143,6 +191,20 @@ int AL4SAN_Sequence_Destroy (AL4SAN_sequence_t *sequence);
 #endif
 int AL4SAN_Sequence_Wait    (AL4SAN_sequence_t *sequence);
 
+
+/**
+ * @brief Flush the sequence structure.
+ *
+ *
+ * @param[in,out] sequence
+ *            On entry the sequence structure.
+ *            On exit, the scheduler specifics of the sequence have been
+ *            destroyed.
+ *
+ * @retval AL4SAN_SUCCESS on success.
+ */
+
+int AL4SAN_Sequence_Flush(AL4SAN_sequence_t *sequence, AL4SAN_request_t *request);
 
 /**
  * @brief Create Workspace.

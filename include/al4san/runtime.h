@@ -24,9 +24,9 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.0
+   * @version 1.0.1
    * @author Rabab Alomairy
-   * @date 2018-10-18
+   * @date 2019-02-06
    *
   **/
 #ifndef _AL4SAN_AL4SAN_Runtime_H_
@@ -34,7 +34,8 @@
 
 #include "al4san/config.h"
 #include "al4san/struct.h"
-
+#include "al4san/constants.h"
+#include <stdarg.h>
 BEGIN_C_DECLS
 
 /**
@@ -312,6 +313,498 @@ AL4SAN_Runtime_sequence_flush( AL4SAN_context_t  *ctxt,
                         AL4SAN_sequence_t *sequence,
                         AL4SAN_request_t  *request,
                         int               status );
+
+/**
+ * @}
+ *
+ * @name RUNTIME Memory management
+ * @{
+ ***
+ * @brief Allocate size bytes through the runtime memory management system if any, or with malloc otherwise.
+ *
+ * This function allows to allocate pinned memory if needed, or eventually not
+ * perform the allocation in simulation mode.
+
+ * @param[in] size
+ *            The number of bytes to allocate.
+ *
+ * @return The pointer to allocated area of size bytes on success, NULL otherwise.
+ */
+void *
+AL4SAN_Runtime_malloc( size_t size );
+
+/**
+ * @}
+ *
+ * @name RUNTIME Memory management
+ * @{
+ ***
+ * @brief Allocate size bytes through the runtime memory management system if any, or with malloc otherwise.
+ *
+ * This function allows to allocate pinned memory if needed, or eventually not
+ * perform the allocation in simulation mode.
+ * @param[in, out] A
+ *            Pointer to allocated memory
+ * @param[in] size
+ *            The number of bytes to allocate.
+ *
+ * @return The pointer to allocated area of size bytes on success, NULL otherwise.
+ */
+void 
+AL4SAN_RUNTIME_malloc(void**A, size_t size );
+/**
+ * @brief Free allocated memory through AL4SAN_Runtime_malloc() function call
+ *
+ * @param[in,out] ptr
+ *            The ptr to free
+ *
+ * @param[in] size
+ *            The size in bytes of the allocated area associated to ptr.
+ */
+void
+AL4SAN_Runtime_free( void *ptr, size_t size );
+
+/**
+ * @}
+ *
+ * @name RUNTIME Descriptor functions
+ * @{
+ ***
+ * @brief Initialize runtime specific data structure to a given descriptor.
+ *
+ * @param[in,out] desc
+ *            The descriptor to initialize.
+ */
+void
+AL4SAN_Runtime_desc_create( AL4SAN_desc_t *desc );
+
+/**
+ * @brief Finalize runtime specific data structure of a given descriptor.
+ *
+ * @param[in,out] desc
+ *            The descriptor to finalize.
+ */
+void
+AL4SAN_Runtime_desc_destroy( AL4SAN_desc_t *desc );
+
+/**
+ * @brief Acquire in main memory an up-to-date copy of the data described by the
+ * descriptor for read-write access.
+ *
+ * The application must call this function prior to accessing registered data
+ * from main memory outside tasks. RUNTIME_desc_release() must be called once
+ * the application does not need to access the data anymore.
+ *
+ * @param[in] desc
+ *            The descriptor to acquire.
+ *
+ * @retval CHAMELEON_SUCCESS on success
+ */
+int
+AL4SAN_Runtime_desc_acquire( const AL4SAN_desc_t *desc );
+
+/**
+ * @brief Release the data described by the descriptor to be used by the runtime
+ * tasks again.
+ *
+ * This function releases the data acquired by the application either by
+ * AL4SAN_Runtime_desc_acquire() or by AL4SAN_Runtime_desc_acquire_async() to the runtime.
+ *
+ * @param[in] desc
+ *            The descriptor to release.
+ *
+ * @retval CHAMELEON_SUCCESS on success
+ */
+int
+AL4SAN_Runtime_desc_release( const AL4SAN_desc_t *desc );
+
+/**
+ * @brief Flush all pieces of data from a descriptor.
+ *
+ * This function marks all pieces of data from the descriptor as unused in the future to:
+ *   - cleanup the data from the distributed cache if present.
+ *   - mark for eviction from the GPU if space is needed
+ *   - move the data back to the main memory
+ *
+ * @param[in] desc
+ *            The descriptor to flush.
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ */
+void
+AL4SAN_Runtime_desc_flush( const AL4SAN_desc_t     *desc,
+                    const AL4SAN_sequence_t *sequence );
+
+/**
+ * @brief Flush all data submitted to the runtime systems from the distributed
+ * cache, and/or mark for eviction from the GPU memory.
+ *
+ * This function flushes all data from the distributed cache of the runtime system.
+ */
+void
+AL4SAN_Runtime_flush( );
+
+/**
+ * @brief Flush a single piece of data.
+ *
+ * This function marks a piece of data as unused in the future to:
+ *   - cleanup the data from the distributed cache if present.
+ *   - mark for eviction from the GPU if space is needed
+ *   - move the data back to the main memory
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ */
+void
+AL4SAN_Runtime_data_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am, int An );
+
+/**
+ * @brief Flush a single piece of data.
+ *
+ * This function marks a piece of data as unused in the future to:
+ *   - cleanup the data from the distributed cache if present.
+ *   - mark for eviction from the GPU if space is needed
+ *   - move the data back to the main memory
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ */
+void
+AL4SAN_Runtime_matrix_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am, int An );
+
+/**
+ * @brief Flush a single piece of data.
+ *
+ * This function marks a piece of data as unused in the future to:
+ *   - cleanup the data from the distributed cache if present.
+ *   - mark for eviction from the GPU if space is needed
+ *   - move the data back to the main memory
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ * @param[in] Am
+ *            The coordinate of the piece of data in the vector
+ */
+void
+AL4SAN_Runtime_vector_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am);
+
+/**
+ * @brief Flush a single piece of data.
+ *
+ * This function marks a piece of data as unused in the future to:
+ *   - cleanup the data from the distributed cache if present.
+ *   - mark for eviction from the GPU if space is needed
+ *   - move the data back to the main memory
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ */
+void
+AL4SAN_Runtime_scaler_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A);
+
+
+#if defined(AL4SAN_USE_MIGRATE)
+/**
+ * @brief Migrate a single piece of data.
+ *
+ * This function migrate a piece of data from its original rank to the new_rank
+ * and changes its ownership.
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @param[in] new_rank
+ *            The new_rank on which to migrate the data
+ */
+void
+AL4SAN_Runtime_data_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+/**
+ * @brief Migrate a single piece of data.
+ *
+ * This function migrate a piece of data from its original rank to the new_rank
+ * and changes its ownership.
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @param[in] new_rank
+ *            The new_rank on which to migrate the data
+ */
+void
+AL4SAN_Runtime_matrix_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+/**
+ * @brief Migrate a single piece of data.
+ *
+ * This function migrate a piece of data from its original rank to the new_rank
+ * and changes its ownership.
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] new_rank
+ *            The new_rank on which to migrate the data
+ */
+void
+AL4SAN_Runtime_vector_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int new_rank );
+/**
+ * @brief Migrate a single piece of data.
+ *
+ * This function migrate a piece of data from its original rank to the new_rank
+ * and changes its ownership.
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ *
+ * @param[in] new_rank
+ *            The new_rank on which to migrate the data
+ */
+void
+AL4SAN_Runtime_scaler_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int new_rank );
+#else
+/**
+ * @brief Migrate a single piece of data.
+ *
+ * This function migrate a piece of data from its original rank to the new_rank
+ * and changes its ownership.
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @param[in] new_rank
+ *            The new_rank on which to migrate the data
+ */
+static inline void
+AL4SAN_Runtime_data_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
+}
+/**
+ * @brief Migrate a single piece of data.
+ *
+ * This function migrate a piece of data from its original rank to the new_rank
+ * and changes its ownership.
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @param[in] new_rank
+ *            The new_rank on which to migrate the data
+ */
+static inline void
+AL4SAN_Runtime_matrix_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
+}
+/**
+ * @brief Migrate a single piece of data.
+ *
+ * This function migrate a piece of data from its original rank to the new_rank
+ * and changes its ownership.
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] new_rank
+ *            The new_rank on which to migrate the data
+ */
+static inline void
+AL4SAN_Runtime_vector_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)new_rank;
+}
+/**
+ * @brief Migrate a single piece of data.
+ *
+ * This function migrate a piece of data from its original rank to the new_rank
+ * and changes its ownership.
+ *
+ * @param[in] sequence
+ *            The sequence in which the data is used.
+ *
+ * @param[in] A
+ *            The descriptor to which the piece of data belongs.
+ *
+ *
+ * @param[in] new_rank
+ *            The new_rank on which to migrate the data
+ */
+static inline void
+AL4SAN_Runtime_scaler_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int new_rank ) {
+    (void)sequence; (void)A; (void)new_rank;
+}
+#endif
+
+/**
+ * @brief Get the pointer to the data or the runtime handler associated to the
+ * piece of data (m, n) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+void *
+AL4SAN_Runtime_data_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+
+
+
+/**
+ * @brief Get the pointer to the data or the runtime handler associated to the
+ * piece of data (m, n) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in out] ptr
+ *        Pointer to retrieved data
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+void AL4SAN_RUNTIME_data_getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
+/**
+ * @brief Get the pointer to the data or the runtime handler associated to the
+ * piece of data (m, n) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+void *
+AL4SAN_Runtime_matrix_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+
+/**
+ * @brief Get the pointer to the data or the runtime handler associated to the
+ * piece of data (m, n) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+void *
+AL4SAN_Runtime_vector_getaddr( const AL4SAN_desc_t *A, int Am);
+
+/**
+ * @brief Get the pointer to the data or the runtime handler associated to the
+ * piece of data (m, n) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+void *
+AL4SAN_Runtime_scaler_getaddr( const AL4SAN_desc_t *A);
 
 /**
  * @}

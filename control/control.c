@@ -26,9 +26,9 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.0
+   * @version 1.0.1
    * @author Rabab Alomairy
-   * @date 2018-10-18
+   * @date 2019-02-06
    *
    **/
 
@@ -95,7 +95,7 @@ AL4SAN_context_t*  AL4SAN_InitPar(int ncpus, int ncudas, int nthreads_per_worker
     al4san = al4san_context_create();
     if (al4san == NULL) {
         al4san_fatal_error("AL4SAN_Init", "al4san_context_create() failed");
-        return AL4SAN_ERR_OUT_OF_RESOURCES;
+        //return AL4SAN_ERR_OUT_OF_RESOURCES;
     }
 
 #if defined(AL4SAN_USE_MPI)
@@ -150,7 +150,9 @@ int AL4SAN_Finalize(void)
     AL4SAN_Runtime_finalize( al4san );
 
 #if defined(AL4SAN_USE_MPI)
-    if (!al4san->mpi_outer_init)
+    int flags;
+    MPI_Finalized(&flags);
+    if (!al4san->mpi_outer_init && !flags)
         MPI_Finalize();
 #endif
 
@@ -217,7 +219,7 @@ int AL4SAN_Resume(void)
  *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int AL4SAN_Distributed_start(void)
+int AL4SAN_Distributed_Start(void)
 {
     AL4SAN_context_t *al4san = al4san_context_self();
     if (al4san == NULL) {
@@ -240,7 +242,7 @@ int AL4SAN_Distributed_start(void)
  *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-int AL4SAN_Distributed_stop(void)
+int AL4SAN_Distributed_Stop(void)
 {
     AL4SAN_context_t *al4san = al4san_context_self();
     if (al4san == NULL) {
@@ -255,6 +257,90 @@ int AL4SAN_Distributed_stop(void)
  *
  * @ingroup Control
  *
+ *  AL4SAN_Barrier
+ *
+ *
+ */
+int AL4SAN_Barrier()
+{
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Barrier()", "AL4SAN not initialized");
+        return -1;
+    }
+
+     AL4SAN_Runtime_barrier( al4san );
+    return AL4SAN_SUCCESS;     
+}
+/**
+ *
+ * @ingroup Control
+ *
+ *  AL4SAN_progress
+ *
+ *
+ */
+int AL4SAN_Progress()
+{
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_progress()", "AL4SAN not initialized");
+        return -1;
+    }
+
+     AL4SAN_Runtime_progress( al4san );
+    return AL4SAN_SUCCESS;          
+}
+/**
+ *
+ * @ingroup Control
+ *
+ *  AL4SAN_Thread_rank - Return the rank of the thread
+ *
+ ******************************************************************************
+ *
+ * @retval The rank of the thread
+ * @retval -1 if context not initialized
+ *
+ */
+int AL4SAN_Thread_Rank()
+{
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Comm_rank()", "AL4SAN not initialized");
+        return -1;
+    }
+
+    return AL4SAN_Runtime_thread_rank( al4san );
+}
+
+/**
+ *
+ * @ingroup Control
+ *
+ *  AL4SAN_Thread_size - Return the number of the threads
+ *
+ ******************************************************************************
+ *
+ * @retval The number of the threads
+ * @retval -1 if context not initialized
+ *
+ */
+int AL4SAN_Thread_Size()
+{
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Comm_size()", "AL4SAN not initialized");
+        return -1;
+    }
+
+    return AL4SAN_Runtime_thread_size( al4san );
+}
+
+/**
+ *
+ * @ingroup Control
+ *
  *  AL4SAN_Comm_size - Return the size of the distributed computation
  *
  ******************************************************************************
@@ -263,7 +349,7 @@ int AL4SAN_Distributed_stop(void)
  * @retval -1 if context not initialized
  *
  */
-int AL4SAN_Comm_size()
+int AL4SAN_Comm_Size()
 {
     AL4SAN_context_t *al4san = al4san_context_self();
     if (al4san == NULL) {
@@ -286,7 +372,7 @@ int AL4SAN_Comm_size()
  * @retval -1 if context not initialized
  *
  */
-int AL4SAN_Comm_rank()
+int AL4SAN_Comm_Rank()
 {
     AL4SAN_context_t *al4san = al4san_context_self();
     if (al4san == NULL) {

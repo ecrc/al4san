@@ -12,9 +12,9 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.0
+   * @version 1.0.1
    * @author Rabab Alomairy
-   * @date 2018-10-18
+   * @date 2019-02-06
    *
    **/
 
@@ -671,7 +671,7 @@ int al4san_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes,
     /* Send and receive data as requested */
     for(i=0 ; i<nb_data ; i++)
     {
-      _starpu_mpi_exchange_data_before_execution(descrs[i].handle, descrs[i].mode, me, xrank, do_execute, prio, comm);
+      _starpu_mpi_exchange_data_before_execution(descrs[i].handle, descrs[i].mode, me, xrank, do_execute, comm);
     }
 
     if (xrank_p)
@@ -753,7 +753,7 @@ int al4san_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb_nodes,
       }
     }
 
-    int val = _starpu_mpi_task_postbuild_v(MPI_COMM_WORLD, xrank, do_execute, descrs, nb_data, prio);
+    int val = _starpu_mpi_task_postbuild_v(MPI_COMM_WORLD, xrank, do_execute, descrs, nb_data);
 
     if (ret == 0 && pre_submit_hook)
       pre_submit_hook(task);
