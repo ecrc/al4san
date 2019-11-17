@@ -38,7 +38,7 @@
 #include "control/al4san_auxiliary.h"
 #include "control/al4san_context.h"
 #include "al4san/runtime.h"
-
+#include <string.h>
 /**
  *  Global data
  */
@@ -48,7 +48,7 @@ static AL4SAN_context_t *al4san_ctxt = NULL;
 /**
  *  Create new context
  */
-AL4SAN_context_t *al4san_context_create()
+AL4SAN_context_t *al4san_context_create(char *runtime)
 {
     AL4SAN_context_t *al4san;
 
@@ -73,9 +73,26 @@ AL4SAN_context_t *al4san_context_create()
     al4san->profiling_enabled    = AL4SAN_FALSE;
     al4san->progress_enabled     = AL4SAN_FALSE;
 
-
     /* Initialize scheduler */
-    AL4SAN_Runtime_context_create(al4san);
+#ifdef AL4SAN_SCHED_QUARK
+    if(strcmp(runtime, "Quark")==0) {
+    AL4SAN_Quark_context_create(al4san);
+    }
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(strcmp(runtime, "Starpu")==0){
+        AL4SAN_Starpu_context_create(al4san);
+    }
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(strcmp(runtime, "Parsec")==0){
+        AL4SAN_Parsec_context_create(al4san);
+    }
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(strcmp(runtime, "Openmp")==0)
+        AL4SAN_Openmp_context_create(al4san);
+#endif
 
     al4san_ctxt = al4san;
     return al4san;
@@ -95,7 +112,33 @@ AL4SAN_context_t *al4san_context_self()
  */
 int al4san_context_destroy(){
 
-    AL4SAN_Runtime_context_destroy(al4san_ctxt);
+    AL4SAN_context_t *al4san;
+    int status;
+
+    al4san = al4san_context_self();
+
+    if (al4san == NULL) {
+        al4san_fatal_error("al4san_context_destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_context_destroy(al4san_ctxt);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_context_destroy(al4san_ctxt);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_context_destroy(al4san_ctxt);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_context_destroy(al4san_ctxt);
+#endif
+
     free(al4san_ctxt);
     al4san_ctxt = NULL;
 
@@ -155,7 +198,23 @@ int AL4SAN_Enable(AL4SAN_enum option)
     }
 
     /* Enable at the lower level if required */
-    AL4SAN_Runtime_enable( option );
+
+#ifdef AL4SAN_SCHED_QUARK    
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_enable(option);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_enable(option);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC     
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_enable(option);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_enable(option);
+#endif
 
     return AL4SAN_SUCCESS;
 }
@@ -213,7 +272,22 @@ int AL4SAN_Disable(AL4SAN_enum option)
     }
 
     /* Disable at the lower level if required */
-    AL4SAN_Runtime_disable( option );
+#ifdef AL4SAN_SCHED_QUARK    
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_disable(option);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_disable(option);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC     
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_disable(option);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_disable(option);
+#endif
 
     return AL4SAN_SUCCESS;
 }

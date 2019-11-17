@@ -126,7 +126,7 @@ inline static void *al4san_getaddr_cm(const AL4SAN_desc_t *A, int m, int n)
  */
 inline static void *al4san_getaddr_diag( const AL4SAN_desc_t *A, int m, int n )
 {
-    assert( m == n );
+    //assert( m == n );
     return al4san_getaddr_ccrb( A, m, 0 );
 }
 
@@ -200,7 +200,7 @@ inline static int al4san_getrankof_2d(const AL4SAN_desc_t *A, int m, int n)
 inline static int al4san_getrankof_2d_diag(const AL4SAN_desc_t *A, int m, int n)
 {
     int mm = m + A->i / A->mb;
-    assert( m == n );
+    //assert( m == n );
     return (mm % A->p) * A->q + (mm % A->q);
 }
 
@@ -236,63 +236,78 @@ inline static int al4san_desc_islocal( const AL4SAN_desc_t *A, int m, int n )
 #define GET_MACRO_ACCESS_RW(_1,_2,_3, NAME,...) NAME
 #define AL4SAN_ACCESS_RW(...) GET_MACRO_ACCESS_RW(__VA_ARGS__, AL4SAN_ACCESS_RW3, AL4SAN_ACCESS_RW2, AL4SAN_ACCESS_RW1)(__VA_ARGS__)
 
+#if defined(AL4SAN_SCHED_STARPU) 
 #define AL4SAN_BEGIN_ACCESS_DECLARATION { \
     unsigned __al4san_need_submit = 0; \
-    AL4SAN_RUNTIME_BEGIN_ACCESS_DECLARATION
+    AL4SAN_STARPU_BEGIN_ACCESS_DECLARATION
 
 #define AL4SAN_ACCESS_R3(A, Am, An) do { \
     if (al4san_desc_islocal(A, Am, An)) __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_ACCESS_R(A, Am, An); \
+    AL4SAN_STARPU_ACCESS_R(A, Am, An); \
 } while(0)
 
 #define AL4SAN_ACCESS_R2(A, Am) do { \
     if (al4san_desc_islocal(A, Am, 0)) __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_ACCESS_R(A, Am, 0); \
+    AL4SAN_STARPU_ACCESS_R(A, Am, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_R1(A) do { \
     if (al4san_desc_islocal(A, 0, 0)) __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_ACCESS_R(A, 0, 0); \
+    AL4SAN_STARPU_ACCESS_R(A, 0, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_W3(A, Am, An) do { \
     if (al4san_desc_islocal(A, Am, An)) __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_ACCESS_W(A, Am, An); \
+    AL4SAN_STARPU_ACCESS_W(A, Am, An); \
 } while(0)
 
 #define AL4SAN_ACCESS_W2(A, Am) do { \
     if (al4san_desc_islocal(A, Am, 0)) __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_ACCESS_W(A, Am, 0); \
+    AL4SAN_STARPU_ACCESS_W(A, Am, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_W1(A) do { \
     if (al4san_desc_islocal(A, 0, 0)) __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_ACCESS_W(A, 0, 0); \
+    AL4SAN_STARPU_ACCESS_W(A, 0, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_RW3(A, Am, An) do { \
     if (al4san_desc_islocal(A, Am, An)) __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_ACCESS_RW(A, Am, An); \
+    AL4SAN_STARPU_ACCESS_RW(A, Am, An); \
 } while(0)
 
 #define AL4SAN_ACCESS_RW2(A, Am) do { \
     if (al4san_desc_islocal(A, Am, 0)) __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_ACCESS_RW(A, Am, 0); \
+    AL4SAN_STARPU_ACCESS_RW(A, Am, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_RW1(A) do { \
     if (al4san_desc_islocal(A, 0, 0)) __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_ACCESS_RW(A, 0, 0); \
+    AL4SAN_STARPU_ACCESS_RW(A, 0, 0); \
 } while(0)
 #define AL4SAN_RANK_CHANGED(rank) do {\
     __al4san_need_submit = 1; \
-    AL4SAN_RUNTIME_RANK_CHANGED(rank); \
+    AL4SAN_STARPU_RANK_CHANGED(rank); \
 } while (0)
 
 #define AL4SAN_END_ACCESS_DECLARATION \
-    AL4SAN_RUNTIME_END_ACCESS_DECLARATION; \
+    AL4SAN_STARPU_END_ACCESS_DECLARATION; \
     if (!__al4san_need_submit) return; \
 }
+#else
+#define AL4SAN_BEGIN_ACCESS_DECLARATION 
+#define AL4SAN_ACCESS_R3(A, Am, An)
+#define AL4SAN_ACCESS_R2(A, Am)
+#define AL4SAN_ACCESS_R1(A) 
+#define AL4SAN_ACCESS_W3(A, Am, An)
+#define AL4SAN_ACCESS_W2(A, Am)
+#define AL4SAN_ACCESS_W1(A)
+#define AL4SAN_ACCESS_RW3(A, Am, An)
+#define AL4SAN_ACCESS_RW2(A, Am)
+#define AL4SAN_ACCESS_RW1(A) 
+#define AL4SAN_RANK_CHANGED(rank)
+#define AL4SAN_END_ACCESS_DECLARATION 
+#endif
 
 #ifdef __cplusplus
 }

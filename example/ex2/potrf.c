@@ -28,7 +28,6 @@
 #include <stdarg.h>
 #include <pthread.h>
 #include <al4san.h>
-#include "runtime/al4san_runtime.h"
 #include <chameleon.h>
 #include <coreblas.h>
 #include <coreblas/lapacke.h>
@@ -79,7 +78,7 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
      * Init task global options data sturcture
    */
    sequence = AL4SAN_Sequence_Create();
-   AL4SAN_Runtime_options_init(&options, al4sanctxt, sequence, request);
+   AL4SAN_Options_Init(&options, sequence, request);
 
         for (k = 0; k < A->nt; k++) {
             tempkm = k == A->nt-1 ? A->n-k*A->nb : A->nb;
@@ -103,7 +102,7 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
                     zone, A(k, k), ldak,
                           A(k, n), ldak);
             }
-            AL4SAN_Runtime_data_flush( sequence, A(k, k) );
+            AL4SAN_Data_Flush( sequence, A(k, k) );
 
             for (m = k+1; m < A->mt; m++) {
                 tempmm = m == A->mt-1 ? A->m - m*A->mb : A->mb;
@@ -129,13 +128,13 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
                                A(k, n), ldak,
                         zone,  A(m, n), ldam);
                 }
-                AL4SAN_Runtime_data_flush( sequence, A(k, m) );
+                AL4SAN_Data_Flush( sequence, A(k, m) );
             }
 
         }
 
   //AL4SAN_Runtime_options_ws_free(&options);
-   AL4SAN_Runtime_options_finalize(&options, al4sanctxt);
+   AL4SAN_Options_Finalize(&options);
 
    AL4SAN_Desc_Flush( A, sequence );
    AL4SAN_Sequence_Wait(sequence);
@@ -154,8 +153,8 @@ int main(int argc, char* argv[]){
     int UPLO = ChamUpper; // where is stored L
 
     /* descriptors necessary for calling CHAMELEON tile interface  */
-    AL4SAN_desc_t *descA = NULL, *descAC = NULL, *descB = NULL, *descX = NULL;
-
+    AL4SAN_desc_t *descA = NULL,  *descAC = NULL, *descB = NULL, *descX = NULL;
+    //CHAM_desc_t *descAC = NULL, *descB = NULL, *descX = NULL;
     /* declarations to time the program and evaluate performances */
     double fmuls, fadds, flops, gflops, cpu_time;
 
@@ -185,18 +184,18 @@ int main(int argc, char* argv[]){
         get_thread_count( &(iparam[IPARAM_THRDNBR]) );
     }
     NCPU = iparam[IPARAM_THRDNBR];
-    NGPU = 0;
+    NGPU = 1;
 
     /* print informations to user */
     print_header( argv[0], iparam);
 
     /* Initialize AL4SAN with main parameters */
-   AL4SAN_context_t *al4san = AL4SAN_Init(NCPU, NGPU);
-
+   AL4SAN_context_t *al4san = AL4SAN_Init("Starpu", NCPU, NGPU);
+      printf("\b schuler:%d\n", al4san->scheduler);
     /* Initialize CHAMELEON with main parameters */
 
     int rc = CHAMELEON_Init( NCPU, NGPU );
-   
+    printf("\n CHAMELEON_Init:%d\n", rc);   
     /*
      * Allocate memory for our data using a C macro (see step2.h)
      *     - matrix A                   : size N x N
@@ -235,10 +234,17 @@ int main(int argc, char* argv[]){
     AL4SAN_Desc_Create(&descAC, NULL, Al4sanRealDouble,
                       NB, NB,  NB*NB, N, N, 0, 0, N, N, 1, 1);
 
-
+   /* CHAMELEON_Desc_Create(&descA,  NULL, ChamRealDouble,
+                      NB, NB,  NB*NB, N, N, 0, 0, N, N, 1, 1);
+    CHAMELEON_Desc_Create(&descB,  NULL, ChamRealDouble,
+                      NB, NB,  NB*NB, N, NRHS, 0, 0, N, NRHS, 1, 1);
+    CHAMELEON_Desc_Create(&descX,  NULL, ChamRealDouble,
+                      NB, NB,  NB*NB, N, NRHS, 0, 0, N, NRHS, 1, 1);
+    CHAMELEON_Desc_Create(&descAC, NULL, ChamRealDouble,
+                      NB, NB,  NB*NB, N, N, 0, 0, N, N, 1, 1);
+*/
     /* generate A matrix with random values such that it is spd */
     CHAMELEON_dplgsy_Tile( (double)N, ChamUpperLower, (CHAM_desc_t*) descA, 51 );
-
     /* generate RHS */
     CHAMELEON_dplrnt_Tile( (CHAM_desc_t*) descB, 5673 );
 
@@ -257,9 +263,9 @@ int main(int argc, char* argv[]){
 
     /* Cholesky factorization:
      * A is replaced by its factorization L or L^T depending on uplo */
-//    CHAMELEON_dpotrf_Tile( UPLO, (CHAM_desc_t*) descA );
-
-     AL4SAN_cholesky(UPLO, descA);
+    //CHAMELEON_dpotrf_Tile( UPLO, (CHAM_desc_t*) descA );
+    printf("\nBefore AL4SAN_cholesky\n");
+    AL4SAN_cholesky(UPLO, descA);
 
     cpu_time += CHAMELEON_timer();
     /* Solve:
@@ -310,11 +316,16 @@ int main(int argc, char* argv[]){
     }
 
     /* deallocate A, B, X, Acpy and associated descriptors descA, ... */
-    AL4SAN_Desc_Destroy( &descA );
-    AL4SAN_Desc_Destroy( &descB );
-    AL4SAN_Desc_Destroy( &descX );
-    AL4SAN_Desc_Destroy( &descAC );
+   AL4SAN_Desc_Destroy( &descA );
+   AL4SAN_Desc_Destroy( &descB );
+   AL4SAN_Desc_Destroy( &descX );
+   AL4SAN_Desc_Destroy( &descAC );
 
+   /*CHAMELEON_Desc_Destroy( &descA );
+   CHAMELEON_Desc_Destroy( &descB );
+   CHAMELEON_Desc_Destroy( &descX );
+   CHAMELEON_Desc_Destroy( &descAC );
+*/
     /*
      * Required semicolon to have at least one inst
      * before the end of OpenMP block.

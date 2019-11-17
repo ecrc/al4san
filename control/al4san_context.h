@@ -43,7 +43,7 @@
 extern "C" {
 #endif
 
-AL4SAN_context_t* al4san_context_create  ();
+AL4SAN_context_t* al4san_context_create  (char *runtime);
 AL4SAN_context_t* al4san_context_self    ();
 int              al4san_context_destroy ();
 

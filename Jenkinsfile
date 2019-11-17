@@ -5,6 +5,11 @@ AL4SAN
 */
 
     agent none
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '15'))
+        timestamps()
+    }
     triggers {
         pollSCM('H/10 * * * *')
     }
@@ -48,13 +53,6 @@ AL4SAN
                         # parsec
                         git clone https://bitbucket.org/icldistcomp/parsec.git parsec-src
                         export CPATH=$CPATH:$PWD/parsec-src
-                        # chameleon
-                        git clone https://gitlab.inria.fr/solverstack/chameleon.git chameleon-src
-                        cd chameleon-src; git submodule update --init --recursive; mkdir -p build; cd build
-                        cmake .. -DCMAKE_INSTALL_PREFIX=$WORKSPACE/chameleon -DCHAMELEON_SCHED="PARSEC" -DCHAMELEON_USE_MPI=ON
-                        make -j 4
-                        make install
-                        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$WORKSPACE/chameleon/lib/pkgconfig
                         cd $WORKSPACE/build-parsec
 
                         cmake .. -DCMAKE_INSTALL_PREFIX=$PWD/installdir -DAL4SAN_SCHED_PARSEC=ON -DAL4SAN_USE_MPI=ON -DAL4SAN_ENABLE_DOC=ON
@@ -81,28 +79,58 @@ AL4SAN
                         # quark
                         git clone https://github.com/ecrc/quark
                         cd quark
+                        git checkout switchruntime 
                         make
                         make install prefix=$WORKSPACE/quark
                         cd $WORKSPACE/build-quark
 
-                        # chameleon
-                        git clone https://gitlab.inria.fr/solverstack/chameleon.git chameleon-src
-                        cd chameleon-src; git submodule update --init --recursive; mkdir -p build; cd build
-                        cmake .. -DCMAKE_INSTALL_PREFIX=$WORKSPACE/chameleon -DCHAMELEON_SCHED="QUARK" -DQUARK_INCDIR=$WORKSPACE/quark/include -DQUARK_LIBDIR=$WORKSPACE/quark/lib
-                        make -j 4
-                        make install
-                        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$WORKSPACE/chameleon/lib/pkgconfig
-                        cd $WORKSPACE/build-quark
-
                         # al4san
                         rm -rf ./*
-                        cmake .. -DCMAKE_INSTALL_PREFIX=$PWD/installdir -DAL4SAN_SCHED_QUARK=ON -DQUARK_INCDIR=$WORKSPACE/quark/include -DQUARK_LIBDIR=$WORKSPACE/quark/lib -DAL4SAN_ENABLE_EXAMPLE=ON
+                        cmake .. -DCMAKE_INSTALL_PREFIX=$PWD/installdir -DAL4SAN_SCHED_QUARK=ON -DQUARK_INCDIR=$WORKSPACE/quark/include -DQUARK_LIBDIR=$WORKSPACE/quark/lib -DAL4SAN_ENABLE_EXAMPLE=OFF
                         make
-                        make test
+                        #make test
                         make install
                         '''
                     }
                 }
+                stage ('build-quark-starpu') {
+                    agent { label 'jenkinsfile-gpu' }
+                    steps {
+                        sh '''#!/bin/bash -el
+                        module purge
+                        module load ecrc-extras
+                        module load gcc/5.5.0
+                        module load mkl/2018-update-2
+                        module load cmake/3.9.6
+                        module load hwloc/2.0.3-gcc-5.5.0
+                        module load cuda/9.0
+                        module load starpu/1.3.3-gcc-5.5.0-cuda-9.0-mkl-openmpi-3.0.0
+
+                        mkdir -p build-quark-starpu
+                        cd build-quark-starpu
+                        rm -rf ./*
+
+
+                        # quark
+                        git clone https://github.com/ecrc/quark
+                        cd quark
+                        git checkout switchruntime
+                        make
+                        make install prefix=$WORKSPACE/quark
+                        cd $WORKSPACE/build-quark-starpu
+
+                        # al4san
+                        rm -rf ./*
+                        cmake .. -DCMAKE_INSTALL_PREFIX=$PWD/installdir -DAL4SAN_SCHED_QUARK=ON -DQUARK_INCDIR=$WORKSPACE/quark/include -DQUARK_LIBDIR=$WORKSPACE/quark/lib -DAL4SAN_ENABLE_EXAMPLE=OFF -DAL4SAN_SCHED_PARSEC=OFF -DAL4SAN_USE_MPI=OFF  -DAL4SAN_SCHED_STARPU=ON -DAL4SAN_ENABLE_CUDA=ON -DAL4SAN_USE_CUDA=ON
+
+
+                        make
+                        #make test
+                        make install
+                        '''
+                    }
+                }
+/***   omit this stage for now
                 stage ('build-clang-openmp') {
                     agent { label 'jenkinsfile' }
                     steps {
@@ -121,13 +149,14 @@ AL4SAN
                         export CXX=clang++
                         export FC=flang
                         rm -rf ./*
-                        cmake .. -DCMAKE_INSTALL_PREFIX=$PWD/installdir -DAL4SAN_SCHED_OPENMP=ON -DAL4SAN_ENABLE_EXAMPLE=ON
+                        cmake .. -DCMAKE_INSTALL_PREFIX=$PWD/installdir -DAL4SAN_SCHED_OPENMP=ON -DAL4SAN_ENABLE_EXAMPLE=OFF
                         make
-                        make test
+                        #make test
                         make install
                         '''
                     }
                 }
+*/
             }
         }
     }

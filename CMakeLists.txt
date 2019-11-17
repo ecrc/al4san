@@ -134,46 +134,50 @@ option(AL4SAN_SCHED_OPENMP
     (Conflict with other AL4SAN_SCHED_* options)" OFF)
 
 # For now, we are able to compile only one runtime at a time, so we disable combinations of runtimes
-if (AL4SAN_SCHED_QUARK)
-    set(AL4SAN_SCHED_STARPU OFF)
-    set(AL4SAN_SCHED_PARSEC OFF)
-    set(AL4SAN_SCHED_OPENMP OFF)
-elseif (AL4SAN_SCHED_STARPU)
-    set(AL4SAN_SCHED_QUARK OFF)
-    set(AL4SAN_SCHED_PARSEC OFF)
-    set(AL4SAN_SCHED_OPENMP OFF)
-elseif (AL4SAN_SCHED_PARSEC)
-    set(AL4SAN_SCHED_QUARK OFF)
-    set(AL4SAN_SCHED_STARPU OFF)
-    set(AL4SAN_SCHED_OPENMP OFF)
-elseif (AL4SAN_SCHED_OPENMP)
-    set(AL4SAN_SCHED_QUARK OFF)
-    set(AL4SAN_SCHED_STARPU OFF)
-    set(AL4SAN_SCHED_PARSEC OFF)
-endif()
+#if (AL4SAN_SCHED_QUARK)
+#    set(AL4SAN_SCHED_STARPU OFF)
+#    set(AL4SAN_SCHED_PARSEC OFF)
+#    set(AL4SAN_SCHED_OPENMP OFF)
+#elseif (AL4SAN_SCHED_STARPU)
+#    set(AL4SAN_SCHED_QUARK OFF)
+#    set(AL4SAN_SCHED_PARSEC OFF)
+#    set(AL4SAN_SCHED_OPENMP OFF)
+#elseif (AL4SAN_SCHED_PARSEC)
+#    set(AL4SAN_SCHED_QUARK OFF)
+#    set(AL4SAN_SCHED_STARPU OFF)
+#    set(AL4SAN_SCHED_OPENMP OFF)
+#elseif (AL4SAN_SCHED_OPENMP)
+#    set(AL4SAN_SCHED_QUARK OFF)
+#    set(AL4SAN_SCHED_STARPU OFF)
+#    set(AL4SAN_SCHED_PARSEC OFF)
+#endif()
+
 # Set default to StarPU if nothing specific is required by the user
-if ( NOT AL4SAN_SCHED_STARPU AND NOT AL4SAN_SCHED_PARSEC AND NOT AL4SAN_SCHED_QUARK AND NOT AL4SAN_SCHED_OPENMP)
-    set(AL4SAN_SCHED_STARPU ON)
-endif()
+#if ( NOT AL4SAN_SCHED_STARPU AND NOT AL4SAN_SCHED_PARSEC AND NOT AL4SAN_SCHED_QUARK AND NOT AL4SAN_SCHED_OPENMP)
+#    set(AL4SAN_SCHED_STARPU ON)
+#endif()
 if (AL4SAN_SCHED_STARPU)
     message("-- ${BoldGreen}AL4SAN_SCHED_STARPU is set to ON: AL4SAN uses StarPU runtime\n"
             "   To use AL4SAN with Quark  runtime: set AL4SAN_SCHED_QUARK  to ON\n"
             "   To use AL4SAN with PaRSEC runtime: set AL4SAN_SCHED_PARSEC to ON\n"
             "   To use AL4SAN with OPENMP runtime: set AL4SAN_SCHED_OPENMP to ON\n"
             "   (AL4SAN_SCHED_STARPU will be disabled)${ColourReset}")
-elseif(AL4SAN_SCHED_QUARK)
+endif()
+if(AL4SAN_SCHED_QUARK)
     message("-- ${BoldGreen}AL4SAN_SCHED_QUARK is set to ON: AL4SAN uses Quark runtime\n"
             "   To use AL4SAN with StarPU runtime: set AL4SAN_SCHED_STARPU to ON\n"
             "   To use AL4SAN with PaRSEC runtime: set AL4SAN_SCHED_PARSEC to ON\n"
             "   To use AL4SAN with OPENMP runtime: set AL4SAN_SCHED_OPENMP to ON\n"
             "   (AL4SAN_SCHED_QUARK will be disabled)${ColourReset}")
-elseif(AL4SAN_SCHED_PARSEC)
+endif()
+if(AL4SAN_SCHED_PARSEC)
     message("-- ${BoldGreen}AL4SAN_SCHED_PARSEC is set to ON: AL4SAN uses PaRSEC runtime\n"
             "   To use AL4SAN with StarPU runtime: set AL4SAN_SCHED_STARPU to ON\n"
             "   To use AL4SAN with Quark  runtime: set AL4SAN_SCHED_QUARK  to ON\n"
             "   To use AL4SAN with OPENMP runtime: set AL4SAN_SCHED_OPENMP to ON\n"
             "   (AL4SAN_SCHED_PARSEC will be disabled)${ColourReset}")
-elseif(AL4SAN_SCHED_OPENMP)
+endif()
+if(AL4SAN_SCHED_OPENMP)
     message("-- ${BoldGreen}AL4SAN_SCHED_OPENMP is set to ON: AL4SAN uses OPENMP runtime\n"
             "   To use AL4SAN with StarPU runtime: set AL4SAN_SCHED_STARPU to ON\n"
             "   To use AL4SAN with Quark  runtime: set AL4SAN_SCHED_QUARK  to ON\n"
@@ -191,9 +195,9 @@ foreach (runtime ${AL4SAN_SCHED_list})
     endif()
 endforeach()
 if (NOT number_of_active_runtime STREQUAL 1)
-    message(FATAL_ERROR
+    message(
             "Number of active runtime is ${number_of_active_runtime}, "
-            "the user should activate one (and only one) runtime. ")
+            "")
 endif()
 
 # Use intermediate variable since cmake_dependent_option doesn't have OR conditions

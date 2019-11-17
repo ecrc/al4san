@@ -56,13 +56,29 @@ int al4san_request_fail(AL4SAN_sequence_t *sequence, AL4SAN_request_t *request, 
 #if !defined(AL4SAN_SCHED_OPENMP)
 AL4SAN_sequence_t* al4san_sequence_create(AL4SAN_context_t *al4san)
 {
+
+
     AL4SAN_sequence_t *sequence;
     if ((sequence = malloc(sizeof(AL4SAN_sequence_t))) == NULL) {
-        al4san_error("AL4SAN_Sequence_Create", "malloc() failed");
+        al4san_error("al4san_sequence_create", "malloc() failed");
      //   return AL4SAN_ERR_OUT_OF_RESOURCES;
     }
-
-    AL4SAN_Runtime_sequence_create( al4san, sequence );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_sequence_create( al4san, sequence );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_sequence_create( al4san, sequence );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC     
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_sequence_create( al4san, sequence );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP    
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_sequence_create( al4san, sequence );
+#endif
     
     sequence->status = AL4SAN_SUCCESS;
     return sequence;
@@ -73,7 +89,23 @@ AL4SAN_sequence_t* al4san_sequence_create(AL4SAN_context_t *al4san)
  */
 int al4san_sequence_destroy(AL4SAN_context_t *al4san, AL4SAN_sequence_t *sequence)
 {
-    AL4SAN_Runtime_sequence_destroy( al4san, sequence );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_sequence_destroy( al4san, sequence );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_sequence_destroy( al4san, sequence );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC    
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_sequence_destroy( al4san, sequence );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP  
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_sequence_destroy( al4san, sequence );
+#endif
+
     free(sequence);
     return AL4SAN_SUCCESS;
 }
@@ -83,7 +115,24 @@ int al4san_sequence_destroy(AL4SAN_context_t *al4san, AL4SAN_sequence_t *sequenc
  */
 int al4san_sequence_wait(AL4SAN_context_t *al4san, AL4SAN_sequence_t *sequence)
 {
-    AL4SAN_Runtime_sequence_wait( al4san, sequence );
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_sequence_wait( al4san, sequence );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_sequence_wait( al4san, sequence );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC    
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_sequence_wait( al4san, sequence );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP  
+    if(al4san->scheduler==3)
+         AL4SAN_Runtime_sequence_wait( al4san, sequence );
+#endif
+
     return AL4SAN_SUCCESS;
 }
 
@@ -225,8 +274,22 @@ int AL4SAN_Sequence_Flush(AL4SAN_sequence_t *sequence, AL4SAN_request_t *request
         al4san_fatal_error("AL4SAN_Sequence_Flush", "NULL sequence");
         return AL4SAN_ERR_UNALLOCATED;
     }
-
-    AL4SAN_Runtime_sequence_flush( al4san->schedopt, sequence, request, AL4SAN_ERR_SEQUENCE_FLUSHED);
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_sequence_flush( al4san->schedopt, sequence, request, AL4SAN_ERR_SEQUENCE_FLUSHED);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    else if(al4san->scheduler==1)
+         AL4SAN_Starpu_sequence_flush( al4san->schedopt, sequence, request, AL4SAN_ERR_SEQUENCE_FLUSHED);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC 
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_sequence_flush( al4san->schedopt, sequence, request, AL4SAN_ERR_SEQUENCE_FLUSHED);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_sequence_flush( al4san->schedopt, sequence, request, AL4SAN_ERR_SEQUENCE_FLUSHED);
+#endif
 
     return AL4SAN_SUCCESS;
 }

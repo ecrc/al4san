@@ -54,6 +54,7 @@ set(AL4SAN_HDRS
   ${CMAKE_CURRENT_SOURCE_DIR}/al4san/runtime.h
   ${CMAKE_CURRENT_SOURCE_DIR}/al4san/struct.h
   ${CMAKE_CURRENT_SOURCE_DIR}/al4san/types.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/al4san/task.h
   )
 
 # Force generation of headers

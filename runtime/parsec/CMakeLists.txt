@@ -46,8 +46,8 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include )
 # Define the list of headers
 # --------------------------
 set(AL4SAN_RUNTIME_HDRS
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/al4san_runtime.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/runtime_task.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/al4san_parsec.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/parsec_task.h
   )
 
 
@@ -68,12 +68,12 @@ install(
 set(AL4SAN_RUNTIME_COMMON_GENERATED "")
 
 set(AL4SAN_RUNTIME_COMMON
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_async.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_context.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_control.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_descriptor.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_options.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_task.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/parsec_async.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/parsec_context.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/parsec_control.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/parsec_descriptor.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/parsec_options.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/parsec_task.c
   ${AL4SAN_RUNTIME_COMMON_GENERATED}
   )
 

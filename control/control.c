@@ -38,7 +38,7 @@
 #include "control/al4san_auxiliary.h"
 #include "control/al4san_common.h"
 #include "al4san/runtime.h"
-
+#include <string.h>
 /**
  *
  * @ingroup Control
@@ -59,9 +59,9 @@
  *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-AL4SAN_context_t*  AL4SAN_Init(int cores, int gpus)
+AL4SAN_context_t*  AL4SAN_Init(char *runtime, int cores, int gpus)
 {
-    return AL4SAN_InitPar(cores, gpus, -1);
+    return AL4SAN_InitPar(runtime, cores, gpus, -1);
 }
 
 /**
@@ -87,17 +87,16 @@ AL4SAN_context_t*  AL4SAN_Init(int cores, int gpus)
  *          \retval AL4SAN_SUCCESS successful exit
  *
  */
-AL4SAN_context_t*  AL4SAN_InitPar(int ncpus, int ncudas, int nthreads_per_worker)
+AL4SAN_context_t*  AL4SAN_InitPar(char *runtime, int ncpus, int ncudas, int nthreads_per_worker)
 {
     AL4SAN_context_t *al4san;
 
     /* Create context and insert in the context map */
-    al4san = al4san_context_create();
+    al4san = al4san_context_create(runtime);
     if (al4san == NULL) {
         al4san_fatal_error("AL4SAN_Init", "al4san_context_create() failed");
         //return AL4SAN_ERR_OUT_OF_RESOURCES;
     }
-
 #if defined(AL4SAN_USE_MPI)
 #  if defined(AL4SAN_SIMULATION)
     /* Assuming that we don't initialize MPI ourself (which SMPI doesn't support anyway) */
@@ -113,12 +112,206 @@ AL4SAN_context_t*  AL4SAN_InitPar(int ncpus, int ncudas, int nthreads_per_worker
     }
 #  endif
 #endif
+       al4san->starpu_schd=-5;
 
-    AL4SAN_Runtime_init( al4san, ncpus, ncudas, nthreads_per_worker );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0){
+    AL4SAN_Quark_init( al4san, ncpus, ncudas, nthreads_per_worker );
+    AL4SAN_Quark_task_option_init();
+    }
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1){
+         AL4SAN_Starpu_init( al4san, ncpus, ncudas, nthreads_per_worker );
+    AL4SAN_Starpu_task_option_init();   
+      al4san->starpu_schd=1;  
+     }
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2){
+         AL4SAN_Parsec_init( al4san, ncpus, ncudas, nthreads_per_worker );
+         AL4SAN_Parsec_task_option_init();
+      }
+#endif
+#ifdef AL4SAN_SCHED_OPENMP    
+    if(al4san->scheduler==3){
+         AL4SAN_Openmp_init( al4san, ncpus, ncudas, nthreads_per_worker );
+         AL4SAN_Openmp_task_option_init();
+     }
+#endif
+
+    //AL4SAN_Runtime_init( al4san, ncpus, ncudas, nthreads_per_worker );
 
 #if defined(AL4SAN_USE_MPI)
-    al4san->my_mpi_rank   = AL4SAN_Runtime_comm_rank( al4san );
-    al4san->mpi_comm_size = AL4SAN_Runtime_comm_size( al4san );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    al4san->my_mpi_rank   = AL4SAN_Quark_comm_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         al4san->my_mpi_rank   = AL4SAN_Starpu_comm_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         al4san->my_mpi_rank   = AL4SAN_Parsec_comm_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP  
+    if(al4san->scheduler==3)
+         al4san->my_mpi_rank   = AL4SAN_Openmp_comm_rank( al4san );
+#endif
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    al4san->my_mpi_rank   = AL4SAN_Quark_comm_size( al4san );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         al4san->my_mpi_rank   = AL4SAN_Starpu_comm_size( al4san );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         al4san->my_mpi_rank   = AL4SAN_Parsec_comm_size( al4san );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         al4san->my_mpi_rank   = AL4SAN_Openmp_comm_size( al4san );
+#endif
+
+    //al4san->mpi_comm_size = AL4SAN_Runtime_comm_size( al4san );
+#endif
+
+    return al4san;
+}
+
+
+AL4SAN_context_t*  AL4SAN_Switch_Runtime(char *runtime, int ncpus, int ncudas)
+{
+
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Switch_Runtime()", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_flush();
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_flush();
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_flush();
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_flush();
+#endif
+
+    //AL4SAN_Runtime_flush();
+#  if !defined(AL4SAN_SIMULATION)
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_barrier(al4san);
+#endif
+
+#  endif
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_finalize(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_finalize(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_finalize(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_finalize(al4san);
+#endif
+          /* Initialize scheduler */
+#ifdef AL4SAN_SCHED_QUARK
+    if(strcmp(runtime, "Quark")==0){
+    AL4SAN_Quark_context_create(al4san);
+    AL4SAN_Quark_init( al4san, ncpus, ncudas, -1 );
+    AL4SAN_Quark_task_option_init();
+    }
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(strcmp(runtime, "Starpu")==0){
+        AL4SAN_Starpu_context_create(al4san);
+        AL4SAN_Starpu_init( al4san, ncpus, ncudas, -1 );
+        AL4SAN_Starpu_task_option_init(); 
+    al4san->starpu_schd=1;
+    }
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(strcmp(runtime, "Parsec")==0){
+        AL4SAN_Parsec_context_create(al4san);
+        AL4SAN_Parsec_init( al4san, ncpus, ncudas, -1 );
+        AL4SAN_Parsec_task_option_init();
+    }
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(strcmp(runtime, "Openmp")){
+        AL4SAN_Openmp_context_create(al4san); 
+        AL4SAN_Openmp_init( al4san, ncpus, ncudas, nthreads_per_worker );
+        AL4SAN_Openmp_task_option_init();
+    }
+#endif
+
+#if defined(AL4SAN_USE_MPI)
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    al4san->my_mpi_rank   = AL4SAN_Quark_comm_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         al4san->my_mpi_rank   = AL4SAN_Starpu_comm_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         al4san->my_mpi_rank   = AL4SAN_Parsec_comm_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         al4san->my_mpi_rank   = AL4SAN_Openmp_comm_rank( al4san );
+#endif
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    al4san->my_mpi_rank   = AL4SAN_Quark_comm_size( al4san );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         al4san->my_mpi_rank   = AL4SAN_Starpu_comm_size( al4san );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         al4san->my_mpi_rank   = AL4SAN_Parsec_comm_size( al4san );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         al4san->my_mpi_rank   = AL4SAN_Openmp_comm_size( al4san );
+#endif
+
 #endif
 
     return al4san;
@@ -143,11 +336,60 @@ int AL4SAN_Finalize(void)
         al4san_error("AL4SAN_Finalize()", "AL4SAN not initialized");
         return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    AL4SAN_Runtime_flush();
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_flush();
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_flush();
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_flush();
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_flush();
+#endif
+
+    //AL4SAN_Runtime_flush();
 #  if !defined(AL4SAN_SIMULATION)
-    AL4SAN_Runtime_barrier(al4san);
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_barrier(al4san);
+#endif
 #  endif
-    AL4SAN_Runtime_finalize( al4san );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_finalize(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_finalize(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_finalize(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_finalize(al4san);
+#endif
+
 
 #if defined(AL4SAN_USE_MPI)
     int flags;
@@ -179,7 +421,24 @@ int AL4SAN_Pause(void)
         al4san_error("AL4SAN_Pause()", "AL4SAN not initialized");
         return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    AL4SAN_Runtime_pause(al4san);
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_pause(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU 
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_pause(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_pause(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_pause(al4san);
+#endif
+
+    //AL4SAN_Runtime_pause(al4san);
     return AL4SAN_SUCCESS;
 }
 
@@ -203,7 +462,23 @@ int AL4SAN_Resume(void)
         al4san_error("AL4SAN_Resume()", "AL4SAN not initialized");
         return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    AL4SAN_Runtime_resume(al4san);
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_resume(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU 
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_resume(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_resume(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_resume(al4san);
+#endif
+
     return AL4SAN_SUCCESS;
 }
 
@@ -226,7 +501,22 @@ int AL4SAN_Distributed_Start(void)
         al4san_error("AL4SAN_Finalize()", "AL4SAN not initialized");
         return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    AL4SAN_Runtime_barrier (al4san);
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_barrier(al4san);
+#endif
     return AL4SAN_SUCCESS;
 }
 
@@ -249,7 +539,23 @@ int AL4SAN_Distributed_Stop(void)
         al4san_error("AL4SAN_Finalize()", "AL4SAN not initialized");
         return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    AL4SAN_Runtime_barrier (al4san);
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_barrier(al4san);
+#endif
     return AL4SAN_SUCCESS;
 }
 
@@ -269,7 +575,25 @@ int AL4SAN_Barrier()
         return -1;
     }
 
-     AL4SAN_Runtime_barrier( al4san );
+ //    AL4SAN_Runtime_barrier( al4san );
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_barrier(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_barrier(al4san);
+#endif
+
     return AL4SAN_SUCCESS;     
 }
 /**
@@ -288,7 +612,23 @@ int AL4SAN_Progress()
         return -1;
     }
 
-     AL4SAN_Runtime_progress( al4san );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_progress(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_progress(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_progress(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP
+    if(al4san->scheduler==3) 
+         AL4SAN_Runtime_progress(al4san);
+#endif
+
     return AL4SAN_SUCCESS;          
 }
 /**
@@ -311,7 +651,22 @@ int AL4SAN_Thread_Rank()
         return -1;
     }
 
-    return AL4SAN_Runtime_thread_rank( al4san );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_thread_rank(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_thread_rank(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_thread_rank(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_thread_rank(al4san);
+#endif         
 }
 
 /**
@@ -334,7 +689,22 @@ int AL4SAN_Thread_Size()
         return -1;
     }
 
-    return AL4SAN_Runtime_thread_size( al4san );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_thread_size(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_thread_size(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_thread_size(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP
+    if(al4san->scheduler==3) 
+         AL4SAN_Openmp_thread_size(al4san);
+#endif 
 }
 
 /**
@@ -356,8 +726,22 @@ int AL4SAN_Comm_Size()
         al4san_error("AL4SAN_Comm_size()", "AL4SAN not initialized");
         return -1;
     }
-
-    return AL4SAN_Runtime_comm_size( al4san );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_comm_size(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_comm_size(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_comm_size(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Openmp_comm_size(al4san);
+#endif
 }
 
 /**
@@ -380,7 +764,23 @@ int AL4SAN_Comm_Rank()
         return -1;
     }
 
-    return AL4SAN_Runtime_comm_rank( al4san );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_comm_rank(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_comm_rank(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_comm_rank(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP
+    if(al4san->scheduler==3) 
+         AL4SAN_Openmp_comm_rank(al4san);
+#endif
+
 }
 
 /**
@@ -404,5 +804,43 @@ int AL4SAN_GetThreadNbr( )
         return -1;
     }
 
-    return AL4SAN_Runtime_thread_size( al4san );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_thread_size(al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_thread_size(al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_thread_size(al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+         AL4SAN_Runtime_thread_size(al4san);
+#endif
 }
+
+#if defined(AL4SAN_USE_MPI)
+void AL4SAN_Init_Processor_Grid(int p, int q){
+
+     AL4SAN_context_t *al4sanctxt;
+
+        al4sanctxt = al4san_context_self();
+    if (al4sanctxt == NULL) {
+        al4sab_error("init_grid", "AL4SAN not initialized");
+        //return CHAMELEON_ERR_NOT_INITIALIZED;
+    }
+
+    int rank, size;
+    MPI_Comm comm;
+    int dim[2], period[2], reorder;
+
+    dim[0]=p; dim[1]=q;
+    period[0]=1; period[1]=0;
+    reorder=1;
+    MPI_Cart_create(MPI_COMM_WORLD, 2, dim, period, reorder, &comm);
+    al4sanctxt->newcomm=comm;
+}
+#endif

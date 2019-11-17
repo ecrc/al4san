@@ -109,7 +109,23 @@ void al4san_fatal_error(const char *func_name, const char *msg_text)
  */
 int al4san_rank(AL4SAN_context_t *al4san)
 {
-    return AL4SAN_Runtime_thread_rank( al4san );
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    return AL4SAN_Quark_thread_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         return AL4SAN_Starpu_thread_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC  
+    if(al4san->scheduler==2)
+         return AL4SAN_Parsec_thread_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP  
+   if(al4san->scheduler==3)
+         return AL4SAN_Openmp_thread_rank( al4san );
+#endif   
 }
 
 /**

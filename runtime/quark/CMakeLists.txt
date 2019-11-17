@@ -48,8 +48,8 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include )
 # Define the list of headers
 # --------------------------
 set(AL4SAN_RUNTIME_HDRS
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/al4san_runtime.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/runtime_task.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/al4san_quark.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/quark_task.h
   )
 
 
@@ -70,12 +70,12 @@ install(
 set(AL4SAN_RUNTIME_COMMON_GENERATED "")
 
 set(AL4SAN_RUNTIME_COMMON
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_async.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_context.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_control.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_options.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_task.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_descriptor.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/quark_async.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/quark_context.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/quark_control.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/quark_options.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/quark_task.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/quark_descriptor.c
   ${AL4SAN_RUNTIME_COMMON_GENERATED}
   )
 

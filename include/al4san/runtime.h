@@ -34,6 +34,7 @@
 
 #include "al4san/config.h"
 #include "al4san/struct.h"
+#include "al4san/task.h"
 #include "al4san/constants.h"
 #include <stdarg.h>
 BEGIN_C_DECLS
@@ -52,7 +53,13 @@ BEGIN_C_DECLS
  *            The Al4san context to initialize for the runtime.
  */
 void
-AL4SAN_Runtime_context_create( AL4SAN_context_t *ctxt );
+AL4SAN_Quark_context_create( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Starpu_context_create( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Parsec_context_create( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Openmp_context_create( AL4SAN_context_t *ctxt );
 
 /**
  * @brief Destroy the specific options in the context after this last one has
@@ -63,7 +70,13 @@ AL4SAN_Runtime_context_create( AL4SAN_context_t *ctxt );
  *            be destroyed
  */
 void
-AL4SAN_Runtime_context_destroy( AL4SAN_context_t *ctxt );
+AL4SAN_Quark_context_destroy( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Starpu_context_destroy( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Parsec_context_destroy( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Openmp_context_destroy( AL4SAN_context_t *ctxt );
 
 /**
  * @brief Enable a global option of the runtime.
@@ -73,7 +86,13 @@ AL4SAN_Runtime_context_destroy( AL4SAN_context_t *ctxt );
  *            @arg AL4SAN_PROFILING_MODE: start the profiling mode of the runtime.
  */
 void
-AL4SAN_Runtime_enable( AL4SAN_enum option );
+AL4SAN_Quark_enable( AL4SAN_enum option );
+void
+AL4SAN_Starpu_enable( AL4SAN_enum option );
+void
+AL4SAN_Parsec_enable( AL4SAN_enum option );
+void
+AL4SAN_Openmp_enable( AL4SAN_enum option );
 
 /**
  * @brief Disable a global option of the runtime.
@@ -83,8 +102,13 @@ AL4SAN_Runtime_enable( AL4SAN_enum option );
  *            @arg AL4SAN_PROFILING_MODE: stop the profiling mode of the runtime.
  */
 void
-AL4SAN_Runtime_disable( AL4SAN_enum option );
-
+AL4SAN_Quark_disable( AL4SAN_enum option );
+void
+AL4SAN_Starpu_disable( AL4SAN_enum option );
+void
+AL4SAN_Parsec_disable( AL4SAN_enum option );
+void
+AL4SAN_Openmp_disable( AL4SAN_enum option );
 /**
  * @}
  *
@@ -121,7 +145,22 @@ AL4SAN_Runtime_disable( AL4SAN_enum option );
  *
  */
 int
-AL4SAN_Runtime_init( AL4SAN_context_t *ctxt,
+AL4SAN_Quark_init( AL4SAN_context_t *ctxt,
+              int ncpus,
+              int ncudas,
+              int nthreads_per_worker );
+int
+AL4SAN_Starpu_init( AL4SAN_context_t *ctxt,
+              int ncpus,
+              int ncudas,
+              int nthreads_per_worker );
+int
+AL4SAN_Parsec_init( AL4SAN_context_t *ctxt,
+              int ncpus,
+              int ncudas,
+              int nthreads_per_worker );
+int
+AL4SAN_Openmp_init( AL4SAN_context_t *ctxt,
               int ncpus,
               int ncudas,
               int nthreads_per_worker );
@@ -133,7 +172,13 @@ AL4SAN_Runtime_init( AL4SAN_context_t *ctxt,
  *            The Al4san context for which the runtime system must be shut down.
  */
 void
-AL4SAN_Runtime_finalize( AL4SAN_context_t *ctxt );
+AL4SAN_Quark_finalize( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Starpu_finalize( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Parsec_finalize( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Openmp_finalize( AL4SAN_context_t *ctxt );
 
 /**
  * @brief Suspend the processing of new tasks submitted to the runtime system.
@@ -142,7 +187,13 @@ AL4SAN_Runtime_finalize( AL4SAN_context_t *ctxt );
  *            The Al4san context for which the suspension must be made.
  */
 void
-AL4SAN_Runtime_pause( AL4SAN_context_t *ctxt );
+AL4SAN_Quark_pause( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Starpu_pause( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Parsec_pause( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Openmp_pause( AL4SAN_context_t *ctxt );
 
 /**
  * @brief Resume the processing of new tasks submitted to the runtime system.
@@ -151,8 +202,13 @@ AL4SAN_Runtime_pause( AL4SAN_context_t *ctxt );
  *            The Al4san context for which the execution must be resumed.
  */
 void
-AL4SAN_Runtime_resume( AL4SAN_context_t *ctxt );
-
+AL4SAN_Quark_resume( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Starpu_resume( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Parsec_resume( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Openmp_resume( AL4SAN_context_t *ctxt );
 /**
  * @brief Wait for completion of all tasks submitted to the runtime.
  *
@@ -160,8 +216,13 @@ AL4SAN_Runtime_resume( AL4SAN_context_t *ctxt );
  *            The Al4san context in which the task completion is performed.
  */
 void
-AL4SAN_Runtime_barrier( AL4SAN_context_t *ctxt );
-
+AL4SAN_Quark_barrier( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Starpu_barrier( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Parsec_barrier( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Openmp_barrier( AL4SAN_context_t *ctxt );
 /**
  * @brief Show the progress of the computations when enabled.
  *
@@ -169,8 +230,13 @@ AL4SAN_Runtime_barrier( AL4SAN_context_t *ctxt );
  *            The Al4san context for which the context needs to be printed.
  */
 void
-AL4SAN_Runtime_progress( AL4SAN_context_t *ctxt );
-
+AL4SAN_Quark_progress( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Starpu_progress( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Parsec_progress( AL4SAN_context_t *ctxt );
+void
+AL4SAN_Openmp_progress( AL4SAN_context_t *ctxt );
 /**
  * @brief Get the rank of the current worker for the runtime.
  *
@@ -180,8 +246,13 @@ AL4SAN_Runtime_progress( AL4SAN_context_t *ctxt );
  * @retval The rank of the current thread in the runtime.
  */
 int
-AL4SAN_Runtime_thread_rank( AL4SAN_context_t *ctxt );
-
+AL4SAN_Quark_thread_rank( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Starpu_thread_rank( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Parsec_thread_rank( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Openmp_thread_rank( AL4SAN_context_t *ctxt );
 /**
  * @brief Get the number of CPU workers of the runtime.
  *
@@ -191,8 +262,13 @@ AL4SAN_Runtime_thread_rank( AL4SAN_context_t *ctxt );
  * @retval The number of threads currently used by the runtime.
  */
 int
-AL4SAN_Runtime_thread_size( AL4SAN_context_t *ctxt );
-
+AL4SAN_Quark_thread_size( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Starpu_thread_size( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Parsec_thread_size( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Openmp_thread_size( AL4SAN_context_t *ctxt );
 /**
  * @brief Get the MPI comm rank of the current process related to the runtime.
  *
@@ -202,8 +278,13 @@ AL4SAN_Runtime_thread_size( AL4SAN_context_t *ctxt );
  * @retval The rank of the process in the communicator known by the runtime.
  */
 int
-AL4SAN_Runtime_comm_rank( AL4SAN_context_t *ctxt );
-
+AL4SAN_Quark_comm_rank( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Starpu_comm_rank( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Parsec_comm_rank( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Openmp_comm_rank( AL4SAN_context_t *ctxt );
 /**
  * @brief Get the MPI comm size related to the runtime.
  *
@@ -213,8 +294,13 @@ AL4SAN_Runtime_comm_rank( AL4SAN_context_t *ctxt );
  * @retval The size of the communicator known by the runtime.
  */
 int
-AL4SAN_Runtime_comm_size( AL4SAN_context_t *ctxt );
-
+AL4SAN_Quark_comm_size( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Starpu_comm_size( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Parsec_comm_size( AL4SAN_context_t *ctxt );
+int
+AL4SAN_Openmp_comm_size( AL4SAN_context_t *ctxt );
 /**
  * @brief Set the data tags bounds based on runtime tags limit.
  *
@@ -228,9 +314,17 @@ AL4SAN_Runtime_comm_size( AL4SAN_context_t *ctxt );
  *            bits used to enumerate the descriptors.
  */
 void
-AL4SAN_Runtime_comm_set_tag_sizes( int user_tag_width,
+AL4SAN_Quark_comm_set_tag_sizes( int user_tag_width,
                             int user_tag_sep );
-
+void
+AL4SAN_Starpu_comm_set_tag_sizes( int user_tag_width,
+                            int user_tag_sep );
+void
+AL4SAN_Parsec_comm_set_tag_sizes( int user_tag_width,
+                            int user_tag_sep );
+void
+AL4SAN_Openmp_comm_set_tag_sizes( int user_tag_width,
+                            int user_tag_sep );
 /**
  * @}
  *
@@ -254,8 +348,13 @@ AL4SAN_Runtime_comm_set_tag_sizes( int user_tag_width,
  * @retval AL4SAN_ERR_OUT_OF_RESOURCES, if the sequence could not be created.
  */
 int
-AL4SAN_Runtime_sequence_create( AL4SAN_context_t  *ctxt, AL4SAN_sequence_t* sequence);
-
+AL4SAN_Quark_sequence_create( AL4SAN_context_t  *ctxt, AL4SAN_sequence_t* sequence);
+int
+AL4SAN_Starpu_sequence_create( AL4SAN_context_t  *ctxt, AL4SAN_sequence_t* sequence);
+int
+AL4SAN_Parsec_sequence_create( AL4SAN_context_t  *ctxt, AL4SAN_sequence_t* sequence);
+int
+AL4SAN_Openmp_sequence_create( AL4SAN_context_t  *ctxt, AL4SAN_sequence_t* sequence);
 /**
  * @brief Destroy the sequence structure.
  *
@@ -270,9 +369,17 @@ AL4SAN_Runtime_sequence_create( AL4SAN_context_t  *ctxt, AL4SAN_sequence_t* sequ
  * @retval AL4SAN_SUCCESS on success.
  */
 int
-AL4SAN_Runtime_sequence_destroy( AL4SAN_context_t  *ctxt,
+AL4SAN_Quark_sequence_destroy( AL4SAN_context_t  *ctxt,
                           AL4SAN_sequence_t *sequence);
-
+int
+AL4SAN_Starpu_sequence_destroy( AL4SAN_context_t  *ctxt,
+                          AL4SAN_sequence_t *sequence);
+int
+AL4SAN_Parsec_sequence_destroy( AL4SAN_context_t  *ctxt,
+                          AL4SAN_sequence_t *sequence);
+int
+AL4SAN_Openmp_sequence_destroy( AL4SAN_context_t  *ctxt,
+                          AL4SAN_sequence_t *sequence);
 /**
  * @brief Wait for completion of all tasks in the given sequence.
  *
@@ -286,9 +393,17 @@ AL4SAN_Runtime_sequence_destroy( AL4SAN_context_t  *ctxt,
  * @retval The algorithm return code on failure.
  */
 int
-AL4SAN_Runtime_sequence_wait( AL4SAN_context_t  *ctxt,
+AL4SAN_Quark_sequence_wait( AL4SAN_context_t  *ctxt,
                        AL4SAN_sequence_t *sequence );
-
+int
+AL4SAN_Starpu_sequence_wait( AL4SAN_context_t  *ctxt,
+                       AL4SAN_sequence_t *sequence );
+int
+AL4SAN_Parsec_sequence_wait( AL4SAN_context_t  *ctxt,
+                       AL4SAN_sequence_t *sequence );
+int
+AL4SAN_Openmp_sequence_wait( AL4SAN_context_t  *ctxt,
+                       AL4SAN_sequence_t *sequence );
 /**
  * @brief Cancel all remaining tasks in the given sequence.
  *
@@ -309,11 +424,25 @@ AL4SAN_Runtime_sequence_wait( AL4SAN_context_t  *ctxt,
  *            above.
  */
 void
-AL4SAN_Runtime_sequence_flush( AL4SAN_context_t  *ctxt,
+AL4SAN_Quark_sequence_flush( AL4SAN_context_t  *ctxt,
                         AL4SAN_sequence_t *sequence,
                         AL4SAN_request_t  *request,
                         int               status );
-
+void
+AL4SAN_Starpu_sequence_flush( AL4SAN_context_t  *ctxt,
+                        AL4SAN_sequence_t *sequence,
+                        AL4SAN_request_t  *request,
+                        int               status );
+void
+AL4SAN_Parsec_sequence_flush( AL4SAN_context_t  *ctxt,
+                        AL4SAN_sequence_t *sequence,
+                        AL4SAN_request_t  *request,
+                        int               status );
+void
+AL4SAN_Openmp_sequence_flush( AL4SAN_context_t  *ctxt,
+                        AL4SAN_sequence_t *sequence,
+                        AL4SAN_request_t  *request,
+                        int               status );
 /**
  * @}
  *
@@ -331,8 +460,13 @@ AL4SAN_Runtime_sequence_flush( AL4SAN_context_t  *ctxt,
  * @return The pointer to allocated area of size bytes on success, NULL otherwise.
  */
 void *
-AL4SAN_Runtime_malloc( size_t size );
-
+AL4SAN_Quark_malloc( size_t size );
+void *
+AL4SAN_Starpu_malloc( size_t size );
+void *
+AL4SAN_Parsec_malloc( size_t size );
+void *
+AL4SAN_Openmp_malloc( size_t size );
 /**
  * @}
  *
@@ -351,7 +485,13 @@ AL4SAN_Runtime_malloc( size_t size );
  * @return The pointer to allocated area of size bytes on success, NULL otherwise.
  */
 void 
-AL4SAN_RUNTIME_malloc(void**A, size_t size );
+AL4SAN_Quark_malloc_ptr(void**A, size_t size );
+void 
+AL4SAN_Starpu_malloc_ptr(void**A, size_t size );
+void 
+AL4SAN_Parsec_malloc_ptr(void**A, size_t size );
+void 
+AL4SAN_Openmp_malloc_ptr(void**A, size_t size );
 /**
  * @brief Free allocated memory through AL4SAN_Runtime_malloc() function call
  *
@@ -362,8 +502,13 @@ AL4SAN_RUNTIME_malloc(void**A, size_t size );
  *            The size in bytes of the allocated area associated to ptr.
  */
 void
-AL4SAN_Runtime_free( void *ptr, size_t size );
-
+AL4SAN_Quark_free( void *ptr, size_t size );
+void
+AL4SAN_Starpu_free( void *ptr, size_t size );
+void
+AL4SAN_Parsec_free( void *ptr, size_t size );
+void
+AL4SAN_Openmp_free( void *ptr, size_t size );
 /**
  * @}
  *
@@ -376,8 +521,13 @@ AL4SAN_Runtime_free( void *ptr, size_t size );
  *            The descriptor to initialize.
  */
 void
-AL4SAN_Runtime_desc_create( AL4SAN_desc_t *desc );
-
+AL4SAN_Quark_desc_create( AL4SAN_desc_t *desc );
+void
+AL4SAN_Starpu_desc_create( AL4SAN_desc_t *desc );
+void
+AL4SAN_Parsec_desc_create( AL4SAN_desc_t *desc );
+void
+AL4SAN_Openmp_desc_create( AL4SAN_desc_t *desc );
 /**
  * @brief Finalize runtime specific data structure of a given descriptor.
  *
@@ -385,8 +535,13 @@ AL4SAN_Runtime_desc_create( AL4SAN_desc_t *desc );
  *            The descriptor to finalize.
  */
 void
-AL4SAN_Runtime_desc_destroy( AL4SAN_desc_t *desc );
-
+AL4SAN_Quark_desc_destroy( AL4SAN_desc_t *desc );
+void
+AL4SAN_Starpu_desc_destroy( AL4SAN_desc_t *desc );
+void
+AL4SAN_Parsec_desc_destroy( AL4SAN_desc_t *desc );
+void
+AL4SAN_Openmp_desc_destroy( AL4SAN_desc_t *desc );
 /**
  * @brief Acquire in main memory an up-to-date copy of the data described by the
  * descriptor for read-write access.
@@ -401,8 +556,13 @@ AL4SAN_Runtime_desc_destroy( AL4SAN_desc_t *desc );
  * @retval CHAMELEON_SUCCESS on success
  */
 int
-AL4SAN_Runtime_desc_acquire( const AL4SAN_desc_t *desc );
-
+AL4SAN_Quark_desc_acquire( const AL4SAN_desc_t *desc );
+int
+AL4SAN_Starpu_desc_acquire( const AL4SAN_desc_t *desc );
+int
+AL4SAN_Parsec_desc_acquire( const AL4SAN_desc_t *desc );
+int
+AL4SAN_Openmp_desc_acquire( const AL4SAN_desc_t *desc );
 /**
  * @brief Release the data described by the descriptor to be used by the runtime
  * tasks again.
@@ -416,8 +576,13 @@ AL4SAN_Runtime_desc_acquire( const AL4SAN_desc_t *desc );
  * @retval CHAMELEON_SUCCESS on success
  */
 int
-AL4SAN_Runtime_desc_release( const AL4SAN_desc_t *desc );
-
+AL4SAN_Quark_desc_release( const AL4SAN_desc_t *desc );
+int
+AL4SAN_Starpu_desc_release( const AL4SAN_desc_t *desc );
+int
+AL4SAN_Parsec_desc_release( const AL4SAN_desc_t *desc );
+int
+AL4SAN_Openmp_desc_release( const AL4SAN_desc_t *desc );
 /**
  * @brief Flush all pieces of data from a descriptor.
  *
@@ -433,9 +598,17 @@ AL4SAN_Runtime_desc_release( const AL4SAN_desc_t *desc );
  *            The sequence in which the data is used.
  */
 void
-AL4SAN_Runtime_desc_flush( const AL4SAN_desc_t     *desc,
+AL4SAN_Quark_desc_flush( const AL4SAN_desc_t     *desc,
                     const AL4SAN_sequence_t *sequence );
-
+void
+AL4SAN_Starpu_desc_flush( const AL4SAN_desc_t     *desc,
+                    const AL4SAN_sequence_t *sequence );
+void
+AL4SAN_Parsec_desc_flush( const AL4SAN_desc_t     *desc,
+                    const AL4SAN_sequence_t *sequence );
+void
+AL4SAN_Openmp_desc_flush( const AL4SAN_desc_t     *desc,
+                    const AL4SAN_sequence_t *sequence );
 /**
  * @brief Flush all data submitted to the runtime systems from the distributed
  * cache, and/or mark for eviction from the GPU memory.
@@ -443,8 +616,13 @@ AL4SAN_Runtime_desc_flush( const AL4SAN_desc_t     *desc,
  * This function flushes all data from the distributed cache of the runtime system.
  */
 void
-AL4SAN_Runtime_flush( );
-
+AL4SAN_Quark_flush( );
+void
+AL4SAN_Starpu_flush( );
+void
+AL4SAN_Parsec_flush( );
+void
+AL4SAN_Openmp_flush( );
 /**
  * @brief Flush a single piece of data.
  *
@@ -466,9 +644,17 @@ AL4SAN_Runtime_flush( );
  *            The column coordinate of the piece of data in the matrix
  */
 void
-AL4SAN_Runtime_data_flush( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_data_flush( const AL4SAN_sequence_t *sequence,
                     const AL4SAN_desc_t *A, int Am, int An );
-
+void
+AL4SAN_Starpu_data_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am, int An );
+void
+AL4SAN_Parsec_data_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am, int An );
+void
+AL4SAN_Openmp_data_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am, int An );
 /**
  * @brief Flush a single piece of data.
  *
@@ -490,9 +676,17 @@ AL4SAN_Runtime_data_flush( const AL4SAN_sequence_t *sequence,
  *            The column coordinate of the piece of data in the matrix
  */
 void
-AL4SAN_Runtime_matrix_flush( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_matrix_flush( const AL4SAN_sequence_t *sequence,
                     const AL4SAN_desc_t *A, int Am, int An );
-
+void
+AL4SAN_Starpu_matrix_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am, int An );
+void
+AL4SAN_Parsec_matrix_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am, int An );
+void
+AL4SAN_Openmp_matrix_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am, int An );
 /**
  * @brief Flush a single piece of data.
  *
@@ -511,9 +705,17 @@ AL4SAN_Runtime_matrix_flush( const AL4SAN_sequence_t *sequence,
  *            The coordinate of the piece of data in the vector
  */
 void
-AL4SAN_Runtime_vector_flush( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_vector_flush( const AL4SAN_sequence_t *sequence,
                     const AL4SAN_desc_t *A, int Am);
-
+void
+AL4SAN_Starpu_vector_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am);
+void
+AL4SAN_Parsec_vector_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am);
+void
+AL4SAN_Openmp_vector_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A, int Am);
 /**
  * @brief Flush a single piece of data.
  *
@@ -529,9 +731,17 @@ AL4SAN_Runtime_vector_flush( const AL4SAN_sequence_t *sequence,
  *            The descriptor to which the piece of data belongs.
  */
 void
-AL4SAN_Runtime_scaler_flush( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_scaler_flush( const AL4SAN_sequence_t *sequence,
                     const AL4SAN_desc_t *A);
-
+void
+AL4SAN_Starpu_scaler_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A);
+void
+AL4SAN_Parsec_scaler_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A);
+void
+AL4SAN_Openmp_scaler_flush( const AL4SAN_sequence_t *sequence,
+                    const AL4SAN_desc_t *A);
 
 #if defined(AL4SAN_USE_MIGRATE)
 /**
@@ -556,7 +766,16 @@ AL4SAN_Runtime_scaler_flush( const AL4SAN_sequence_t *sequence,
  *            The new_rank on which to migrate the data
  */
 void
-AL4SAN_Runtime_data_migrate( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_data_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+void
+AL4SAN_Starpu_data_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+void
+AL4SAN_Parsec_data_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+void
+AL4SAN_Openmp_data_migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int An, int new_rank );
 /**
  * @brief Migrate a single piece of data.
@@ -580,7 +799,16 @@ AL4SAN_Runtime_data_migrate( const AL4SAN_sequence_t *sequence,
  *            The new_rank on which to migrate the data
  */
 void
-AL4SAN_Runtime_matrix_migrate( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_matrix_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+void
+AL4SAN_Starpu_matrix_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+void
+AL4SAN_Parsec_matrix_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank );
+void
+AL4SAN_Openmp_matrix_migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int An, int new_rank );
 /**
  * @brief Migrate a single piece of data.
@@ -601,7 +829,16 @@ AL4SAN_Runtime_matrix_migrate( const AL4SAN_sequence_t *sequence,
  *            The new_rank on which to migrate the data
  */
 void
-AL4SAN_Runtime_vector_migrate( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_vector_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int new_rank );
+void
+AL4SAN_Starpu_vector_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int new_rank );
+void
+AL4SAN_Parsec_vector_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int new_rank );
+void
+AL4SAN_Openmp_vector_migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int new_rank );
 /**
  * @brief Migrate a single piece of data.
@@ -620,7 +857,16 @@ AL4SAN_Runtime_vector_migrate( const AL4SAN_sequence_t *sequence,
  *            The new_rank on which to migrate the data
  */
 void
-AL4SAN_Runtime_scaler_migrate( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_scaler_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int new_rank );
+void
+AL4SAN_Starpu_scaler_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int new_rank );
+void
+AL4SAN_Parsec_scaler_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int new_rank );
+void
+AL4SAN_Openmp_scaler_migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int new_rank );
 #else
 /**
@@ -645,7 +891,22 @@ AL4SAN_Runtime_scaler_migrate( const AL4SAN_sequence_t *sequence,
  *            The new_rank on which to migrate the data
  */
 static inline void
-AL4SAN_Runtime_data_migrate( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_data_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
+}
+static inline void
+AL4SAN_Starpu_data_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
+}
+static inline void
+AL4SAN_Parsec_data_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
+}
+static inline void
+AL4SAN_Openmp_data_migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
     (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
 }
@@ -671,7 +932,22 @@ AL4SAN_Runtime_data_migrate( const AL4SAN_sequence_t *sequence,
  *            The new_rank on which to migrate the data
  */
 static inline void
-AL4SAN_Runtime_matrix_migrate( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_matrix_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
+}
+static inline void
+AL4SAN_Starpu_matrix_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
+}
+static inline void
+AL4SAN_Parsec_matrix_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
+}
+static inline void
+AL4SAN_Openmp_matrix_migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int An, int new_rank ) {
     (void)sequence; (void)A; (void)Am; (void)An; (void)new_rank;
 }
@@ -694,7 +970,22 @@ AL4SAN_Runtime_matrix_migrate( const AL4SAN_sequence_t *sequence,
  *            The new_rank on which to migrate the data
  */
 static inline void
-AL4SAN_Runtime_vector_migrate( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_vector_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)new_rank;
+}
+static inline void
+AL4SAN_Starpu_vector_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)new_rank;
+}
+static inline void
+AL4SAN_Parsec_vector_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int Am, int new_rank ) {
+    (void)sequence; (void)A; (void)Am; (void)new_rank;
+}
+static inline void
+AL4SAN_Openmp_vector_migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int new_rank ) {
     (void)sequence; (void)A; (void)Am; (void)new_rank;
 }
@@ -715,7 +1006,22 @@ AL4SAN_Runtime_vector_migrate( const AL4SAN_sequence_t *sequence,
  *            The new_rank on which to migrate the data
  */
 static inline void
-AL4SAN_Runtime_scaler_migrate( const AL4SAN_sequence_t *sequence,
+AL4SAN_Quark_scaler_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int new_rank ) {
+    (void)sequence; (void)A; (void)new_rank;
+}
+static inline void
+AL4SAN_Starpu_scaler_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int new_rank ) {
+    (void)sequence; (void)A; (void)new_rank;
+}
+static inline void
+AL4SAN_Parsec_scaler_migrate( const AL4SAN_sequence_t *sequence,
+                      const AL4SAN_desc_t *A, int new_rank ) {
+    (void)sequence; (void)A; (void)new_rank;
+}
+static inline void
+AL4SAN_Openmp_scaler_migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int new_rank ) {
     (void)sequence; (void)A; (void)new_rank;
 }
@@ -737,7 +1043,14 @@ AL4SAN_Runtime_scaler_migrate( const AL4SAN_sequence_t *sequence,
  * @retval The runtime handler address of the piece of data.
  */
 void *
-AL4SAN_Runtime_data_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+AL4SAN_Quark_data_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+void *
+AL4SAN_Starpu_data_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+void *
+AL4SAN_Parsec_data_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+void *
+AL4SAN_Openmp_data_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+
 
 
 
@@ -760,7 +1073,11 @@ AL4SAN_Runtime_data_getaddr( const AL4SAN_desc_t *A, int Am, int An );
  * @retval The runtime handler address of the piece of data.
  */
 
-void AL4SAN_RUNTIME_data_getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
+void AL4SAN_Quark_data_getaddr_ptr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
+void AL4SAN_Starpu_data_getaddr_ptr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
+void AL4SAN_Parsec_data_getaddr_ptr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
+void AL4SAN_Openmp_data_getaddr_ptr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
+
 /**
  * @brief Get the pointer to the data or the runtime handler associated to the
  * piece of data (m, n) in desc.
@@ -777,8 +1094,13 @@ void AL4SAN_RUNTIME_data_getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, 
  * @retval The runtime handler address of the piece of data.
  */
 void *
-AL4SAN_Runtime_matrix_getaddr( const AL4SAN_desc_t *A, int Am, int An );
-
+AL4SAN_Quark_matrix_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+void *
+AL4SAN_Starpu_matrix_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+void *
+AL4SAN_Parsec_matrix_getaddr( const AL4SAN_desc_t *A, int Am, int An );
+void *
+AL4SAN_Openmp_matrix_getaddr( const AL4SAN_desc_t *A, int Am, int An );
 /**
  * @brief Get the pointer to the data or the runtime handler associated to the
  * piece of data (m, n) in desc.
@@ -792,8 +1114,13 @@ AL4SAN_Runtime_matrix_getaddr( const AL4SAN_desc_t *A, int Am, int An );
  * @retval The runtime handler address of the piece of data.
  */
 void *
-AL4SAN_Runtime_vector_getaddr( const AL4SAN_desc_t *A, int Am);
-
+AL4SAN_Quark_vector_getaddr( const AL4SAN_desc_t *A, int Am);
+void *
+AL4SAN_Starpu_vector_getaddr( const AL4SAN_desc_t *A, int Am);
+void *
+AL4SAN_Parsec_vector_getaddr( const AL4SAN_desc_t *A, int Am);
+void *
+AL4SAN_Openmp_vector_getaddr( const AL4SAN_desc_t *A, int Am);
 /**
  * @brief Get the pointer to the data or the runtime handler associated to the
  * piece of data (m, n) in desc.
@@ -804,18 +1131,38 @@ AL4SAN_Runtime_vector_getaddr( const AL4SAN_desc_t *A, int Am);
  * @retval The runtime handler address of the piece of data.
  */
 void *
-AL4SAN_Runtime_scaler_getaddr( const AL4SAN_desc_t *A);
-
+AL4SAN_Quark_scaler_getaddr( const AL4SAN_desc_t *A);
+void *
+AL4SAN_Starpu_scaler_getaddr( const AL4SAN_desc_t *A);
+void *
+AL4SAN_Parsec_scaler_getaddr( const AL4SAN_desc_t *A);
+void *
+AL4SAN_Openmp_scaler_getaddr( const AL4SAN_desc_t *A);
 /**
  * @}
  *
  * @name RUNTIME Insert task options management
  * @{
  */
-void  AL4SAN_Runtime_options_init     (AL4SAN_option_t*, AL4SAN_context_t*, AL4SAN_sequence_t*, AL4SAN_request_t*);
-void  AL4SAN_Runtime_options_finalize (AL4SAN_option_t*, AL4SAN_context_t *);
-int   AL4SAN_Runtime_options_ws_alloc (AL4SAN_option_t*, size_t, size_t);
-int   AL4SAN_Runtime_options_ws_free  (AL4SAN_option_t*);
+void  AL4SAN_Quark_options_init     (AL4SAN_option_t*, AL4SAN_context_t*, AL4SAN_sequence_t*, AL4SAN_request_t*);
+void  AL4SAN_Starpu_options_init     (AL4SAN_option_t*, AL4SAN_context_t*, AL4SAN_sequence_t*, AL4SAN_request_t*);
+void  AL4SAN_Parsec_options_init     (AL4SAN_option_t*, AL4SAN_context_t*, AL4SAN_sequence_t*, AL4SAN_request_t*);
+void  AL4SAN_Openmp_options_init     (AL4SAN_option_t*, AL4SAN_context_t*, AL4SAN_sequence_t*, AL4SAN_request_t*);
+
+void  AL4SAN_Quark_options_finalize (AL4SAN_option_t*, AL4SAN_context_t *);
+void  AL4SAN_Starpu_options_finalize (AL4SAN_option_t*, AL4SAN_context_t *);
+void  AL4SAN_Parsec_options_finalize (AL4SAN_option_t*, AL4SAN_context_t *);
+void  AL4SAN_Openmp_options_finalize (AL4SAN_option_t*, AL4SAN_context_t *);
+
+int   AL4SAN_Quark_options_ws_alloc (AL4SAN_option_t*, size_t, size_t);
+int   AL4SAN_Starpu_options_ws_alloc (AL4SAN_option_t*, size_t, size_t);
+int   AL4SAN_Parsec_options_ws_alloc (AL4SAN_option_t*, size_t, size_t);
+int   AL4SAN_Openmp_options_ws_alloc (AL4SAN_option_t*, size_t, size_t);
+
+int   AL4SAN_Quark_options_ws_free  (AL4SAN_option_t*);
+int   AL4SAN_Starpu_options_ws_free  (AL4SAN_option_t*);
+int   AL4SAN_Parsec_options_ws_free  (AL4SAN_option_t*);
+int   AL4SAN_Openmp_options_ws_free  (AL4SAN_option_t*);
 
 /**
  * @brief insert task routines using AL4SAN_Runtime_insert_task() 
@@ -830,7 +1177,10 @@ int   AL4SAN_Runtime_options_ws_free  (AL4SAN_option_t*);
  *            The varg_list to task information which conatin dependency direction, ptr or value, and the size in bytes.
  */
 
-int AL4SAN_Runtime_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list);
+int AL4SAN_Quark_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list);
+int AL4SAN_Starpu_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list);
+int AL4SAN_Parsec_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list);
+int AL4SAN_Openmp_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list);
 
 /**
  * @brief unpack arguments  using AL4SAN_Runtime_unpack_arg() 
@@ -842,7 +1192,15 @@ int AL4SAN_Runtime_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options
  *            The varg_list contains list of varabile which points the value being unpacked.
  */
 
-int AL4SAN_Runtime_unpack_arg(AL4SAN_arg args, va_list varg_list);
+int AL4SAN_Quark_unpack_arg(AL4SAN_arg_list* al4san_arg, va_list varg_list);
+int AL4SAN_Starpu_unpack_arg(AL4SAN_arg_list* al4san_arg, va_list varg_list);
+int AL4SAN_Parsec_unpack_arg(AL4SAN_arg_list* al4san_arg, va_list varg_list);
+int AL4SAN_Openmp_unpack_arg(AL4SAN_arg_list* al4san_arg, va_list varg_list);
+
+void AL4SAN_Quark_task_option_init();
+void AL4SAN_Starpu_task_option_init();
+void AL4SAN_Parsec_task_option_init();
+void AL4SAN_Openmp_task_option_init();
 
 /**
  * @}

@@ -35,7 +35,7 @@
 #else
 #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 #endif
-
+BEGIN_C_DECLS
 struct timezone
 {
     int  tz_minuteswest; /* minutes W of Greenwich */
@@ -92,5 +92,6 @@ AL4SAN_timer(void)
     gettimeofday( &tp, NULL );
     return tp.tv_sec + 1e-6 * tp.tv_usec;
 }
+END_C_DECLS
 
 #endif /* _al4san_timer_h_ */

@@ -34,6 +34,9 @@
 #include "al4san/config.h"
 #include "al4san/types.h"
 #include "al4san/constants.h"
+#if defined(AL4SAN_USE_MPI)
+#include<mpi.h>
+#endif
 BEGIN_C_DECLS
 
 /**
@@ -45,10 +48,10 @@ BEGIN_C_DECLS
  */
 
 typedef enum al4san_sched_e {
-  AL4SAN_RUNTIME_SCHED_QUARK,
-  AL4SAN_RUNTIME_SCHED_PARSEC,
-  AL4SAN_RUNTIME_SCHED_STARPU,
-  AL4SAN_RUNTIME_SCHED_OPENMP
+  AL4SAN_RUNTIME_SCHED_QUARK = 0,
+  AL4SAN_RUNTIME_SCHED_STARPU = 1,
+  AL4SAN_RUNTIME_SCHED_PARSEC = 2,
+  AL4SAN_RUNTIME_SCHED_OPENMP = 3,
 } AL4SAN_sched_t;
 
 
@@ -60,12 +63,15 @@ typedef void *AL4SAN_arg;
  */
 typedef struct al4san_context_s {
     AL4SAN_sched_t      scheduler;
+    AL4SAN_sched_t      starpu_schd;
     int                nworkers;
     int                ncudas;
     int                nthreads_per_worker;
 #if defined(AL4SAN_USE_MPI)
     int                my_mpi_rank;
     int                mpi_comm_size;
+    int                pcols;
+    int                prows;
 #endif
     int                world_size;
     int                group_size;
@@ -83,6 +89,9 @@ typedef struct al4san_context_s {
     int                ib;
     void              *schedopt;           // structure for runtimes
     int                mpi_outer_init;     // MPI has been initialized outside our functions
+#if defined(AL4SAN_USE_MPI)
+    MPI_Comm           newcomm;
+#endif
 } AL4SAN_context_t;
 
 /**

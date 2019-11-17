@@ -39,6 +39,8 @@
 #include "al4san/types.h"
 #include "al4san/struct.h"
 #include "al4san/constants.h"
+#include "al4san/task.h"
+
 
 
 /* ****************************************************************************
@@ -54,8 +56,8 @@ BEGIN_C_DECLS
 /* Auxiliary */
 int AL4SAN_Version           (int *ver_major, int *ver_minor, int *ver_micro);
 int AL4SAN_My_Mpi_Rank       (void);
-AL4SAN_context_t* AL4SAN_Init              (int nworkers, int ncudas);
-AL4SAN_context_t* AL4SAN_InitPar           (int nworkers, int ncudas, int nthreads_per_worker);
+AL4SAN_context_t* AL4SAN_Init              (char *runtime, int nworkers, int ncudas);
+AL4SAN_context_t* AL4SAN_InitPar           (char *runtime, int nworkers, int ncudas, int nthreads_per_worker);
 int AL4SAN_Finalize          (void);
 int AL4SAN_Pause             (void);
 int AL4SAN_Resume            (void);
@@ -81,15 +83,14 @@ int AL4SAN_GetThreadNbr      (void);
  */
 
 
-int AL4SAN_Insert_Task(AL4SAN_codelet codelet,  AL4SAN_option_t *options,...);
-
+int AL4SAN_Insert_Task(AL4SAN_codelet codelet_quark, AL4SAN_codelet codelet_starpu, AL4SAN_codelet codelet_parsec,  AL4SAN_codelet codelet_openmp, AL4SAN_option_t *options,...);
 /*
     * AL4SAN_Unpack_Arg:
     *  @param[in] First argument AL4SAN_arg that hold the packed data
     *  @param[in] Parameter list  of va_list type which holds list of arguments
  */
 
-int AL4SAN_Unpack_Arg(AL4SAN_arg args, ...);
+int AL4SAN_Unpack_Arg(AL4SAN_arg_list* al4san_arg, ...);
 
 /* Descriptor */
 int AL4SAN_Element_Size(int type);
@@ -134,9 +135,13 @@ void AL4SAN_Scaler_Migrate( const AL4SAN_sequence_t *sequence, const AL4SAN_desc
 void AL4SAN_Data_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
 void AL4SAN_Matrix_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n);
 void AL4SAN_Vector_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m);
-void AL4SAN_Scaler_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m);
+void AL4SAN_Scaler_Getaddr( const AL4SAN_desc_t *desc, void **ptr);
 
 
+void *AL4SAN_Data_getaddr( const AL4SAN_desc_t *desc, int m, int n);
+void *AL4SAN_Matrix_getaddr( const AL4SAN_desc_t *desc, int m, int n);
+void *AL4SAN_Vector_getaddr( const AL4SAN_desc_t *desc, int m);
+void *AL4SAN_Scaler_getaddr( const AL4SAN_desc_t *desc);
 /* Context options */
 int AL4SAN_Enable  (AL4SAN_enum option);
 int AL4SAN_Disable (AL4SAN_enum option);
@@ -150,7 +155,7 @@ int AL4SAN_Options_Finalize(AL4SAN_option_t *options);
 int AL4SAN_Options_Workspace_Alloc( AL4SAN_option_t *options, size_t worker_size, size_t host_size );
 int AL4SAN_Options_Workspace_Free(AL4SAN_option_t *options );
 
-
+void AL4SAN_Init_Processor_Grid(int p, int q);
 /* Sequences */
 #if defined (AL4SAN_SCHED_OPENMP)
 #define PRAGMA(x) _Pragma(#x)

@@ -49,7 +49,31 @@ int al4san_desc_mat_alloc( AL4SAN_desc_t *desc )
 {
     size_t size = (size_t)(desc->llm) * (size_t)(desc->lln)
         * (size_t)AL4SAN_Element_Size(desc->dtyp);
-    if ((desc->mat = AL4SAN_Runtime_malloc(size)) == NULL) {
+
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Comm_rank()", "AL4SAN not initialized");
+        return -1;
+    }
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     desc->mat = AL4SAN_Quark_malloc(size);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         desc->mat = AL4SAN_Starpu_malloc(size);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         desc->mat = AL4SAN_Parsec_malloc(size);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    desc->mat = AL4SAN_Openmp_malloc(size);
+#endif
+
+    if (desc->mat == NULL) {
         al4san_error("al4san_desc_mat_alloc", "malloc() failed");
         return AL4SAN_ERR_OUT_OF_RESOURCES;
     }
@@ -69,10 +93,32 @@ int al4san_desc_mat_free( AL4SAN_desc_t *desc )
          (desc->use_mat   == 1   ) &&
          (desc->alloc_mat == 1   ) )
     {
-        size_t size = (size_t)(desc->llm) * (size_t)(desc->lln)
+ 
+     AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Comm_rank()", "AL4SAN not initialized");
+        return -1;
+    }
+    
+    size_t size = (size_t)(desc->llm) * (size_t)(desc->lln)
             * (size_t)AL4SAN_Element_Size(desc->dtyp);
 
-        AL4SAN_Runtime_free(desc->mat, size);
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_free(desc->mat, size);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_free(desc->mat, size);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_free(desc->mat, size);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP
+    if(al4san->scheduler==3)
+     AL4SAN_Openmp_free(desc->mat, size);
+#endif
         desc->mat = NULL;
     }
 
@@ -152,13 +198,13 @@ int al4san_desc_init( AL4SAN_desc_t *desc, void *mat,
                          int   (*get_blkldd) ( const AL4SAN_desc_t*, int      ),
                          int   (*get_rankof) ( const AL4SAN_desc_t*, int, int ) )
 {
-    AL4SAN_context_t *al4sanctxt;
+    AL4SAN_context_t *al4san;
     int rc = AL4SAN_SUCCESS;
 
     memset( desc, 0, sizeof(AL4SAN_desc_t) );
 
-    al4sanctxt = al4san_context_self();
-    if (al4sanctxt == NULL) {
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
         al4san_error("AL4SAN_Desc_Create", "AL4SAN not initialized");
         return AL4SAN_ERR_NOT_INITIALIZED;
     }
@@ -193,14 +239,90 @@ int al4san_desc_init( AL4SAN_desc_t *desc, void *mat,
     nbdesc++;
     desc->occurences = 0;
 
-    desc->myrank = AL4SAN_Runtime_comm_rank( al4sanctxt );
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     desc->myrank = AL4SAN_Quark_comm_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         desc->myrank = AL4SAN_Starpu_comm_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         desc->myrank = AL4SAN_Parsec_comm_rank( al4san );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    desc->myrank = AL4SAN_Openmp_comm_rank( al4san );
+#endif
+//    desc->myrank = AL4SAN_Runtime_comm_rank( al4san );
 
     // Grid size
     desc->p = p;
     desc->q = q;
 
+    int rank, size;
+#if defined(AL4SAN_USE_MPI)
+    MPI_Comm comm;
+#endif
+    int dim[2], period[2], reorder;
+    int coord[2], id;
+
+
+    /*dim[0]=p; dim[1]=q;
+    period[0]=1; period[1]=0;
+    reorder=1;
+    MPI_Cart_create(MPI_COMM_WORLD, 2, dim, period, reorder, &comm);
+    chamctxt->newcomm=comm;*/
+#if defined(AL4SAN_USE_MPI)
+    MPI_Cart_coords(al4san->newcomm, desc->myrank, 2, coord);
+#endif
+    //printf("\n Me:%d, i:%d, j:%d\n", desc->myrank, coord[0], coord[1]);
+
+if ( desc->myrank < (p*q) ) {
+     int i0=0;
+     //Figure process distance from source process
+     int mydist_rows=(p+coord[0]-i0)%p;
+     int mydist_cols=(q+coord[1]-i0)%q;
+     
+     //Figure the total number of whole complete bloaks
+     int MBLOCKS=desc->lm/mb;
+     int NBLOCKS=desc->ln/nb;
+     
+    //Figure min number of rows/cols a process can have
+     int numroc_row=(MBLOCKS/p)*mb;
+     int numroc_cols=(NBLOCKS/q)*nb;
+
+    //See if there are an extra balocks
+    int extra_rows=MBLOCKS%p;
+    int extra_cols=NBLOCKS%q;
+
+   //Rows
+   if(mydist_rows<extra_rows) numroc_row=numroc_row+mb;
+   else if(mydist_rows==extra_rows) numroc_row=numroc_row+(desc->lm%mb);
+
+   //cols
+   if(mydist_cols<extra_cols) numroc_cols=numroc_cols+nb;
+   else if(mydist_cols==extra_cols) numroc_cols=numroc_cols+(desc->ln%nb);
+
+   desc->llm=numroc_row;
+   desc->lln=numroc_cols;
+   desc->llm1 = (desc->llm/mb);
+   desc->lln1 = (desc->lln/nb);
+   desc->llmt = (desc->lmt + p - 1) / p;
+   desc->llnt = (desc->lnt + q - 1) / q;
+}
+else
+{
+        desc->llmt = 0;
+        desc->llnt = 0;
+        desc->llm  = 0;
+        desc->lln  = 0;
+        desc->llm1 = 0;
+        desc->lln1 = 0;
+}
     // Local dimensions in tiles
-    if ( desc->myrank < (p*q) ) {
+    /*if ( desc->myrank < (p*q) ) {
         desc->llmt = (desc->lmt + p - 1) / p;
         desc->llnt = (desc->lnt + q - 1) / q;
 
@@ -226,7 +348,7 @@ int al4san_desc_init( AL4SAN_desc_t *desc, void *mat,
         desc->lln  = 0;
         desc->llm1 = 0;
         desc->lln1 = 0;
-    }
+    }*/
 
     /* memory of the matrix is handled by the user */
     desc->alloc_mat    = 0;
@@ -266,8 +388,26 @@ int al4san_desc_init( AL4SAN_desc_t *desc, void *mat,
     desc->A12 = (size_t)(            desc->llm%mb)*(size_t)(desc->lln - desc->lln%nb) + desc->A21;
     desc->A22 = (size_t)(desc->llm - desc->llm%mb)*(size_t)(            desc->lln%nb) + desc->A12;
 
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_desc_create( desc );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_desc_create( desc );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_desc_create( desc );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+        AL4SAN_Openmp_desc_create( desc );
+#endif
+
     /* Create runtime specific structure like registering data */
-    AL4SAN_Runtime_desc_create( desc );
+ //   AL4SAN_Runtime_desc_create( desc );
 
     return rc;
 }
@@ -309,7 +449,30 @@ AL4SAN_desc_t* al4san_desc_submatrix(AL4SAN_desc_t *descA, int i, int j, int m, 
 
 void al4san_desc_destroy( AL4SAN_desc_t *desc )
 {
-    AL4SAN_Runtime_desc_destroy( desc );
+    AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("al4san_desc_destroy", "AL4SAN not initialized");
+        //return -1;
+    }
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_desc_destroy( desc );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_desc_destroy( desc );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_desc_destroy( desc );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+        AL4SAN_Openmp_desc_destroy( desc );
+#endif
+
+    //AL4SAN_Runtime_desc_destroy( desc );
     al4san_desc_mat_free( desc );
 }
 
@@ -662,14 +825,14 @@ int AL4SAN_Desc_Create_User( AL4SAN_desc_t **descptr, void *mat, al4san_flttype_
                                 int   (*get_blkldd) ( const AL4SAN_desc_t*, int      ),
                                 int   (*get_rankof) ( const AL4SAN_desc_t*, int, int ) )
 {
-    AL4SAN_context_t *al4sanctxt;
+    AL4SAN_context_t *al4san;
     AL4SAN_desc_t *desc;
     int status;
 
     *descptr = NULL;
 
-    al4sanctxt = al4san_context_self();
-    if (al4sanctxt == NULL) {
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
         al4san_error("AL4SAN_Desc_Create_User", "AL4SAN not initialized");
         return AL4SAN_ERR_NOT_INITIALIZED;
     }
@@ -1093,10 +1256,10 @@ int AL4SAN_Desc_Create_OOC(AL4SAN_desc_t **descptr, al4san_flttype_t dtyp, int m
  */
 int AL4SAN_Desc_Destroy(AL4SAN_desc_t **desc)
 {
-    AL4SAN_context_t *al4sanctxt;
+    AL4SAN_context_t *al4san;
 
-    al4sanctxt = al4san_context_self();
-    if (al4sanctxt == NULL) {
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
         al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
         return AL4SAN_ERR_NOT_INITIALIZED;
     }
@@ -1109,6 +1272,41 @@ int AL4SAN_Desc_Destroy(AL4SAN_desc_t **desc)
     al4san_desc_destroy( *desc );
     free(*desc);
     *desc = NULL;
+    return AL4SAN_SUCCESS;
+}
+
+int AL4SAN_Desc_Discharge(AL4SAN_desc_t **desc)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
+    }
+
+    if (*desc == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "attempting to destroy a NULL descriptor");
+        return AL4SAN_ERR_UNALLOCATED;
+    }
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_desc_destroy( *desc );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_desc_destroy( *desc );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_desc_destroy( *desc );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+     AL4SAN_Openmp_desc_destroy( *desc );
+#endif
+
     return AL4SAN_SUCCESS;
 }
 
@@ -1130,10 +1328,33 @@ int AL4SAN_Desc_Destroy(AL4SAN_desc_t **desc)
  * @return The pointer to allocated area of size bytes on success, NULL otherwise.
  */
 
-void AL4SAN_Malloc(void**A, size_t size)
+void AL4SAN_Malloc_ptr(void**A, size_t size)
 {
-  *A = AL4SAN_Runtime_malloc(size);
-  //AL4SAN_RUNTIME_malloc(A, size );
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     *A = AL4SAN_Quark_malloc(size);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         *A = AL4SAN_Starpu_malloc(size);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         *A = AL4SAN_Parsec_malloc(size);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+     *A = AL4SAN_Openmp_malloc(size);
+#endif
+
 }
 
 /**
@@ -1147,7 +1368,29 @@ void AL4SAN_Malloc(void**A, size_t size)
  */
 void AL4SAN_Free( void  *ptr, size_t size )
 {
-AL4SAN_Runtime_free(ptr, size);
+     AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_free(ptr, size);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_free(ptr, size);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_free(ptr, size);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+     AL4SAN_Openmp_free(ptr, size);
+#endif
 return;
 }
 
@@ -1170,7 +1413,32 @@ return;
  *
  */
 int AL4SAN_Desc_Acquire (AL4SAN_desc_t  *desc) {
-    return AL4SAN_Runtime_desc_acquire( desc );
+
+     AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     return AL4SAN_Quark_desc_acquire( desc );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         return AL4SAN_Starpu_desc_acquire( desc );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         return AL4SAN_Parsec_desc_acquire( desc );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+     return AL4SAN_Openmp_desc_acquire( desc );
+#endif
+
 }
 
 /**
@@ -1193,7 +1461,32 @@ int AL4SAN_Desc_Acquire (AL4SAN_desc_t  *desc) {
  *
  */
 int AL4SAN_Desc_Release (AL4SAN_desc_t  *desc) {
-    return AL4SAN_Runtime_desc_release( desc );
+     AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     return AL4SAN_Quark_desc_release( desc );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         return AL4SAN_Starpu_desc_release( desc );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         return AL4SAN_Parsec_desc_release( desc );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    return AL4SAN_Openmp_desc_release( desc );
+#endif
+
+    //return AL4SAN_Runtime_desc_release( desc );
 }
 
 /**
@@ -1205,8 +1498,31 @@ int AL4SAN_Desc_Release (AL4SAN_desc_t  *desc) {
 
 void AL4SAN_Flush()
 {
+     AL4SAN_context_t *al4san;
 
-AL4SAN_Runtime_flush();
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_flush();
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_flush();
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_flush();
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_flush();
+#endif
+
     return;    
 }
 
@@ -1232,7 +1548,31 @@ AL4SAN_Runtime_flush();
 int AL4SAN_Desc_Flush( AL4SAN_desc_t     *desc,
                           AL4SAN_sequence_t *sequence )
 {
-    AL4SAN_Runtime_desc_flush( desc, sequence );
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_desc_flush( desc, sequence );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_desc_flush( desc, sequence );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_desc_flush( desc, sequence );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_desc_flush( desc, sequence );
+#endif
+
     return AL4SAN_SUCCESS;
 }
 
@@ -1260,7 +1600,32 @@ void
 AL4SAN_Data_Flush( const AL4SAN_sequence_t *sequence,
                     const AL4SAN_desc_t *A, int Am, int An )
 {
-    AL4SAN_Runtime_data_flush(sequence, A, Am, An);
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_data_flush(sequence, A, Am, An);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_data_flush(sequence, A, Am, An);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_data_flush(sequence, A, Am, An);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_data_flush(sequence, A, Am, An);
+#endif
+
+    //AL4SAN_Runtime_data_flush(sequence, A, Am, An);
 }
 
 /**
@@ -1287,7 +1652,32 @@ void
 AL4SAN_Matrix_Flush( const AL4SAN_sequence_t *sequence,
                     const AL4SAN_desc_t *A, int Am, int An )
 {
-    AL4SAN_Runtime_matrix_flush(sequence, A, Am, An);
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+     AL4SAN_Quark_matrix_flush(sequence, A, Am, An);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_matrix_flush(sequence, A, Am, An);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_matrix_flush(sequence, A, Am, An);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_matrix_flush(sequence, A, Am, An);
+#endif
+
+    //AL4SAN_Runtime_matrix_flush(sequence, A, Am, An);
 }
 
 /**
@@ -1312,7 +1702,30 @@ void
 AL4SAN_Vector_Flush( const AL4SAN_sequence_t *sequence,
                     const AL4SAN_desc_t *A, int Am)
 {
-    AL4SAN_Runtime_vector_flush(sequence, A, Am);
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+         AL4SAN_Quark_vector_flush(sequence, A, Am);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_vector_flush(sequence, A, Am);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_vector_flush(sequence, A, Am);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_vector_flush(sequence, A, Am);
+#endif
 }
 
 /**
@@ -1335,7 +1748,31 @@ void
 AL4SAN_Scaler_Flush( const AL4SAN_sequence_t *sequence,
                     const AL4SAN_desc_t *A)
 {
-    AL4SAN_Runtime_scaler_flush(sequence, A);
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+         AL4SAN_Quark_scaler_flush(sequence, A);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_scaler_flush(sequence, A);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_scaler_flush(sequence, A);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_scaler_flush(sequence, A);
+#endif
+
 }
 
 /**
@@ -1363,7 +1800,31 @@ void
 AL4SAN_Data_Migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int An, int new_rank )
 {
-    AL4SAN_Runtime_data_migrate( sequence, A,  Am,  An,  new_rank );
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+        AL4SAN_Quark_data_migrate( sequence, A,  Am,  An,  new_rank );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_data_migrate( sequence, A,  Am,  An,  new_rank );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_data_migrate( sequence, A,  Am,  An,  new_rank );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_data_migrate( sequence, A,  Am,  An,  new_rank );
+#endif
+
 }
 
 /**
@@ -1391,7 +1852,30 @@ void
 AL4SAN_Matrix_Migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int An, int new_rank )
 {
-    AL4SAN_Runtime_data_migrate( sequence, A,  Am,  An,  new_rank );
+        AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+        AL4SAN_Quark_data_migrate( sequence, A,  Am,  An,  new_rank );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_data_migrate( sequence, A,  Am,  An,  new_rank );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_data_migrate( sequence, A,  Am,  An,  new_rank );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_data_migrate( sequence, A,  Am,  An,  new_rank );
+#endif
 }
 
 /**
@@ -1419,7 +1903,32 @@ void
 AL4SAN_Vector_Migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int new_rank )
 {
-    AL4SAN_Runtime_vector_migrate( sequence, A,  Am, new_rank );
+     AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+        AL4SAN_Quark_vector_migrate( sequence, A,  Am,  new_rank );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_vector_migrate( sequence, A,  Am, new_rank );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_vector_migrate( sequence, A,  Am,  new_rank );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_vector_migrate( sequence, A,  Am,  new_rank );
+#endif
+
+    //AL4SAN_Runtime_vector_migrate( sequence, A,  Am, new_rank );
 }
 
 
@@ -1448,9 +1957,224 @@ void
 AL4SAN_Scaler_Migrate( const AL4SAN_sequence_t *sequence,
                       const AL4SAN_desc_t *A, int Am, int new_rank )
 {
-    AL4SAN_Runtime_scaler_migrate( sequence, A, new_rank );
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+        AL4SAN_Quark_scaler_migrate( sequence, A, new_rank );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_scaler_migrate( sequence, A, new_rank );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_scaler_migrate( sequence, A, new_rank );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_scaler_migrate( sequence, A,  new_rank );
+#endif
+//    AL4SAN_Runtime_scaler_migrate( sequence, A, new_rank );
 }
 
+/**
+ * @brief Get the pointer to the data or the runtime handler associated to the
+ * piece of data (m, n) in desc.
+ *
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+void *AL4SAN_Data_getaddr( const AL4SAN_desc_t *desc,  int m, int n)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Data_getaddr", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+      return AL4SAN_Quark_data_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+      return AL4SAN_Starpu_data_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         return AL4SAN_Parsec_data_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    return AL4SAN_Openmp_data_getaddr( desc, m, n);
+#endif
+    //*ptr = AL4SAN_Runtime_data_getaddr( desc, m, n);
+}
+
+
+/**
+ * @brief Get the pointer to the data or the runtime handler associated to the
+ * piece of data (m, n) in desc.
+ *
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+void *AL4SAN_Matrix_getaddr( const AL4SAN_desc_t *desc,  int m, int n)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Matrix_getaddr", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+      return AL4SAN_Quark_matrix_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+      return AL4SAN_Starpu_matrix_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         return AL4SAN_Parsec_matrix_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    return AL4SAN_Openmp_matrix_getaddr( desc, m, n);
+#endif
+
+    //*ptr = AL4SAN_Runtime_data_getaddr( desc, m, n);
+}
+
+/**
+ * @brief Get the pointer to the data or the runtime handler associated to the
+ * piece of data (m, n) in desc.
+ *
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+void *AL4SAN_Vector_getaddr( const AL4SAN_desc_t *desc,  int m)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Vector_getaddr", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+      return AL4SAN_Quark_vector_getaddr( desc, m);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+      return AL4SAN_Starpu_vector_getaddr( desc, m);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         return AL4SAN_Parsec_vector_getaddr( desc, m);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    return AL4SAN_Openmp_vector_getaddr( desc, m, n);
+#endif
+}
+
+/**
+ * @brief Get the pointer to the data or the runtime handler associated to the
+ * piece of data (m, n) in desc.
+ *
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+void *AL4SAN_Scaler_getaddr( const AL4SAN_desc_t *desc)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Data_getaddr", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+      return AL4SAN_Quark_scaler_getaddr( desc);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+      return AL4SAN_Starpu_scaler_getaddr( desc);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         return AL4SAN_Parsec_scaler_getaddr( desc);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    return AL4SAN_Openmp_scaler_getaddr( desc, m, n);
+#endif
+}
 /**
  * @brief Get the pointer to the data or the runtime handler associated to the
  * piece of data (m, n) in desc.
@@ -1474,7 +2198,30 @@ AL4SAN_Scaler_Migrate( const AL4SAN_sequence_t *sequence,
 
 void AL4SAN_Data_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n)
 {
-    *ptr = AL4SAN_Runtime_data_getaddr( desc, m, n);
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    *ptr = AL4SAN_Quark_data_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         *ptr = AL4SAN_Starpu_data_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         *ptr = AL4SAN_Parsec_data_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    *ptr = AL4SAN_Openmp_data_getaddr( desc, m, n);
+#endif
 }
 
 /**
@@ -1500,7 +2247,30 @@ void AL4SAN_Data_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n)
 
 void AL4SAN_Matrix_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n)
 {
-    *ptr = AL4SAN_Runtime_matrix_getaddr( desc, m, n);
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    *ptr = AL4SAN_Quark_matrix_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         *ptr = AL4SAN_Starpu_matrix_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         *ptr = AL4SAN_Parsec_matrix_getaddr( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    *ptr = AL4SAN_Openmp_matrix_getaddr( desc, m, n);
+#endif
 }
 /**
  * @brief Get the pointer to the data or the runtime handler associated to the
@@ -1525,7 +2295,30 @@ void AL4SAN_Matrix_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m, int n)
 
 void AL4SAN_Vector_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m)
 {
-    *ptr = AL4SAN_Runtime_vector_getaddr( desc, m);
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    *ptr = AL4SAN_Quark_vector_getaddr( desc, m);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         *ptr = AL4SAN_Starpu_vector_getaddr( desc, m);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         *ptr = AL4SAN_Parsec_vector_getaddr( desc, m);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    *ptr = AL4SAN_Openmp_vector_getaddr( desc, m);
+#endif
 }
 
 /**
@@ -1549,9 +2342,31 @@ void AL4SAN_Vector_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m)
  * @retval The runtime handler address of the piece of data.
  */
 
-void AL4SAN_Scaler_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m)
+void AL4SAN_Scaler_Getaddr( const AL4SAN_desc_t *desc, void **ptr)
 {
-    *ptr = AL4SAN_Runtime_scaler_getaddr( desc);
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    *ptr = AL4SAN_Quark_scaler_getaddr( desc );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         *ptr = AL4SAN_Starpu_scaler_getaddr( desc );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         *ptr = AL4SAN_Parsec_scaler_getaddr( desc );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    *ptr = AL4SAN_Openmp_scaler_getaddr( desc );
+#endif
 }
 
 
@@ -1575,6 +2390,30 @@ void AL4SAN_Scaler_Getaddr( const AL4SAN_desc_t *desc, void **ptr, int m)
  *
  */
 void AL4SAN_User_Tag_Size(int user_tag_width, int user_tag_sep) {
-    AL4SAN_Runtime_comm_set_tag_sizes( user_tag_width, user_tag_sep );
+     AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_comm_set_tag_sizes( user_tag_width, user_tag_sep );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_comm_set_tag_sizes( user_tag_width, user_tag_sep );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_comm_set_tag_sizes( user_tag_width, user_tag_sep );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_comm_set_tag_sizes( user_tag_width, user_tag_sep );
+#endif
     return;
 }
+

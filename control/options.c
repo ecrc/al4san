@@ -52,9 +52,25 @@ int AL4SAN_Options_Init(AL4SAN_option_t *options, AL4SAN_sequence_t *sequence, A
     al4san = al4san_context_self();
     if (al4san == NULL) {
         al4san_fatal_error("AL4SAN_Options_Init", "AL4SAN not initialized");
-        return AL4SAN_ERR_NOT_INITIALIZED;
+        //return AL4SAN_ERR_NOT_INITIALIZED;
     }
-	AL4SAN_Runtime_options_init( options, al4san, sequence, request );
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_options_init( options, al4san, sequence, request );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_options_init( options, al4san, sequence, request );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_options_init( options, al4san, sequence, request );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+AL4SAN_Openmp_options_init( options, al4san, sequence, request );
+#endif
 
 	return AL4SAN_SUCCESS;
 }
@@ -84,9 +100,24 @@ int AL4SAN_Options_Finalize(AL4SAN_option_t *options)
     al4san = al4san_context_self();
     if (al4san == NULL) {
         al4san_fatal_error("AL4SAN_Options_Finalize", "AL4SAN not initialized");
-        return AL4SAN_ERR_NOT_INITIALIZED;
+        //return AL4SAN_ERR_NOT_INITIALIZED;
     }
-	AL4SAN_Runtime_options_finalize( options, al4san);
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_options_finalize( options, al4san);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_options_finalize( options, al4san);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_options_finalize( options, al4san);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+     AL4SAN_Openmp_options_finalize( options, al4san);
+#endif
 
 	return AL4SAN_SUCCESS;
 }
@@ -116,9 +147,34 @@ int AL4SAN_Options_Finalize(AL4SAN_option_t *options)
 
 int AL4SAN_Options_Workspace_Alloc( AL4SAN_option_t *options, size_t worker_size, size_t host_size )
 {
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_fatal_error("AL4SAN_Options_Workspace_Alloc", "AL4SAN not initialized");
+       // return AL4SAN_ERR_NOT_INITIALIZED;
+    }
+
     options->ws_wsize = worker_size;
     options->ws_hsize = host_size;
-    AL4SAN_Runtime_options_ws_alloc( options, worker_size, host_size );
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_options_ws_alloc( options, worker_size, host_size );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_options_ws_alloc( options, worker_size, host_size );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_options_ws_alloc( options, worker_size, host_size );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+     AL4SAN_Openmp_options_ws_alloc( options, worker_size, host_size );
+#endif
+
     return AL4SAN_SUCCESS;
 }
 
@@ -141,6 +197,29 @@ int AL4SAN_Options_Workspace_Alloc( AL4SAN_option_t *options, size_t worker_size
 
 int AL4SAN_Options_Workspace_Free(AL4SAN_option_t *options )
 {
-	AL4SAN_Runtime_options_ws_free(options);
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_fatal_error("AL4SAN_Options_Workspace_Free", "AL4SAN not initialized");
+       // return AL4SAN_ERR_NOT_INITIALIZED;
+    }
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_options_ws_free(options);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+         AL4SAN_Starpu_options_ws_free(options);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+         AL4SAN_Parsec_options_ws_free(options);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+     AL4SAN_Openmp_options_ws_free(options);
+#endif
+
     return AL4SAN_SUCCESS;
 }

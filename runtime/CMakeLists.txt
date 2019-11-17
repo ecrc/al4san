@@ -41,11 +41,14 @@
 # ----------------------------
 if( AL4SAN_SCHED_QUARK )
     add_subdirectory(quark)
-elseif( AL4SAN_SCHED_PARSEC )
+endif()
+if( AL4SAN_SCHED_PARSEC )
     add_subdirectory(parsec)
-elseif( AL4SAN_SCHED_STARPU )
+endif()
+if( AL4SAN_SCHED_STARPU )
     add_subdirectory(starpu)
-elseif( AL4SAN_SCHED_OPENMP)
+endif()
+if( AL4SAN_SCHED_OPENMP)
     add_subdirectory(openmp)
 endif()
 

@@ -42,8 +42,8 @@ cmake_minimum_required(VERSION 2.8)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include )
 
-configure_file("include/al4san_runtime.h.in"
-               "include/al4san_runtime.h"
+configure_file("include/al4san_starpu.h.in"
+               "include/al4san_starpu.h"
                @ONLY)
 
 # Generate headers for all possible precisions
@@ -52,10 +52,10 @@ configure_file("include/al4san_runtime.h.in"
 # Define the list of headers
 # --------------------------
 set(AL4SAN_RUNTIME_HDRS
-  ${CMAKE_CURRENT_BINARY_DIR}/include/al4san_runtime.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/runtime_codelet.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/runtime_workspace.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/runtime_task.h
+  ${CMAKE_CURRENT_BINARY_DIR}/include/al4san_starpu.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/starpu_codelet.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/starpu_workspace.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/starpu_task.h
   )
 
 # Force generation of headers
@@ -75,13 +75,13 @@ install(
 set(AL4SAN_RUNTIME_COMMON_GENERATED "")
 
 set(AL4SAN_RUNTIME_COMMON
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_async.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_context.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_control.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_options.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_workspace.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_descriptor.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/control/runtime_task.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/starpu_async.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/starpu_context.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/starpu_control.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/starpu_options.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/starpu_workspace.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/starpu_descriptor.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/control/starpu_task.c
   ${AL4SAN_RUNTIME_COMMON_GENERATED}
   )
 

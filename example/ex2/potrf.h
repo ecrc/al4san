@@ -35,7 +35,9 @@
 #include <stdarg.h>
 #include <pthread.h>
 #include <al4san.h>
-#include "runtime/al4san_runtime.h"
+#include "runtime/al4san_quark.h"
+#include "runtime/al4san_starpu.h"
+#include "runtime/al4san_parsec.h"
 #include "control/al4san_descriptor.h"
 #include <chameleon.h>
 #include <coreblas.h>
