@@ -20,12 +20,6 @@
 #include <al4san.h>
 #include <runtime/al4san_quark.h>
 #include <runtime/al4san_starpu.h>
-//#include <runtime/al4san_parsec.h>
-/**
- *
- * @ingroup CORE_CHAMELEON_Complex64_t
- *
- */
 
 AL4SAN_TASK_CPU(latro, latro_cpu_func)
 
@@ -49,7 +43,6 @@ void EIG_AL4SAN_CORE_dlatro(AL4SAN_option_t *options,
         ARG_END);
 }
 
-#if !defined(CHAMELEON_SIMULATION)
 void latro_cpu_func(AL4SAN_arg_list *al4san_arg)
 {
     int uplo;
@@ -63,4 +56,3 @@ void latro_cpu_func(AL4SAN_arg_list *al4san_arg)
     AL4SAN_Unpack_Arg(al4san_arg, &uplo, &trans, &M, &N, &A, &LDA, &B, &LDB);
     CORE_dlatro(uplo, trans, M, N, A, LDA, B, LDB);
 }
-#endif /* !defined(CHAMELEON_SIMULATION) */

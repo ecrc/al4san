@@ -2,7 +2,6 @@
 #include <al4san.h>
 #include <runtime/al4san_quark.h>
 #include <runtime/al4san_starpu.h>
-//#include <runtime/al4san_parsec.h>
 
 AL4SAN_TASK_CPU(tpqrt, tpqrt_cpu_func)
 
@@ -28,11 +27,6 @@ void EIG_AL4SAN_CORE_dtpqrt(AL4SAN_option_t *options,
                         const AL4SAN_desc_t *T, int Tm, int Tn, int ldt )
 {
 
-    /*AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_RW(A, Am, An);
-    AL4SAN_ACCESS_RW(B, Bm, Bn);
-    AL4SAN_ACCESS_W(T, Tm, Tn);
-    AL4SAN_END_ACCESS_DECLARATION;*/
 
     int shapeB = ( l == 0 ) ? 0 : (AL4SAN_REGION_U | AL4SAN_REGION_D);
 
@@ -60,7 +54,6 @@ void EIG_AL4SAN_CORE_dtpqrt(AL4SAN_option_t *options,
     (void)ib; (void)nb;
 }
 
-#if !defined(CHAMELEON_SIMULATION)
 void tpqrt_cpu_func(AL4SAN_arg_list *al4san_arg)
 {
     int M;
@@ -77,8 +70,6 @@ void tpqrt_cpu_func(AL4SAN_arg_list *al4san_arg)
 
     AL4SAN_Unpack_Arg(al4san_arg,  &M, &N, &L, &ib,
                           &A, &lda, &B, &ldb, &T, &ldt, &WORK );
-//    CORE_dlaset( Al4sanUpperLower, ib, N, 0., 0., T, ldt );
     CORE_dtpqrt( M, N, L, ib,
                  A, lda, B, ldb, T, ldt, WORK );
 }
-#endif /* !defined(CHAMELEON_SIMULATION) */

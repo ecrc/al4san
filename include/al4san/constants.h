@@ -243,6 +243,8 @@ typedef enum al4san_translation_e {
 #define AL4SAN_ERR_UNEXPECTED       -110
 #define AL4SAN_ERR_SEQUENCE_FLUSHED -111
 
+#define AL4SAN_Col_Major 132
+#define AL4SAN_Row_Major 142
 
 /**
  * Kernels options

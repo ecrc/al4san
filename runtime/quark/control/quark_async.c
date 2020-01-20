@@ -10,13 +10,12 @@
  *                     All rights reserved.
  ***
  *
- * author Jakub Kurzak
- * author Vijay Joshi
- * author Cedric Castagnede
- * date 2011-10-29
+ * @author Jakub Kurzak
+ * @author Vijay Joshi
+ * @author Cedric Castagnede
+ * @date 2011-10-29
  *
- */
-/**
+ *
  *
  * @brief AL4SAN Quark Task asynchronous routines
  *

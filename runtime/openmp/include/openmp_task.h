@@ -4,10 +4,7 @@
  *
  * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
- **/
-
-/**
- *
+ ***
  * @brief AL4SAN OpenMP task header
  *
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)

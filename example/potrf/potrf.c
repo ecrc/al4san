@@ -32,8 +32,10 @@
 #include <coreblas.h>
 #include <coreblas/lapacke.h>
 #include <coreblas/cblas.h>
-#include <chameleon/timer.h>
+#include <al4san/timer.h>
 #include "potrf.h"
+
+float get_time();
 /*
  * @briefThis example only factorizes using Cholesky using the C interface of
  * BLAS/LAPACK.
@@ -50,8 +52,18 @@
 #define A(m,n) A,  m,  n
 #define BLKLDD(A, k) A->get_blkldd( A, k )
 
+/* Cholesky factorization:
+ * A is replaced by its factorization L or L^T depending on uplo */
+
 int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
 {
+
+   /*
+     * Define AL4SAN handle for seqeunce to manage groupe of threads.
+     * Define AL4SAN handle for options to set glabel task options and set the sequence handle.
+     * Define AL4SAN handle for request status.
+   */
+
     AL4SAN_context_t *al4sanctxt;
     AL4SAN_sequence_t *sequence = NULL;
     AL4SAN_request_t* request = RUNTIME_REQUEST_INITIALIZER;
@@ -71,7 +83,7 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
         al4san_fatal_error("AL4SAN_cholesky", "AL4SAN not initialized");
         return AL4SAN_ERR_NOT_INITIALIZED;
     }
-    //AL4SAN_Runtime_options_ws_alloc( &options, 0, ws_host );
+
 
    /*
      * Create sequence data sturcture 
@@ -133,10 +145,18 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
 
         }
 
-  //AL4SAN_Runtime_options_ws_free(&options);
+   /*
+    * Finilized options data
+   */
    AL4SAN_Options_Finalize(&options);
 
    AL4SAN_Desc_Flush( A, sequence );
+
+  /*
+    * Use sequence for sync
+    * Destroy sequence
+   */
+
    AL4SAN_Sequence_Wait(sequence);
    AL4SAN_Sequence_Destroy( sequence );
 
@@ -151,10 +171,8 @@ int main(int argc, char* argv[]){
     int NCPU; // number of cores to use
     int NGPU; // number of gpus (cuda devices) to use
     int UPLO = ChamUpper; // where is stored L
-
-    /* descriptors necessary for calling CHAMELEON tile interface  */
+    /* descriptors necessary for calling AL4SAN data descriptor interface  */
     AL4SAN_desc_t *descA = NULL,  *descAC = NULL, *descB = NULL, *descX = NULL;
-    //CHAM_desc_t *descAC = NULL, *descB = NULL, *descX = NULL;
     /* declarations to time the program and evaluate performances */
     double fmuls, fadds, flops, gflops, cpu_time;
 
@@ -184,28 +202,22 @@ int main(int argc, char* argv[]){
         get_thread_count( &(iparam[IPARAM_THRDNBR]) );
     }
     NCPU = iparam[IPARAM_THRDNBR];
-    NGPU = 1;
+    NGPU = iparam[IPARAM_GPUS];
 
     /* print informations to user */
     print_header( argv[0], iparam);
 
     /* Initialize AL4SAN with main parameters */
    AL4SAN_context_t *al4san = AL4SAN_Init("Starpu", NCPU, NGPU);
-      printf("\b schuler:%d\n", al4san->scheduler);
-    /* Initialize CHAMELEON with main parameters */
 
-    int rc = CHAMELEON_Init( NCPU, NGPU );
-    printf("\n CHAMELEON_Init:%d\n", rc);   
     /*
      * Allocate memory for our data using a C macro (see step2.h)
      *     - matrix A                   : size N x N
-     *     - set of RHS vectors B       : size N x NRHS
-     *     - set of solutions vectors X : size N x NRHS
      */
 
     /*
-     * Initialize the structure required for CHAMELEON tile interface
-     * CHAM_desc_t is a structure wrapping your data allowing CHAMELEON to get
+     * Initialize the structure required for AL4SAN data interface
+     * AL4SAN_desc_t is a structure wrapping your data allowing AL4SAN to get
      * pointers to tiles. A tile is a data subset of your matrix on which we
      * apply some optimized CPU/GPU kernels.
      * Notice that this routine suppose your matrix is a contiguous vector of
@@ -216,127 +228,41 @@ int main(int argc, char* argv[]){
      *     - if you want to give your allocated matrix give its address,
      *     if not give a NULL pointer, the routine will allocate the memory
      *     and you access the matrix data with descA->mat
-     *     - give the data type (ChamByte, ChamInteger, ChamRealFloat,
-     *     ChamRealDouble, ChamComplexFloat, ChamComplexDouble)
+     *     - give the data type (Al4sanByte, Al4sanInteger, Al4sanRealFloat,
+     *     Al4sanRealDouble, Al4sanComplexFloat, Al4sanComplexDouble)
      *     - number of rows in a block (tile)
      *     - number of columns in a block (tile)
      *     - number of elements in a block (tile)
      * The other parameters are specific, use:
-     * CHAMELEON_Desc_Create( ... , 0, 0, number of rows, number of columns, 1, 1);
+     * AL4SAN_Desc_Create( ... , 0, 0, number of rows, number of columns, 1, 1);
      * Have a look to the documentation for details about these parameters.
      */
-    AL4SAN_Desc_Create(&descA,  NULL, Al4sanRealDouble,
-                      NB, NB,  NB*NB, N, N, 0, 0, N, N, 1, 1);
-    AL4SAN_Desc_Create(&descB,  NULL, Al4sanRealDouble,
-                      NB, NB,  NB*NB, N, NRHS, 0, 0, N, NRHS, 1, 1);
-    AL4SAN_Desc_Create(&descX,  NULL, Al4sanRealDouble,
-                      NB, NB,  NB*NB, N, NRHS, 0, 0, N, NRHS, 1, 1);
-    AL4SAN_Desc_Create(&descAC, NULL, Al4sanRealDouble,
-                      NB, NB,  NB*NB, N, N, 0, 0, N, N, 1, 1);
+    AL4SAN_Matrix_Create(&descA,  NULL, Al4sanRealDouble,
+                      AL4SAN_Col_Major, NB, NB, NB, N, N, N);
 
-   /* CHAMELEON_Desc_Create(&descA,  NULL, ChamRealDouble,
-                      NB, NB,  NB*NB, N, N, 0, 0, N, N, 1, 1);
-    CHAMELEON_Desc_Create(&descB,  NULL, ChamRealDouble,
-                      NB, NB,  NB*NB, N, NRHS, 0, 0, N, NRHS, 1, 1);
-    CHAMELEON_Desc_Create(&descX,  NULL, ChamRealDouble,
-                      NB, NB,  NB*NB, N, NRHS, 0, 0, N, NRHS, 1, 1);
-    CHAMELEON_Desc_Create(&descAC, NULL, ChamRealDouble,
-                      NB, NB,  NB*NB, N, N, 0, 0, N, N, 1, 1);
-*/
-    /* generate A matrix with random values such that it is spd */
+    /* generate A matrix with random values such that it is spd using chameleon lib*/
+    int rc = CHAMELEON_Init( NCPU, NGPU );
     CHAMELEON_dplgsy_Tile( (double)N, ChamUpperLower, (CHAM_desc_t*) descA, 51 );
-    /* generate RHS */
-    CHAMELEON_dplrnt_Tile( (CHAM_desc_t*) descB, 5673 );
 
-    /* copy A before facto. in order to check the result */
-    CHAMELEON_dlacpy_Tile(ChamUpperLower, (CHAM_desc_t*) descA, (CHAM_desc_t*) descAC);
-
-    /* copy B in X before solving
-     * same sense as memcpy(X, B, N*NRHS*sizeof(double)) but for descriptors */
-    CHAMELEON_dlacpy_Tile(ChamUpperLower, (CHAM_desc_t*) descB, (CHAM_desc_t*) descX);
-
-    /************************************************************/
-    /* solve the system AX = B using the Cholesky factorization */
-    /************************************************************/
-
-    cpu_time = -CHAMELEON_timer();
-
+    cpu_time = -AL4SAN_timer();
     /* Cholesky factorization:
      * A is replaced by its factorization L or L^T depending on uplo */
-    //CHAMELEON_dpotrf_Tile( UPLO, (CHAM_desc_t*) descA );
-    printf("\nBefore AL4SAN_cholesky\n");
     AL4SAN_cholesky(UPLO, descA);
 
-    cpu_time += CHAMELEON_timer();
-    /* Solve:
-     * B is stored in X on entry, X contains the result on exit.
-     * Forward and back substitutions
-     */
-
-    CHAMELEON_dpotrs_Tile( UPLO, (CHAM_desc_t*) descA, (CHAM_desc_t*) descX );
-
+    cpu_time += AL4SAN_timer();
+    /* print informations to user */
 
     /* print informations to user */
     gflops = flops / cpu_time;
     printf( "%9.3f %9.2f\n", cpu_time, gflops);
     fflush( stdout );
 
-    /************************************************************/
-    /* check if solve is correct i.e. AX-B = 0                  */
-    /************************************************************/
 
-    /* compute norms to check the result */
-    anorm = CHAMELEON_dlange_Tile( ChamInfNorm, (CHAM_desc_t*) descAC);
-    bnorm = CHAMELEON_dlange_Tile( ChamInfNorm, (CHAM_desc_t*) descB);
-    xnorm = CHAMELEON_dlange_Tile( ChamInfNorm, (CHAM_desc_t*) descX);
-
-    /* compute A*X-B, store the result in B */
-    CHAMELEON_dgemm_Tile( ChamNoTrans, ChamNoTrans,
-                      1.0, (CHAM_desc_t*) descAC, (CHAM_desc_t*) descX, -1.0, (CHAM_desc_t*) descB );
-    res = CHAMELEON_dlange_Tile( ChamInfNorm, (CHAM_desc_t*) descB );
-
-    /* check residual and print a message */
-    eps = LAPACKE_dlamch_work( 'e' );
-
-    /*
-     * if hres = 0 then the test succeed
-     * else the test failed
-     */
-    hres = ( res / N / eps / (anorm * xnorm + bnorm ) > 100.0 );
-    printf( "   ||Ax-b||       ||A||       ||x||       ||b|| ||Ax-b||/N/eps/(||A||||x||+||b||)  RETURN\n");
-    if (hres) {
-        printf( "%8.5e %8.5e %8.5e %8.5e                       %8.5e FAILURE \n",
-            res, anorm, xnorm, bnorm,
-            res / N / eps / (anorm * xnorm + bnorm ));
-    }
-    else {
-        printf( "%8.5e %8.5e %8.5e %8.5e                       %8.5e SUCCESS \n",
-            res, anorm, xnorm, bnorm,
-            res / N / eps / (anorm * xnorm + bnorm ));
-    }
-
-    /* deallocate A, B, X, Acpy and associated descriptors descA, ... */
+    /* deallocate A and associated descriptors descA, ... */
    AL4SAN_Desc_Destroy( &descA );
-   AL4SAN_Desc_Destroy( &descB );
-   AL4SAN_Desc_Destroy( &descX );
-   AL4SAN_Desc_Destroy( &descAC );
 
-   /*CHAMELEON_Desc_Destroy( &descA );
-   CHAMELEON_Desc_Destroy( &descB );
-   CHAMELEON_Desc_Destroy( &descX );
-   CHAMELEON_Desc_Destroy( &descAC );
-*/
-    /*
-     * Required semicolon to have at least one inst
-     * before the end of OpenMP block.
-     */
-    ;
-    /* Finalize CHAMELEON */
-//    CHAMELEON_Finalize();
- 
    /* Finalize AL4SAN */
    AL4SAN_Finalize();
 
 }
-
 

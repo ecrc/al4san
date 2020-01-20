@@ -1,18 +1,28 @@
 /**
- * @file dsygv.c
  *
- *  PLASMA computational routines
- *  Release Date: November, 15th 2009
- *  PLASMA is a software package provided by Univ. of Tennessee,
- *  Univ. of California Berkeley and Univ. of Colorado Denver
+ * @file Second_Stage.c
  *
- * @version 2.8.0
- * @author Azzam Haidar
- * @author Hatem Ltaief
+ * @copyright 2009-2014 The University of Tennessee and The University of
+ *                      Tennessee Research Foundation. All rights reserved.
+ * @copyright 2012-2018 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
+ *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
+ ***
+ *
+ * @comment This file has been automatically generated
+ *          from Plasma 2.5.0
+ * @author Jakub Kurzak
+ * @author Mathieu Faverge
+ * @author Emmanuel Agullo
+ * @author Cedric Castagnede
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  * @date 2010-11-15
- * @generated d Fri Apr  1 11:02:55 2016
+ * @precisions normal z -> s d c
  *
- **/
+ */
 #include<mkl_lapacke.h>
 #include <sys/time.h>
 #include <sys/times.h>

@@ -14,7 +14,7 @@
  *
  * @version 1.0.1
  * @comment This file has been automatically generated
- *          from Plasma 2.5.0 for AL4SAN 1.0.0
+ *          from Plasma 2.5.0 for AL4SAN 1.0.1
  * @author Hatem Ltaief
  * @author Jakub Kurzak
  * @author Mathieu Faverge
@@ -22,18 +22,16 @@
  * @author Cedric Castagnede
  * @author Rabab Alomairy
  * @date 2019-02-06
- * @precisions normal z -> c d s
  *
  */
 
 #include "../potrf.h"
-/**
- *
- * @ingroup CORE_double
- *
- */
-
-//AL4SAN_QUARK_TASK_HEADER(trsm)
+/*
+  * Preparing work's function:
+  * @param[in] First argument is task name.
+  * @param[in] Second argument cpu  user function name
+  * @param[in] Second argument gpu user function name
+*/
 AL4SAN_TASK_CPU_GPU(trsm, trsm_cpu_func, trsm_cuda_func)
 
 
@@ -44,11 +42,13 @@ void INSERT_Task_dtrsm( const AL4SAN_option_t *options,
                        const AL4SAN_desc_t *B, int Bm, int Bn, int ldb )
 {
 
-  /*  AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_R(A, Am, An);
-    AL4SAN_ACCESS_RW(B, Bm, Bn);
-    AL4SAN_END_ACCESS_DECLARATION
-    */
+          /*
+            * Insert Task function:
+            *  @param[in] First argument AL4SAN_TASK macro with task name
+            *  @param[in] options argument which holds sequence data sturcture
+            *  @param[in] Parameter list  of va_list type to represent data and the dependencies
+          */
+
     AL4SAN_Insert_Task(AL4SAN_TASK(trsm), (AL4SAN_option_t * )options,
         AL4SAN_VALUE,                      &side,                                        sizeof(int),         
         AL4SAN_VALUE,                      &uplo,                                        sizeof(int),
@@ -63,13 +63,11 @@ void INSERT_Task_dtrsm( const AL4SAN_option_t *options,
         AL4SAN_VALUE,                      &ldb,                                         sizeof(int), 
         AL4SAN_CUDA_FLG,                   ON,                                           sizeof(int),
         AL4SAN_PRIORITY,                   options->priority,                            sizeof(int),
-//        AL4SAN_CALLBACK,                   AL4SAN_CALLBACK(ztrsm),                       sizeof(void),
         AL4SAN_LABEL,                      "ztrsm",                                      sizeof(char),
         AL4SAN_COLOR,                      "yellow",                                     sizeof(char),
         ARG_END);
 }
 
-#if !defined(CHAMELEON_SIMULATION)
 void trsm_cpu_func(AL4SAN_arg_list *al4san_arg)
 {
     int side;
@@ -83,6 +81,12 @@ void trsm_cpu_func(AL4SAN_arg_list *al4san_arg)
     int lda;
     double *B;
     int ldb;
+
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
 
     AL4SAN_Unpack_Arg(al4san_arg, &side, &uplo, &transA, &diag, &m, &n, &alpha, &A, &lda, &B, &ldb);
 
@@ -106,7 +110,11 @@ void trsm_cuda_func(AL4SAN_arg_list *al4san_arg)
     int lda;
     double *B;
     int ldb;
-
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
    AL4SAN_Unpack_Arg(al4san_arg, &side, &uplo, &transA, &diag, &m, &n, &alpha, &A, &lda, &B, &ldb);
 
     AL4SAN_getStream(stream);
@@ -118,11 +126,10 @@ void trsm_cuda_func(AL4SAN_arg_list *al4san_arg)
         B, ldb,
         stream);
 
-#ifndef AL4SAN_CUDA_ASYNC1
+#ifndef AL4SAN_CUDA_ASYNC
     cudaStreamSynchronize( stream );
 #endif
 
     return;
 }
-#endif /* CHAMELEON_USE_CUDA */
-#endif /* !defined(CHAMELEON_SIMULATION) */
+#endif /* AL4SAN_USE_CUDA */

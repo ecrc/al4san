@@ -1,23 +1,24 @@
 /**
  *
- * @file first_stage.c
+ * @file First_Stage.c
  *
  * @copyright 2009-2014 The University of Tennessee and The University of
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2018 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
- *
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  ***
  *
- * @brief Chameleon zpotrf wrappers
- *
- * @version 1.0.0
  * @comment This file has been automatically generated
- *          from Plasma 2.5.0 for CHAMELEON 1.0.0
+ *          from Plasma 2.5.0
  * @author Jakub Kurzak
  * @author Mathieu Faverge
  * @author Emmanuel Agullo
  * @author Cedric Castagnede
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  * @date 2010-11-15
  * @precisions normal z -> s d c
  *

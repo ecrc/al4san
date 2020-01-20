@@ -1,23 +1,26 @@
 /**
  *
- * @file pdsymm.c
+ * @file eig_dsymm.c
  *
  * @copyright 2009-2014 The University of Tennessee and The University of
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2019 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
- *
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  ***
  *
- * @brief Al4saneleon dsymm parallel algorithm
+ * @brief Al4sane dsymm parallel algorithm
  *
- * @version 0.9.2
  * @comment This file has been automatically generated
- *          from Plasma 2.5.0 for CHAMELEON 0.9.2
+ *          from Plasma 2.5.0 
  * @author Mathieu Faverge
  * @author Emmanuel Agullo
  * @author Cedric Castagnede
  * @date 2014-11-16
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06 
  * @generated d Tue Apr  2 10:58:05 2019
  *
  */
@@ -35,6 +38,11 @@ void eig_pdsymm(int side, int uplo,
                           double beta, AL4SAN_desc_t *C,
                           AL4SAN_sequence_t *sequence, AL4SAN_request_t *request)
 {
+   /*
+     * Define AL4SAN handle for seqeunce to manage groupe of threads.
+     * Define AL4SAN handle for options to set glabel task options and set the sequence handle.
+     * Define AL4SAN handle for request status.
+   */
     AL4SAN_context_t *al4sanctxt;
     AL4SAN_option_t options;
 

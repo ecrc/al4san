@@ -1,6 +1,6 @@
 /**
  *
- * @file pdtrsm.c
+ * @file eig_dtrsm.c
  *
  * @copyright 2009-2015 The University of Tennessee and The University of
  *                      Tennessee Research Foundation. All rights reserved.
@@ -11,15 +11,17 @@
  *
  * @brief Al4san dtrsm parallel algorithm
  *
- * @version 0.9.2
  * @comment This file has been automatically generated
- *          from Plasma 2.5.0 for CHAMELEON 0.9.2
+ *          from Plasma 2.5.0
  * @author Jakub Kurzak
  * @author Hatem Ltaief
  * @author Mathieu Faverge
  * @author Emmanuel Agullo
  * @author Cedric Castagnede
  * @date 2014-11-16
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  * @generated d Tue Apr  2 10:58:06 2019
  *
  */
@@ -36,6 +38,11 @@ void eig_pdtrsm(int side, int uplo, int trans, int diag,
                          double alpha, AL4SAN_desc_t *A, AL4SAN_desc_t *B,
                          AL4SAN_sequence_t *sequence, AL4SAN_request_t *request)
 {
+   /*
+     * Define AL4SAN handle for seqeunce to manage groupe of threads.
+     * Define AL4SAN handle for options to set glabel task options and set the sequence handle.
+     * Define AL4SAN handle for request status.
+   */
     AL4SAN_context_t *al4sanctxt;
     AL4SAN_option_t options;
 

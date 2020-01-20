@@ -37,14 +37,15 @@
 #include <al4san.h>
 #include "runtime/al4san_quark.h"
 #include "runtime/al4san_starpu.h"
-//#include "runtime/al4san_parsec.h"
+#include "runtime/al4san_parsec.h"
 #include "control/al4san_descriptor.h"
 #include <chameleon.h>
 #include <coreblas.h>
 #include <coreblas/lapacke.h>
 #include <coreblas/cblas.h>
 #include <chameleon/timer.h>
-
+#include <sys/time.h>
+#include <sys/times.h>
 
 #if defined( _WIN32 ) || defined( _WIN64 )
 #include <windows.h>
@@ -71,6 +72,7 @@ static void get_thread_count(int *thrdnbr) {
 /* Integer parameters for step2 */
 enum iparam_step2 {
     IPARAM_THRDNBR,        /* Number of cores                            */
+    IPARAM_GPUS,        /* Number of gpus                            */
     IPARAM_N,              /* Number of columns of the matrix            */
     IPARAM_NRHS,           /* Number of RHS                              */
     IPARAM_NB,           /* Number of NB                              */
@@ -85,6 +87,7 @@ enum iparam_step2 {
  */
 static void init_iparam(int iparam[IPARAM_SIZEOF]){
     iparam[IPARAM_THRDNBR       ] = -1;
+    iparam[IPARAM_GPUS          ] = -1;
     iparam[IPARAM_N             ] = 500;
     iparam[IPARAM_NRHS          ] = 1;
     iparam[IPARAM_NB            ] = 10;
@@ -132,6 +135,8 @@ static void read_args(int argc, char *argv[], int *iparam){
             sscanf( strchr( argv[i], '=' ) + 1, "%d", &(iparam[IPARAM_NB]) );
         } else if (startswith( argv[i], "--threads=" )) {
             sscanf( strchr( argv[i], '=' ) + 1, "%d", &(iparam[IPARAM_THRDNBR]) );
+        } else if (startswith( argv[i], "--gpus=" )) {
+            sscanf( strchr( argv[i], '=' ) + 1, "%d", &(iparam[IPARAM_GPUS]) );
         } else {
             fprintf( stderr, "Unknown option: %s\n", argv[i] );
         }
@@ -157,12 +162,12 @@ static void print_header(char *prog_name, int * iparam) {
             "# IB:         %d\n"
             "# eps:        %e\n"
             "#\n",
-            CHAMELEON_VERSION_MAJOR,
-            CHAMELEON_VERSION_MINOR,
-            CHAMELEON_VERSION_MICRO,
+            AL4SAN_VERSION_MAJOR,
+            AL4SAN_VERSION_MINOR,
+            AL4SAN_VERSION_MICRO,
             prog_name,
             iparam[IPARAM_THRDNBR],
-            0,
+            iparam[IPARAM_GPUS],
             iparam[IPARAM_N],
             iparam[IPARAM_NB],
             32,
@@ -173,6 +178,8 @@ static void print_header(char *prog_name, int * iparam) {
     fflush( stdout );
     return;
 }
+
+
 
 #endif /* _step2_h_ */
 

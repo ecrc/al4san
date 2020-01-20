@@ -9,12 +9,8 @@
  * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
  *
- */
-/**
-   *
-   * @brief AL4SAN task options
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+**
+   * @brief AL4SAN task routines exposed to the users
    *
    * @version 1.0.1
    * @author Rabab Alomairy
@@ -103,7 +99,6 @@ int AL4SAN_AFFINITY;
 int AL4SAN_DONT_TRACK;
 int AL4SAN_PASSED_BY_REF;
 
-//typedef void (al4san_codelet) (Quark *);
 typedef struct al4san_arg_list_s
 {
     void* Quark_arg_list;

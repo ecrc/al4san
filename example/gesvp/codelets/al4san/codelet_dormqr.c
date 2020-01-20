@@ -2,7 +2,6 @@
 #include <al4san.h>
 #include <runtime/al4san_quark.h>
 #include <runtime/al4san_starpu.h>
-//#include <runtime/al4san_parsec.h>
 
 AL4SAN_TASK_CPU_GPU(ormqr, ormqr_cpu_func, ormqr_cuda_func)
 
@@ -14,11 +13,6 @@ void EIG_AL4SAN_CORE_dormqr(AL4SAN_option_t *options,
                         const AL4SAN_desc_t *C, int Cm, int Cn, int ldc )
 {
 
-    /*AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_R(A, Am, An);
-    AL4SAN_ACCESS_R(T, Tm, Tn);
-    AL4SAN_ACCESS_RW(C, Cm, Cn);
-    AL4SAN_END_ACCESS_DECLARATION;*/
 
 
    AL4SAN_Insert_Task(AL4SAN_TASK(ormqr), (AL4SAN_option_t*)options,
@@ -45,7 +39,6 @@ void EIG_AL4SAN_CORE_dormqr(AL4SAN_option_t *options,
 }
 
 
-#if !defined(CHAMELEON_SIMULATION)
 void ormqr_cpu_func(AL4SAN_arg_list *al4san_arg)
 {
     int side;
@@ -94,5 +87,4 @@ void ormqr_cuda_func(AL4SAN_arg_list *al4san_arg)
     cudaStreamSynchronize( stream );
 #endif
 }
-#endif /* defined(CHAMELEON_USE_CUDA) */
-#endif /* !defined(CHAMELEON_SIMULATION) */
+#endif /* defined(AL4SAN_USE_CUDA) */

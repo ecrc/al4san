@@ -1,15 +1,11 @@
 /**
  *
- * @file task.c
+ * @file option.c
  *
  * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
- **/
-
-/**
- *
- * @brief AL4SAN Global Options routines
- *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ * @defgroup Option
+ * @brief AL4SAN option routines are exposed to the users
  *
  * @version 1.0.1
  * @author Rabab Alomairy
@@ -25,7 +21,7 @@
 /**
  *****************************************************************************
  *
- * @ingroup Descriptor
+ * @ingroup Option
  *
  *  AL4SAN_Options_Init - initialization of global options.
  *
@@ -71,14 +67,13 @@ int AL4SAN_Options_Init(AL4SAN_option_t *options, AL4SAN_sequence_t *sequence, A
     if(al4san->scheduler==3)
 AL4SAN_Openmp_options_init( options, al4san, sequence, request );
 #endif
-
 	return AL4SAN_SUCCESS;
 }
 
 /**
  *****************************************************************************
  *
- * @ingroup Descriptor
+ * @ingroup Option
  *
  *  AL4SAN_Options_Finalize - finalize the global options.
  *
@@ -125,7 +120,7 @@ int AL4SAN_Options_Finalize(AL4SAN_option_t *options)
 /**
  *****************************************************************************
  *
- * @ingroup Descriptor
+ * @ingroup Option
  *
  *  AL4SAN_Options_Workspace_Alloc - Workspace Allocation.
  *
@@ -181,7 +176,7 @@ int AL4SAN_Options_Workspace_Alloc( AL4SAN_option_t *options, size_t worker_size
 /**
  *****************************************************************************
  *
- * @ingroup Descriptor
+ * @ingroup Option
  *
  *  AL4SAN_Options_Workspace_Free - Workspace Dellocation.
  *

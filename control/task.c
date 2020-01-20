@@ -4,12 +4,9 @@
  *
  * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
- **/
-
-/**
- *
- * @brief AL4SAN Task routines
- *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ **
+ * @defgroup Task
+ * @brief AL4SAN task routines exposed to the users 
  *
  * @version 1.0.1
  * @author Rabab Alomairy
@@ -24,8 +21,9 @@
 
 
 
-/*
-    * Insert Task function: Define Task and it is dependencies
+/**
+   * @ingroup Task
+    * Insert Task function - Define Task and it is dependencies
     *  @param[in] First argument AL4SAN_TASK macro with task name
     *  @param[in] options argument which holds sequence data sturcture
     *  @param[in] Parameter list  of va_list type to represent data and the dependencies 
@@ -68,8 +66,9 @@ int AL4SAN_Insert_Task(AL4SAN_codelet codelet_quark, AL4SAN_codelet codelet_star
     return AL4SAN_SUCCESS;
 }
 
-/*
-    * AL4SAN_Unpack_Arg:
+/**
+    * @ingroup Task
+    * AL4SAN_Unpack_Arg - to unpack tasks arguments
     *  @param[in] First argument AL4SAN_arg that hold the packed data
     *  @param[in] Parameter list  of va_list type which holds list of arguments
  */

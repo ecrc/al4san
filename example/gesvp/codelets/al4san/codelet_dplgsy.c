@@ -22,7 +22,6 @@
 #include <al4san.h>
 #include <runtime/al4san_quark.h>
 #include <runtime/al4san_starpu.h>
-//#include <runtime/al4san_parsec.h>
 
 /*   AL4SAN_TASK_dplgsy - Generate a tile for random symmetric (positive definite if 'bump' is large enough) matrix. */
 
@@ -33,10 +32,6 @@ void EIG_AL4SAN_CORE_dplgsy(AL4SAN_option_t *options,
                         int bigM, int m0, int n0, unsigned long long int seed )
 {
 
-  /*  AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_W(A, Am, An);
-    AL4SAN_END_ACCESS_DECLARATION;
-*/
     AL4SAN_Insert_Task(AL4SAN_TASK(plgsy), (AL4SAN_option_t*)options,
         AL4SAN_VALUE,                       &bump,                                        sizeof(double),
         AL4SAN_VALUE,                       &m,                                           sizeof(int),
@@ -55,7 +50,6 @@ void EIG_AL4SAN_CORE_dplgsy(AL4SAN_option_t *options,
 
 }
 
-#if !defined(CHAMELEON_SIMULATION)
 void plgsy_cpu_func(AL4SAN_arg_list *al4san_arg)
 {
 
@@ -75,4 +69,3 @@ void plgsy_cpu_func(AL4SAN_arg_list *al4san_arg)
     CORE_dplgsy( bump, m, n, A, lda, bigM, m0, n0, seed );
 
 }
-#endif /* !defined(CHAMELEON_SIMULATION) */

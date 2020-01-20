@@ -19,8 +19,7 @@
  * @author Cedric Castagnede
  * @date 2019-02-06
  *
- */
-/**
+ ***
  *
  * @brief AL4SAN StarPU descriptor routines
  *  

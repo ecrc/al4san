@@ -36,7 +36,6 @@ set(AL4SAN_HDRS
     ${CMAKE_CURRENT_SOURCE_DIR}/al4san_auxiliary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/al4san_common.h
     ${CMAKE_CURRENT_SOURCE_DIR}/al4san_context.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/al4san_f77.h
     ${CMAKE_CURRENT_SOURCE_DIR}/al4san_descriptor.h
     )
 

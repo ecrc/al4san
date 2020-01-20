@@ -11,24 +11,19 @@
  *
  ***
  *
- * author Mathieu Faverge
- * author Cedric Augonnet
- * author Cedric Castagnede
- * date 2011-06-01
+ * @author Mathieu Faverge
+ * @author Cedric Augonnet
+ * @author Cedric Castagnede
+ * @date 2011-06-01
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
+ * @brief AL4SAN runtimes API
  *
- */
-
-/**
-   *
-   * @brief AL4SAN runtimes API
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
-   * @version 1.0.1
-   * @author Rabab Alomairy
-   * @date 2019-02-06
-   *
-  **/
+ * AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
+ *
+ **/
 #ifndef _AL4SAN_AL4SAN_Runtime_H_
 #define _AL4SAN_AL4SAN_Runtime_H_
 
@@ -47,22 +42,40 @@ BEGIN_C_DECLS
  */
 
 /**
- * @brief Create the runtime specific options in the context before starting it
+ * @brief QUARK Create the runtime specific options in the context before starting it
  *
  * @param[in,out] ctxt
  *            The Al4san context to initialize for the runtime.
  */
 void
 AL4SAN_Quark_context_create( AL4SAN_context_t *ctxt );
+/**
+ * @brief StarPU Create the runtime specific options in the context before starting it
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context to initialize for the runtime.
+ */
 void
 AL4SAN_Starpu_context_create( AL4SAN_context_t *ctxt );
+/**
+ * @brief PaRSEC Create the runtime specific options in the context before starting it
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context to initialize for the runtime.
+ */
 void
 AL4SAN_Parsec_context_create( AL4SAN_context_t *ctxt );
+/**
+ * @brief OpenMP Create the runtime specific options in the context before starting it
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context to initialize for the runtime.
+ */
 void
 AL4SAN_Openmp_context_create( AL4SAN_context_t *ctxt );
 
 /**
- * @brief Destroy the specific options in the context after this last one has
+ * @brief QUARK Destroy the specific options in the context after this last one has
  * been stop.
  *
  * @param[in,out] ctxt
@@ -71,15 +84,39 @@ AL4SAN_Openmp_context_create( AL4SAN_context_t *ctxt );
  */
 void
 AL4SAN_Quark_context_destroy( AL4SAN_context_t *ctxt );
+/**
+ * @brief StarPU Destroy the specific options in the context after this last one has
+ * been stop.
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context in which the runtime specific options must
+ *            be destroyed
+ */
 void
 AL4SAN_Starpu_context_destroy( AL4SAN_context_t *ctxt );
+/**
+ * @brief PaRSEC Destroy the specific options in the context after this last one has
+ * been stop.
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context in which the runtime specific options must
+ *            be destroyed
+ */
 void
 AL4SAN_Parsec_context_destroy( AL4SAN_context_t *ctxt );
+/**
+ * @brief OpenMP Destroy the specific options in the context after this last one has
+ * been stop.
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context in which the runtime specific options must
+ *            be destroyed
+ */
 void
 AL4SAN_Openmp_context_destroy( AL4SAN_context_t *ctxt );
 
 /**
- * @brief Enable a global option of the runtime.
+ * @brief QUARK Enable a global option of the runtime.
  * @warning Should be called only by AL4SAN_Enable()
  *
  * @param[in] option
@@ -87,15 +124,36 @@ AL4SAN_Openmp_context_destroy( AL4SAN_context_t *ctxt );
  */
 void
 AL4SAN_Quark_enable( AL4SAN_enum option );
+/**
+ * @brief StarPU Enable a global option of the runtime.
+ * @warning Should be called only by AL4SAN_Enable()
+ *
+ * @param[in] option
+ *            @arg AL4SAN_PROFILING_MODE: start the profiling mode of the runtime.
+ */
 void
 AL4SAN_Starpu_enable( AL4SAN_enum option );
+/**
+ * @brief PaRSEC Enable a global option of the runtime.
+ * @warning Should be called only by AL4SAN_Enable()
+ *
+ * @param[in] option
+ *            @arg AL4SAN_PROFILING_MODE: start the profiling mode of the runtime.
+ */
 void
 AL4SAN_Parsec_enable( AL4SAN_enum option );
+/**
+ * @brief OpenMP Enable a global option of the runtime.
+ * @warning Should be called only by AL4SAN_Enable()
+ *
+ * @param[in] option
+ *            @arg AL4SAN_PROFILING_MODE: start the profiling mode of the runtime.
+ */
 void
 AL4SAN_Openmp_enable( AL4SAN_enum option );
 
 /**
- * @brief Disable a global option of the runtime.
+ * @brief QUARK Disable a global option of the runtime.
  * @warning Should be called only by AL4SAN_Disable()
  *
  * @param[in] option
@@ -103,10 +161,31 @@ AL4SAN_Openmp_enable( AL4SAN_enum option );
  */
 void
 AL4SAN_Quark_disable( AL4SAN_enum option );
+/**
+ * @brief StarPU Disable a global option of the runtime.
+ * @warning Should be called only by AL4SAN_Disable()
+ *
+ * @param[in] option
+ *            @arg AL4SAN_PROFILING_MODE: stop the profiling mode of the runtime.
+ */
 void
 AL4SAN_Starpu_disable( AL4SAN_enum option );
+/**
+ * @brief PaRSEC Disable a global option of the runtime.
+ * @warning Should be called only by AL4SAN_Disable()
+ *
+ * @param[in] option
+ *            @arg AL4SAN_PROFILING_MODE: stop the profiling mode of the runtime.
+ */
 void
 AL4SAN_Parsec_disable( AL4SAN_enum option );
+/**
+ * @brief OpenMP Disable a global option of the runtime.
+ * @warning Should be called only by AL4SAN_Disable()
+ *
+ * @param[in] option
+ *            @arg AL4SAN_PROFILING_MODE: stop the profiling mode of the runtime.
+ */
 void
 AL4SAN_Openmp_disable( AL4SAN_enum option );
 /**
@@ -118,7 +197,7 @@ AL4SAN_Openmp_disable( AL4SAN_enum option );
  */
 
 /**
- * @brief Initialize the scheduler with the given parameters
+ * @brief QAURK Initialize the scheduler with the given parameters
  *
  * @param[in,out] ctxt
  *            The Al4san context in which to initialize the runtime support.
@@ -149,16 +228,97 @@ AL4SAN_Quark_init( AL4SAN_context_t *ctxt,
               int ncpus,
               int ncudas,
               int nthreads_per_worker );
+/**
+ * @brief StarPU Initialize the scheduler with the given parameters
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context in which to initialize the runtime support.
+ *
+ * @param[in] ncpus
+ *            Defines the total number of cores given to the runtime per
+ *            node. Including cuda and communication workers for runtimes that
+ *            dedicates cores to this. ncpus > 0, or -1 to target the whole machine.
+ *
+ * @param[in] ncudas
+ *            Defines the number of CUDA devices used by node. If the runtime
+ *            uses one core dedicated to each CUDA device, they will be taken
+ *            from ncpus. If ncpus > 0, ncudas < ncpus. -1 to target all the
+ *            CUDA devices available.
+ *
+ * @param[in] nthreads_per_worker
+ *            Defines the number of threads per worker when multi-threaded tasks
+ *            are enabled.  This is used to exploit parallel BLAS kernels, and
+ *            defines a better binding of the workers.
+ *            -1 to disable, or > 0 to enable.
+ *
+ * @retval -1 on failure to initialize the runtime.
+ * @retval >0 on success to initialize the runtime.
+ *
+ */
 int
 AL4SAN_Starpu_init( AL4SAN_context_t *ctxt,
               int ncpus,
               int ncudas,
               int nthreads_per_worker );
+/**
+ * @brief PaRSEC Initialize the scheduler with the given parameters
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context in which to initialize the runtime support.
+ *
+ * @param[in] ncpus
+ *            Defines the total number of cores given to the runtime per
+ *            node. Including cuda and communication workers for runtimes that
+ *            dedicates cores to this. ncpus > 0, or -1 to target the whole machine.
+ *
+ * @param[in] ncudas
+ *            Defines the number of CUDA devices used by node. If the runtime
+ *            uses one core dedicated to each CUDA device, they will be taken
+ *            from ncpus. If ncpus > 0, ncudas < ncpus. -1 to target all the
+ *            CUDA devices available.
+ *
+ * @param[in] nthreads_per_worker
+ *            Defines the number of threads per worker when multi-threaded tasks
+ *            are enabled.  This is used to exploit parallel BLAS kernels, and
+ *            defines a better binding of the workers.
+ *            -1 to disable, or > 0 to enable.
+ *
+ * @retval -1 on failure to initialize the runtime.
+ * @retval >0 on success to initialize the runtime.
+ *
+ */
 int
 AL4SAN_Parsec_init( AL4SAN_context_t *ctxt,
               int ncpus,
               int ncudas,
               int nthreads_per_worker );
+/**
+ * @brief OpenMP Initialize the scheduler with the given parameters
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context in which to initialize the runtime support.
+ *
+ * @param[in] ncpus
+ *            Defines the total number of cores given to the runtime per
+ *            node. Including cuda and communication workers for runtimes that
+ *            dedicates cores to this. ncpus > 0, or -1 to target the whole machine.
+ *
+ * @param[in] ncudas
+ *            Defines the number of CUDA devices used by node. If the runtime
+ *            uses one core dedicated to each CUDA device, they will be taken
+ *            from ncpus. If ncpus > 0, ncudas < ncpus. -1 to target all the
+ *            CUDA devices available.
+ *
+ * @param[in] nthreads_per_worker
+ *            Defines the number of threads per worker when multi-threaded tasks
+ *            are enabled.  This is used to exploit parallel BLAS kernels, and
+ *            defines a better binding of the workers.
+ *            -1 to disable, or > 0 to enable.
+ *
+ * @retval -1 on failure to initialize the runtime.
+ * @retval >0 on success to initialize the runtime.
+ *
+ */
 int
 AL4SAN_Openmp_init( AL4SAN_context_t *ctxt,
               int ncpus,
@@ -166,61 +326,133 @@ AL4SAN_Openmp_init( AL4SAN_context_t *ctxt,
               int nthreads_per_worker );
 
 /**
- * @brief Finalize the scheduler used for the computations.
+ * @brief QUARK Finalize the scheduler used for the computations.
  *
  * @param[in,out] ctxt
  *            The Al4san context for which the runtime system must be shut down.
  */
 void
 AL4SAN_Quark_finalize( AL4SAN_context_t *ctxt );
+/**
+ * @brief StarPU Finalize the scheduler used for the computations.
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context for which the runtime system must be shut down.
+ */
 void
 AL4SAN_Starpu_finalize( AL4SAN_context_t *ctxt );
+/**
+ * @brief PaRSEC Finalize the scheduler used for the computations.
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context for which the runtime system must be shut down.
+ */
 void
 AL4SAN_Parsec_finalize( AL4SAN_context_t *ctxt );
+/**
+ * @brief OpenMP Finalize the scheduler used for the computations.
+ *
+ * @param[in,out] ctxt
+ *            The Al4san context for which the runtime system must be shut down.
+ */
 void
 AL4SAN_Openmp_finalize( AL4SAN_context_t *ctxt );
 
 /**
- * @brief Suspend the processing of new tasks submitted to the runtime system.
+ * @brief QUARK Suspend the processing of new tasks submitted to the runtime system.
  *
  * @param[in] ctxt
  *            The Al4san context for which the suspension must be made.
  */
 void
 AL4SAN_Quark_pause( AL4SAN_context_t *ctxt );
+/**
+ * @brief StarPU Suspend the processing of new tasks submitted to the runtime system.
+ *
+ * @param[in] ctxt
+ *            The Al4san context for which the suspension must be made.
+ */
 void
 AL4SAN_Starpu_pause( AL4SAN_context_t *ctxt );
+/**
+ * @brief PaRSEC Suspend the processing of new tasks submitted to the runtime system.
+ *
+ * @param[in] ctxt
+ *            The Al4san context for which the suspension must be made.
+ */
 void
 AL4SAN_Parsec_pause( AL4SAN_context_t *ctxt );
+/**
+ * @brief OpenMP Suspend the processing of new tasks submitted to the runtime system.
+ *
+ * @param[in] ctxt
+ *            The Al4san context for which the suspension must be made.
+ */
 void
 AL4SAN_Openmp_pause( AL4SAN_context_t *ctxt );
 
 /**
- * @brief Resume the processing of new tasks submitted to the runtime system.
+ * @brief QUARK Resume the processing of new tasks submitted to the runtime system.
  *
  * @param[in] ctxt
  *            The Al4san context for which the execution must be resumed.
  */
 void
 AL4SAN_Quark_resume( AL4SAN_context_t *ctxt );
+/**
+ * @brief StarPU Resume the processing of new tasks submitted to the runtime system.
+ *
+ * @param[in] ctxt
+ *            The Al4san context for which the execution must be resumed.
+ */
 void
 AL4SAN_Starpu_resume( AL4SAN_context_t *ctxt );
+/**
+ * @brief PaRSEC Resume the processing of new tasks submitted to the runtime system.
+ *
+ * @param[in] ctxt
+ *            The Al4san context for which the execution must be resumed.
+ */
 void
 AL4SAN_Parsec_resume( AL4SAN_context_t *ctxt );
+/**
+ * @brief OpenMP Resume the processing of new tasks submitted to the runtime system.
+ *
+ * @param[in] ctxt
+ *            The Al4san context for which the execution must be resumed.
+ */
 void
 AL4SAN_Openmp_resume( AL4SAN_context_t *ctxt );
 /**
- * @brief Wait for completion of all tasks submitted to the runtime.
+ * @brief QUARK Wait for completion of all tasks submitted to the runtime.
  *
  * @param[in] ctxt
  *            The Al4san context in which the task completion is performed.
  */
 void
 AL4SAN_Quark_barrier( AL4SAN_context_t *ctxt );
+/**
+ * @brief StarPU Wait for completion of all tasks submitted to the runtime.
+ *
+ * @param[in] ctxt
+ *            The Al4san context in which the task completion is performed.
+ */
 void
 AL4SAN_Starpu_barrier( AL4SAN_context_t *ctxt );
+/**
+ * @brief PaRSEC Wait for completion of all tasks submitted to the runtime.
+ *
+ * @param[in] ctxt
+ *            The Al4san context in which the task completion is performed.
+ */
 void
 AL4SAN_Parsec_barrier( AL4SAN_context_t *ctxt );
+/**
+ * @brief OpenMP Wait for completion of all tasks submitted to the runtime.
+ *
+ * @param[in] ctxt
+ *            The Al4san context in which the task completion is performed.
+ */
 void
 AL4SAN_Openmp_barrier( AL4SAN_context_t *ctxt );
 /**
@@ -473,7 +705,7 @@ AL4SAN_Openmp_malloc( size_t size );
  * @name RUNTIME Memory management
  * @{
  ***
- * @brief Allocate size bytes through the runtime memory management system if any, or with malloc otherwise.
+ * @brief QUARK Allocate size bytes through the runtime memory management system if any, or with malloc otherwise.
  *
  * This function allows to allocate pinned memory if needed, or eventually not
  * perform the allocation in simulation mode.
@@ -486,14 +718,57 @@ AL4SAN_Openmp_malloc( size_t size );
  */
 void 
 AL4SAN_Quark_malloc_ptr(void**A, size_t size );
+
+/**
+ *
+ * @brief StarPU Allocate size bytes through the runtime memory management system if any, or with malloc otherwise.
+ *
+ * This function allows to allocate pinned memory if needed, or eventually not
+ * perform the allocation in simulation mode.
+ * @param[in, out] A
+ *            Pointer to allocated memory
+ * @param[in] size
+ *            The number of bytes to allocate.
+ *
+ * @return The pointer to allocated area of size bytes on success, NULL otherwise.
+ */
 void 
 AL4SAN_Starpu_malloc_ptr(void**A, size_t size );
+
+
+/**
+ *
+ * @brief PaRSEC Allocate size bytes through the runtime memory management system if any, or with malloc otherwise.
+ *
+ * This function allows to allocate pinned memory if needed, or eventually not
+ * perform the allocation in simulation mode.
+ * @param[in, out] A
+ *            Pointer to allocated memory
+ * @param[in] size
+ *            The number of bytes to allocate.
+ *
+ * @return The pointer to allocated area of size bytes on success, NULL otherwise.
+ */
 void 
 AL4SAN_Parsec_malloc_ptr(void**A, size_t size );
+
+/**
+ *
+ * @brief OpenMP Allocate size bytes through the runtime memory management system if any, or with malloc otherwise.
+ *
+ * This function allows to allocate pinned memory if needed, or eventually not
+ * perform the allocation in simulation mode.
+ * @param[in, out] A
+ *            Pointer to allocated memory
+ * @param[in] size
+ *            The number of bytes to allocate.
+ *
+ * @return The pointer to allocated area of size bytes on success, NULL otherwise.
+ */
 void 
 AL4SAN_Openmp_malloc_ptr(void**A, size_t size );
 /**
- * @brief Free allocated memory through AL4SAN_Runtime_malloc() function call
+ * @brief QUARK Free allocated memory through AL4SAN_Runtime_malloc() function call
  *
  * @param[in,out] ptr
  *            The ptr to free
@@ -503,10 +778,37 @@ AL4SAN_Openmp_malloc_ptr(void**A, size_t size );
  */
 void
 AL4SAN_Quark_free( void *ptr, size_t size );
+/**
+ * @brief StarPU Free allocated memory through AL4SAN_Runtime_malloc() function call
+ *
+ * @param[in,out] ptr
+ *            The ptr to free
+ *
+ * @param[in] size
+ *            The size in bytes of the allocated area associated to ptr.
+ */
 void
 AL4SAN_Starpu_free( void *ptr, size_t size );
+/**
+ * @brief PaRSEC Free allocated memory through AL4SAN_Runtime_malloc() function call
+ *
+ * @param[in,out] ptr
+ *            The ptr to free
+ *
+ * @param[in] size
+ *            The size in bytes of the allocated area associated to ptr.
+ */
 void
 AL4SAN_Parsec_free( void *ptr, size_t size );
+/**
+ * @brief OpenMP Free allocated memory through AL4SAN_Runtime_malloc() function call
+ *
+ * @param[in,out] ptr
+ *            The ptr to free
+ *
+ * @param[in] size
+ *            The size in bytes of the allocated area associated to ptr.
+ */
 void
 AL4SAN_Openmp_free( void *ptr, size_t size );
 /**
@@ -1144,14 +1446,86 @@ AL4SAN_Openmp_scaler_getaddr( const AL4SAN_desc_t *A);
  * @name RUNTIME Insert task options management
  * @{
  */
+/**
+ * @brief QUARK init option structure
+ *
+ * @param[in,out] option structure
+ *
+ * @param[in, out] sequence structure
+ *
+ * @param[in, out] request structure 
+ *
+ */
 void  AL4SAN_Quark_options_init     (AL4SAN_option_t*, AL4SAN_context_t*, AL4SAN_sequence_t*, AL4SAN_request_t*);
+/**
+ * @brief StarPU init option structure
+ *
+ * @param[in,out] option structure
+ *
+ * @param[in, out] sequence structure
+ *
+ * @param[in, out] request structure
+ *
+ */
 void  AL4SAN_Starpu_options_init     (AL4SAN_option_t*, AL4SAN_context_t*, AL4SAN_sequence_t*, AL4SAN_request_t*);
+/**
+ * @brief PaRSEC init option structure
+ *
+ * @param[in,out] option structure
+ *
+ * @param[in, out] sequence structure
+ *
+ * @param[in, out] request structure
+ *
+ */
 void  AL4SAN_Parsec_options_init     (AL4SAN_option_t*, AL4SAN_context_t*, AL4SAN_sequence_t*, AL4SAN_request_t*);
+/**
+ * @brief OpenMP init option structure
+ *
+ * @param[in,out] option structure
+ *
+ * @param[in, out] sequence structure
+ *
+ * @param[in, out] request structure
+ *
+ */
 void  AL4SAN_Openmp_options_init     (AL4SAN_option_t*, AL4SAN_context_t*, AL4SAN_sequence_t*, AL4SAN_request_t*);
 
+/**
+ * @brief QUARK finialize option structure
+ *
+ * @param[in,out] option structure
+ *
+ * @param[in, out] context structure
+ *
+ */
 void  AL4SAN_Quark_options_finalize (AL4SAN_option_t*, AL4SAN_context_t *);
+/**
+ * @brief StarPU finialize option structure
+ *
+ * @param[in,out] option structure
+ *
+ * @param[in, out] context structure
+ *
+ */
 void  AL4SAN_Starpu_options_finalize (AL4SAN_option_t*, AL4SAN_context_t *);
+/**
+ * @brief PaRSEC finialize option structure
+ *
+ * @param[in,out] option structure
+ *
+ * @param[in, out] context structure
+ *
+ */
 void  AL4SAN_Parsec_options_finalize (AL4SAN_option_t*, AL4SAN_context_t *);
+/**
+ * @brief OpenMP finialize option structure
+ *
+ * @param[in,out] option structure
+ *
+ * @param[in, out] context structure
+ *
+ */
 void  AL4SAN_Openmp_options_finalize (AL4SAN_option_t*, AL4SAN_context_t *);
 
 int   AL4SAN_Quark_options_ws_alloc (AL4SAN_option_t*, size_t, size_t);
@@ -1165,7 +1539,7 @@ int   AL4SAN_Parsec_options_ws_free  (AL4SAN_option_t*);
 int   AL4SAN_Openmp_options_ws_free  (AL4SAN_option_t*);
 
 /**
- * @brief insert task routines using AL4SAN_Runtime_insert_task() 
+ * @brief QUARK insert task routines using AL4SAN_Runtime_insert_task() 
  *
  * @param[in,out] codelet
  *            The ptr to function or codelet structure that contains main kernal info. 
@@ -1178,12 +1552,48 @@ int   AL4SAN_Openmp_options_ws_free  (AL4SAN_option_t*);
  */
 
 int AL4SAN_Quark_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list);
+/**
+ * @brief StarPU insert task routines using AL4SAN_Runtime_insert_task()
+ *
+ * @param[in,out] codelet
+ *            The ptr to function or codelet structure that contains main kernal info.
+ *
+ * @param[in] options
+ *            The ptr  to global runtime option.
+ *
+ * @param[in] varg_list
+ *            The varg_list to task information which conatin dependency direction, ptr or value, and the size in bytes.
+ */
 int AL4SAN_Starpu_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list);
+/**
+ * @brief PaRSEC insert task routines using AL4SAN_Runtime_insert_task()
+ *
+ * @param[in,out] codelet
+ *            The ptr to function or codelet structure that contains main kernal info.
+ *
+ * @param[in] options
+ *            The ptr  to global runtime option.
+ *
+ * @param[in] varg_list
+ *            The varg_list to task information which conatin dependency direction, ptr or value, and the size in bytes.
+ */
 int AL4SAN_Parsec_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list);
+/**
+ * @brief OpenMP insert task routines using AL4SAN_Runtime_insert_task()
+ *
+ * @param[in,out] codelet
+ *            The ptr to function or codelet structure that contains main kernal info.
+ *
+ * @param[in] options
+ *            The ptr  to global runtime option.
+ *
+ * @param[in] varg_list
+ *            The varg_list to task information which conatin dependency direction, ptr or value, and the size in bytes.
+ */
 int AL4SAN_Openmp_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options, va_list varg_list);
 
 /**
- * @brief unpack arguments  using AL4SAN_Runtime_unpack_arg() 
+ * @brief QUARK unpack arguments  using AL4SAN_Runtime_unpack_arg() 
  *
  * @param[in,out] args
  *            The args contains reference to list of arguments. 
@@ -1193,13 +1603,56 @@ int AL4SAN_Openmp_insert_task(AL4SAN_codelet codelet,  AL4SAN_option_t *options,
  */
 
 int AL4SAN_Quark_unpack_arg(AL4SAN_arg_list* al4san_arg, va_list varg_list);
+/**
+ * @brief StarPU unpack arguments  using AL4SAN_Runtime_unpack_arg()
+ *
+ * @param[in,out] args
+ *            The args contains reference to list of arguments.
+ *
+ * @param[in] varg_list
+ *            The varg_list contains list of varabile which points the value being unpacked.
+ */
 int AL4SAN_Starpu_unpack_arg(AL4SAN_arg_list* al4san_arg, va_list varg_list);
+/**
+ * @brief PaRSEC unpack arguments  using AL4SAN_Runtime_unpack_arg()
+ *
+ * @param[in,out] args
+ *            The args contains reference to list of arguments.
+ *
+ * @param[in] varg_list
+ *            The varg_list contains list of varabile which points the value being unpacked.
+ */
 int AL4SAN_Parsec_unpack_arg(AL4SAN_arg_list* al4san_arg, va_list varg_list);
+/**
+ * @brief OpenMP unpack arguments  using AL4SAN_Runtime_unpack_arg()
+ *
+ * @param[in,out] args
+ *            The args contains reference to list of arguments.
+ *
+ * @param[in] varg_list
+ *            The varg_list contains list of varabile which points the value being unpacked.
+ */
 int AL4SAN_Openmp_unpack_arg(AL4SAN_arg_list* al4san_arg, va_list varg_list);
 
+/**
+ * @brief QUARK initialize task's options
+ *
+ */
 void AL4SAN_Quark_task_option_init();
+/**
+ * @brief StarPU initialize task's options
+ *
+ */
 void AL4SAN_Starpu_task_option_init();
+/**
+ * @brief PaRSEC initialize task's options
+ *
+ */
 void AL4SAN_Parsec_task_option_init();
+/**
+ * @brief OpenMP initialize task's options
+ *
+ */
 void AL4SAN_Openmp_task_option_init();
 
 /**

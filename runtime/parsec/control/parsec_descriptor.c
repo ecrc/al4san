@@ -11,25 +11,19 @@
  *
  ***
  *
- * @brief al4san PaRSEC descriptor routines
+ * @brief AL4SAN PaRSEC descriptor routines
+ *
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
  *
  * @version 1.0.1
  * @author Reazul Hoque
  * @author Mathieu Faverge
  * @date 2019-02-06
- *
- */
-/**
- *
- * @brief AL4SAN PaRSEC descriptor routines
- *  
- *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
- *
  * @version 1.0.1
  * @author Rabab Alomairy
  * @date 2019-02-06
- *
- **/
+ */
 #include <stdlib.h>
 #include "al4san_parsec.h"
 #include <parsec/data.h>

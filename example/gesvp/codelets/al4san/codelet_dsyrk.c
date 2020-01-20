@@ -21,16 +21,9 @@
 #include <al4san.h>
 #include <runtime/al4san_quark.h>
 #include <runtime/al4san_starpu.h>
-//#include <runtime/al4san_parsec.h>
-/**
- *
- * @ingroup CORE_ double
- *
- */
 
 AL4SAN_TASK_CPU_GPU(syrk, syrk_cpu_func, syrk_cuda_func)
 
-//AL4SAN_TASK_CPU(syrk, syrk_cpu_func)
 
 void EIG_AL4SAN_CORE_dsyrk(const AL4SAN_option_t *options,
                        int uplo, int trans,
@@ -39,11 +32,6 @@ void EIG_AL4SAN_CORE_dsyrk(const AL4SAN_option_t *options,
                        double beta, const AL4SAN_desc_t *C, int Cm, int Cn, int ldc )
 {
     (void)nb;
-  /*AL4SAN_BEGIN_ACCESS_DECLARATION;
-  AL4SAN_ACCESS_R(A, Am, An);
-  AL4SAN_ACCESS_RW(C, Cm, Cn);
-  AL4SAN_END_ACCESS_DECLARATION;
-*/
 
   AL4SAN_Insert_Task(AL4SAN_TASK(syrk), (AL4SAN_option_t*)options,
         AL4SAN_VALUE,                      &uplo,                                        sizeof(int),
@@ -64,7 +52,6 @@ void EIG_AL4SAN_CORE_dsyrk(const AL4SAN_option_t *options,
 
 }
 
-#if !defined(CHAMELEON_SIMULATION)
 void syrk_cpu_func(AL4SAN_arg_list *al4san_arg)
 {
     int uplo;
@@ -119,4 +106,3 @@ void syrk_cuda_func(AL4SAN_arg_list *al4san_arg)
     return;
 }
 #endif /* AL4SAN_USE_CUDA */
-#endif /* !defined(AL4SAN_SIMULATION) */

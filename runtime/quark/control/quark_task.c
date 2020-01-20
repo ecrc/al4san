@@ -4,9 +4,7 @@
  *
  * @copyright 2017-2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
- **/
-
-/**
+ **
  *
  * @brief AL4SAN Quark Task routines
  *  AL4SAN Task

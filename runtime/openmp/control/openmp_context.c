@@ -11,24 +11,18 @@
  *                     All rights reserved.
  *
  ***
- *
- *
- * author Vijay Joshi
- * author Cedric Castagnede
- * date 2011-10-29
- *
- */
-/**
-*
 * @brief AL4SAN OpenMP context routines
 *
 *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
 *
-* @version 1.0.0
+ *
+ * @author Vijay Joshi
+ * @author Cedric Castagnede
+ * @date 2011-10-29
+ * @version 1.0.0
 * @author Rabab Alomairy
 * @date 2018-10-18
-*
-**/
+ */
 #include <stdlib.h>
 #include "al4san_openmp.h"
 

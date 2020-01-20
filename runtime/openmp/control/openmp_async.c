@@ -10,23 +10,18 @@
  * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
  *
- ***
+ * @brief AL4san OpenMP  sequence source codes
  *
- * author Reazul Hoque
- * author Mathieu Faverge
- * date 2017-01-12
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- */
-/**
-   *
- * @brief AL4san OpenMP  main header
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
+ *
+ * @author Reazul Hoque
+ * @author Mathieu Faverge
+ * @date 2017-01-12
    * @version 1.0.0
    * @author Rabab Alomairy
    * @date 2018-10-18
-   */
+ */
 
 #include <stdlib.h>
 #include "al4san_openmp.h"

@@ -12,13 +12,12 @@
  ***
  *
  *
- * version 1.0.0
- * author Mathieu Faverge
- * author Cedric Castagnede
- * date 2010-11-15
+ * @version 1.0.0
+ * @author Mathieu Faverge
+ * @author Cedric Castagnede
+ * @date 2010-11-15
  *
- */
-/**
+ ***
  *
  * @brief AL4SAN StarPU asynchronous routines
  *

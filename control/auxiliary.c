@@ -10,30 +10,25 @@
  *                     All rights reserved.
  *
  ***
+ * @brief AL4SAN auxiliary routines
  *
- * author Jakub Kurzak
- * author Piotr Luszczek
- * author Emmanuel Agullo
- * author Cedric Castagnede
- * date 2012-09-15
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
+ * @author Jakub Kurzak
+ * @author Piotr Luszczek
+ * @author Emmanuel Agullo
+ * @author Cedric Castagnede
+ * @date 2012-09-15
+ * @version 1.0.0
+ * @author Rabab Alomairy
+ * @date 2018-10-18 
+*
  ***
  *
  * @defgroup Auxiliary
  * @brief Group auxiliary routines exposed to users
  *
  */
-  /**
-   *
-   * @brief AL4SAN auxiliary routines
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
-   * @version 1.0.0
-   * @author Rabab Alomairy
-   * @date 2018-10-18
-   *
-   **/
 #include "control/al4san_common.h"
 #include "control/al4san_auxiliary.h"
 

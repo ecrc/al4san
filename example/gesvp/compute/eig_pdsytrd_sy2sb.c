@@ -1,3 +1,25 @@
+/**
+ *
+ * @file eig_pdsytrd_sy2sb.c
+ *
+ * @copyright 2009-2015 The University of Tennessee and The University of
+ *                      Tennessee Research Foundation. All rights reserved.
+ * @copyright 2012-2019 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
+ *                      Univ. Bordeaux. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
+ ***
+ *
+ * @brief Al4san dtrsm parallel algorithm
+ *
+ * @comment This file has been automatically generated
+ *          from Plasma 2.5.0
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
+ * @generated d Tue Apr  2 10:58:06 2019
+ *
+ */
 #include <al4san.h>
 #include <stdlib.h>
 #include "control/al4san_common.h"

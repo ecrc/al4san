@@ -1,15 +1,17 @@
 /**
+ * @copyright 2009-2014 The University of Tennessee and The University of
+ *                      Tennessee Research Foundation. All rights reserved.
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  *
- * @file pdsygst.c
+ * @file cham_eig_pdsygst.c
  *
- *  PLASMA auxiliary routines
- *  PLASMA is a software package provided by Univ. of Tennessee,
- *  Univ. of California Berkeley and Univ. of Colorado Denver
  *
- * @version 2.8.0
  * @author Hatem Ltaief
  * @date 2010-11-15
- * @generated d Fri Apr  1 11:03:00 2016
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  *
  **/
 #include <al4san.h>
@@ -25,6 +27,12 @@ void cham_eig_pdsygst(int itype, cham_uplo_t uplo,
 		AL4SAN_desc_t *A, AL4SAN_desc_t *B,
 		AL4SAN_sequence_t *sequence, AL4SAN_request_t *request)
 {
+   /*
+     * Define AL4SAN handle for seqeunce to manage groupe of threads.
+     * Define AL4SAN handle for options to set glabel task options and set the sequence handle.
+     * Define AL4SAN handle for request status.
+   */
+
      AL4SAN_context_t *al4sanctxt;
      AL4SAN_option_t options;
 

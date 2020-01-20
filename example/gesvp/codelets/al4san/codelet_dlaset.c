@@ -3,8 +3,6 @@
 #include <al4san.h>
 #include <runtime/al4san_quark.h>
 #include <runtime/al4san_starpu.h>
-//#include <runtime/al4san_parsec.h>
-
 
 
 
@@ -17,10 +15,6 @@ void EIG_AL4SAN_CORE_dlaset(AL4SAN_option_t *options,
 {
 
 
-/*    AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_W(A, Am, An);
-    AL4SAN_END_ACCESS_DECLARATION;
-*/
 
     AL4SAN_Insert_Task(AL4SAN_TASK(laset), (AL4SAN_option_t*)options,
         AL4SAN_VALUE,                       &uplo,                                         sizeof(int),

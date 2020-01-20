@@ -17,8 +17,7 @@
  * @author Cedric Augonnet
  * @date 2018-10-18
  *
- */
-/**
+ ***
  *
  * @brief AL4SAN StarPU workspace header
  *

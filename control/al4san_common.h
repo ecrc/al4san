@@ -9,24 +9,17 @@
  * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
  *
+ * @brief AL4SAN common headers
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  ***
   *
- * author Mathieu Faverge
- * author Cedric Castagnede
- * date 2012-09-15
- *
+ * @author Mathieu Faverge
+ * @author Cedric Castagnede
+ * @date 2012-09-15
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  */
-  /**
-   *
-   * @brief AL4SAN common headers
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
-   * @version 1.0.1
-   * @author Rabab Alomairy
-   * @date 2019-02-06
-   *
-   **/
 #ifndef _AL4SAN_COMMON_H_
 #define _AL4SAN_COMMON_H_
 

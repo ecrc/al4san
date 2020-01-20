@@ -4,6 +4,11 @@
 #include <runtime/al4san_starpu.h>
 #include <runtime/al4san_parsec.h>
 
+/*
+  * Preparing work's function:
+  * @param[in] First argument is task name.
+  * @param[in] Second argument user function name
+*/
 AL4SAN_TASK_CPU(gelqt, gelqt_cpu_func)
 
 void EIG_AL4SAN_CORE_dgelqt(AL4SAN_option_t *options,
@@ -18,6 +23,12 @@ void EIG_AL4SAN_CORE_dgelqt(AL4SAN_option_t *options,
     AL4SAN_ACCESS_W(T, Tm, Tn);
     AL4SAN_END_ACCESS_DECLARATION;
 
+          /*
+            * Insert Task function:
+            *  @param[in] First argument AL4SAN_TASK macro with task name
+            *  @param[in] options argument which holds sequence data sturcture
+            *  @param[in] Parameter list  of va_list type to represent data and the dependencies
+          */
 
     AL4SAN_Insert_Task(AL4SAN_TASK(gelqt), (AL4SAN_option_t*)options,
         AL4SAN_VALUE,                        &m,                                           sizeof(int),
@@ -45,6 +56,11 @@ void gelqt_cpu_func(AL4SAN_arg_list *al4san_arg)
     int ldt;
     double *TAU, *WORK;
 
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
     AL4SAN_Unpack_Arg(al4san_arg, &m, &n, &ib, &A, &lda, &T,&ldt, &TAU);
 
     WORK = TAU + al4san_max( m, n );

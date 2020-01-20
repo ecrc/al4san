@@ -12,14 +12,11 @@
  ***
  *
  *
- * author Vijay Joshi
- * author Cedric Castagnede
- * date 2011-10-29
+ * @author Vijay Joshi
+ * @author Cedric Castagnede
+ * @date 2011-10-29
  *
- */
- 
-/**
- *
+ **
  * @brief AL4SAN Quark context routines
  *  
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)

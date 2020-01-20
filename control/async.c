@@ -10,29 +10,20 @@
  *                     All rights reserved.
  ***
  * *
- * author Jakub Kurzak
- * author Mathieu Faverge
- * author Cedric Castagnede
- * date 2012-09-15
- *
- ***
+ * @brief AL4SAN asynchronous routines
+ * @author Jakub Kurzak
+ * @author Mathieu Faverge
+ * @author Cedric Castagnede
+ * 2date 2012-09-15
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  *
  * @defgroup Sequences
  * @brief Group routines exposed to users to handle asynchronous tasks execution
  *
  */
 
-  /**
-   *
-   * @brief AL4SAN asynchronous routines
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
-   * @version 1.0.1
-   * @author Rabab Alomairy
-   * @date 2019-02-06
-   *
-   **/
 #include <stdlib.h>
 #include "control/al4san_common.h"
 #include "al4san/runtime.h"

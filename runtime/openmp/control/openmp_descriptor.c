@@ -13,23 +13,19 @@
  *
  * @brief AL4SAN Quark descriptor routines
  *
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ *
+ *
  * @version 1.0.1
  * @author Vijay Joshi
  * @author Cedric Castagnede
  * @date 2019-02-06
- *
- */
-/**
- *
- * @brief AL4SAN Quark descriptor routines
- *  
- *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
- *
  * @version 1.0.1
  * @author Rabab Alomairy
  * @date 2019-02-06
  *
- **/
+ *
+ */
 #include <stdlib.h>
 #include "al4san_openmp.h"
 

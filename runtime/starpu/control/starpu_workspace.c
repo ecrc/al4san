@@ -15,8 +15,7 @@
  * author Mathieu Faverge
  * date 2011-06-01
  *
- */
-/**
+ ***
  *
  * @brief AL4SAN StarPU workspaces routines
  *

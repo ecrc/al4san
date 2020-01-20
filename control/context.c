@@ -10,26 +10,20 @@
  *                     All rights reserved.
  *
  ***
+ * @brief AL4SAN context management  routines
+ *
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
  *
  * author Jakub Kurzak
  * author Mathieu Faverge
  * author Cedric Castagnede
  * date 2012-09-15
- *
+ * @version 1.0.0
+ * @author Rabab Alomairy
+ * @date 2018-10-18
  *
  */
-  /**
-   *
-   * @brief AL4SAN context management  routines
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
-   * @version 1.0.0
-   * @author Rabab Alomairy
-   * @date 2018-10-18
-   *
-   **/
 
 #include <stdlib.h>
 #include <pthread.h>

@@ -11,21 +11,18 @@
  *
  ***
  *
- * author Reazul Hoque
- * author Mathieu Faverge
- * date 2017-01-12
- *
- */
-/**
- *
  * @brief AL4SAN PaRSEC asynchronous routines
  *
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
+ * author Reazul Hoque
+ * author Mathieu Faverge
+ * date 2017-01-12
  * @version 1.0.0
  * @author Rabab Alomairy
  * @date 2018-10-18
-**/ 
+ *
+ */
 #include <stdlib.h>
 #include "al4san_parsec.h"
 

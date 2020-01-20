@@ -10,27 +10,18 @@
  *                     All rights reserved.
  *
  ***
- *
- * author Jakub Kurzak
- * author Mathieu Faverge
- * author Cedric Castagnede
- * date 2012-09-15
- *
+ * @defgroup Context
+ * @brief AL4SAN context routines are exposed to the users
+ * @author Jakub Kurzak
+ * @author Mathieu Faverge
+ * @author Cedric Castagnede
+ * @date 2012-09-15
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  *
  *
  */
-
-  /**
-   *
-   * @brief AL4SAN control routines
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
-   * @version 1.0.1
-   * @author Rabab Alomairy
-   * @date 2019-02-06
-   *
-   **/
 
 
 #include <stdio.h>
@@ -41,7 +32,7 @@
 #include <string.h>
 /**
  *
- * @ingroup Control
+ * @ingroup Context 
  *
  *  AL4SAN_Init - Initialize AL4SAN.
  *
@@ -66,11 +57,13 @@ AL4SAN_context_t*  AL4SAN_Init(char *runtime, int cores, int gpus)
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_InitPar - Initialize AL4SAN.
  *
  ******************************************************************************
+ *
+ * @param[in] runtime name
  *
  * @param[in] ncpus
  *          Number of cores to use.
@@ -84,7 +77,7 @@ AL4SAN_context_t*  AL4SAN_Init(char *runtime, int cores, int gpus)
  ******************************************************************************
  *
  * @return
- *          \retval AL4SAN_SUCCESS successful exit
+ *          \retval AL4SAN context data structure
  *
  */
 AL4SAN_context_t*  AL4SAN_InitPar(char *runtime, int ncpus, int ncudas, int nthreads_per_worker)
@@ -183,7 +176,29 @@ AL4SAN_context_t*  AL4SAN_InitPar(char *runtime, int ncpus, int ncudas, int nthr
     return al4san;
 }
 
-
+/**
+ *
+ * @ingroup Context
+ *
+ *  AL4SAN_Switch_Runtime - Switching AL4SAN backend runtime.
+ *
+ ******************************************************************************
+ *
+ * @param[in] runtime name
+ *
+ * @param[in] ncpus
+ *          Number of cores to use.
+ *
+ * @param[in] ncudas
+ *          Number of cuda devices to use.
+ *
+ *
+ ******************************************************************************
+ *
+ * @return
+ *          \retval AL4SAN context data structure
+ *
+ */
 AL4SAN_context_t*  AL4SAN_Switch_Runtime(char *runtime, int ncpus, int ncudas)
 {
 
@@ -319,7 +334,7 @@ AL4SAN_context_t*  AL4SAN_Switch_Runtime(char *runtime, int ncpus, int ncudas)
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Finalize - Finalize AL4SAN.
  *
@@ -404,7 +419,7 @@ int AL4SAN_Finalize(void)
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Pause - Suspend AL4SAN runtime to poll for new tasks.
  *
@@ -444,7 +459,7 @@ int AL4SAN_Pause(void)
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Resume - Symmetrical call to AL4SAN_Pause,
  *  used to resume the workers polling for new tasks.
@@ -484,7 +499,7 @@ int AL4SAN_Resume(void)
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Distributed_start - Prepare the distributed processes for computation
  *
@@ -522,7 +537,7 @@ int AL4SAN_Distributed_Start(void)
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Distributed_stop - Clean the distributed processes after computation
  *
@@ -561,7 +576,7 @@ int AL4SAN_Distributed_Stop(void)
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Barrier
  *
@@ -598,7 +613,7 @@ int AL4SAN_Barrier()
 }
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_progress
  *
@@ -633,7 +648,7 @@ int AL4SAN_Progress()
 }
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Thread_rank - Return the rank of the thread
  *
@@ -671,7 +686,7 @@ int AL4SAN_Thread_Rank()
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Thread_size - Return the number of the threads
  *
@@ -709,7 +724,7 @@ int AL4SAN_Thread_Size()
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Comm_size - Return the size of the distributed computation
  *
@@ -746,7 +761,7 @@ int AL4SAN_Comm_Size()
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_Comm_rank - Return the rank of the distributed computation
  *
@@ -785,7 +800,7 @@ int AL4SAN_Comm_Rank()
 
 /**
  *
- * @ingroup Control
+ * @ingroup Context
  *
  *  AL4SAN_GetThreadNbr - Return the number of CPU workers initialized by the
  *  runtime
@@ -818,10 +833,23 @@ int AL4SAN_GetThreadNbr( )
 #endif
 #ifdef AL4SAN_SCHED_OPENMP 
     if(al4san->scheduler==3)
-         AL4SAN_Runtime_thread_size(al4san);
+         AL4SAN_Openmp_thread_size(al4san);
 #endif
 }
 
+/**
+ *
+ * @ingroup Context
+ *
+ *  AL4SAN_Init_Processor_Grid - Makes a new communicator to which topology information has been attached 
+ * if distributed setting is activiated
+ *
+ * @param[in] number of row processors
+ *
+ * @param[in] number of col processors
+ *          Number of cores to use. 
+ *
+ */
 #if defined(AL4SAN_USE_MPI)
 void AL4SAN_Init_Processor_Grid(int p, int q){
 
@@ -829,7 +857,7 @@ void AL4SAN_Init_Processor_Grid(int p, int q){
 
         al4sanctxt = al4san_context_self();
     if (al4sanctxt == NULL) {
-        al4sab_error("init_grid", "AL4SAN not initialized");
+        al4sab_error("AL4SAN_Init_Processor_Grid", "AL4SAN not initialized");
         //return CHAMELEON_ERR_NOT_INITIALIZED;
     }
 

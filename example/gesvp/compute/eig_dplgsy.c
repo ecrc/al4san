@@ -1,26 +1,29 @@
 /**
  *
- * @file pdplgsy.c
+ * @file eig_dplgsy.c
  *
  * @copyright 2009-2014 The University of Tennessee and The University of
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2019 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
- *
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  ***
  *
- * @brief Chameleon dplgsy parallel algorithm
+ * @brief Al4san dplgsy parallel algorithm
  *
- * @version 0.9.2
  * @comment This file is a copy of pdplgsy.c,
             wich has been automatically generated
- *          from Plasma 2.5.0 for CHAMELEON 0.9.2
+ *          from Plasma 2.5.0
  * @author Mathieu Faverge
  * @author Emmanuel Agullo
  * @author Cedric Castagnede
  * @author Rade Mathis
  * @author Florent Pruvost
  * @date 2014-11-16
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  * @generated d Tue Apr  2 10:58:14 2019
  *
  */
@@ -30,11 +33,16 @@
 #define A(m,n) A,  m,  n
 #define BLKLDD(A, k) A->get_blkldd( A, k )
 /**
- *  chameleon_pdplgsy - Generate a random symmetric (positive definite if 'bump' is large enough) half-matrix by tiles.
+ *  eig_pdplgsy - Generate a random symmetric (positive definite if 'bump' is large enough) half-matrix by tiles.
  */
 void eig_pdplgsy( double bump, int uplo, AL4SAN_desc_t *A,
                     unsigned long long int seed)
 {
+   /*
+     * Define AL4SAN handle for seqeunce to manage groupe of threads.
+     * Define AL4SAN handle for options to set glabel task options and set the sequence handle.
+     * Define AL4SAN handle for request status.
+   */
      AL4SAN_context_t *al4sanctxt;
     AL4SAN_sequence_t *sequence = NULL;
     AL4SAN_request_t* request = AL4SAN_REQUEST_INITIALIZER;

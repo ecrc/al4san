@@ -55,6 +55,7 @@ set(AL4SAN_HDRS
   ${CMAKE_CURRENT_SOURCE_DIR}/al4san/struct.h
   ${CMAKE_CURRENT_SOURCE_DIR}/al4san/types.h
   ${CMAKE_CURRENT_SOURCE_DIR}/al4san/task.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/al4san/timer.h
   )
 
 # Force generation of headers
@@ -72,8 +73,9 @@ install( FILES ${AL4SAN_HDRS}
          DESTINATION include/al4san )
 
 # Put doxygen input to parent scope
-set(DOXYGEN_INPUT ${DOXYGEN_INPUT} ${AL4SAN_HDRS} PARENT_SCOPE )
-
+set(INCLUDE_FILES ${CMAKE_SOURCE_DIR} ${AL4SAN_HDRS}
+                  ${CMAKE_CURRENT_SOURCE_DIR}/al4san.h )
+set(DOXYGEN_INPUT ${DOXYGEN_INPUT} ${INCLUDE_FILES} PARENT_SCOPE)
 ###
 ### END CMakeLists.txt
 ###

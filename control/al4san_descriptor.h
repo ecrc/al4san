@@ -8,7 +8,6 @@
  *                      Univ. Bordeaux. All rights reserved.
  *
  ***
- *
  * @brief Al4san descriptor header
  *
  * @version 1.0.1
@@ -16,19 +15,11 @@
  * @author Mathieu Faverge
  * @author Cedric Castagnede
  * @date 2019-02-06
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  *
- */
-  /**
-   *
-   * @brief AL4SAN descriptor header
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
-   * @version 1.0.1
-   * @author Rabab Alomairy
-   * @date 2019-02-06
-   *
-   **/
+ **/
 #ifndef _AL4SAN_DESCRIPTOR_H_
 #define _AL4SAN_DESCRIPTOR_H_
 

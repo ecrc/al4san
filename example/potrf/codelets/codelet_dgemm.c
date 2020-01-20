@@ -22,11 +22,16 @@
 
 #include "../potrf.h"
 
-//AL4SAN_TASK_HEADER(gemm)
+
+/*
+  * Preparing work's function:
+  * @param[in] First argument is task name.
+  * @param[in] Second argument cpu  user function name
+  * @param[in] Second argument gpu user function name
+*/
+
 AL4SAN_TASK_CPU_GPU(gemm, gemm_cpu_func, gemm_cuda_func)
-//AL4SAN_QUARK_TASK_CPU(gemm, gemm_cpu_func)
-//AL4SAN_STARPU_TASK_CPU(gemm, gemm_cpu_func)
-//AL4SAN_PARSEC_TASK_CPU(gemm, gemm_cpu_func)
+
 void gemm_cpu_func( AL4SAN_arg_list *al4san_arg)
 {
 
@@ -43,6 +48,14 @@ void gemm_cpu_func( AL4SAN_arg_list *al4san_arg)
     double beta;
     double *C;
     int ldc;
+
+
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
+
 
     AL4SAN_Unpack_Arg(al4san_arg, &transA, &transB, &m, &n, &k, &alpha, &A, &lda, &B, &ldb, &beta, &C, &ldc);
     CORE_dgemm(transA, transB,
@@ -69,6 +82,12 @@ void gemm_cuda_func(AL4SAN_arg_list *al4san_arg)
     double *C;
     int ldc;
 
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
+
     AL4SAN_Unpack_Arg(al4san_arg, &transA, &transB, &m, &n, &k, &alpha, &A, &lda, &B, &ldb, &beta, &C, &ldc);
 
     AL4SAN_getStream( stream );
@@ -81,13 +100,13 @@ void gemm_cuda_func(AL4SAN_arg_list *al4san_arg)
         &beta,  C, ldc,
         stream);
 
-#ifndef AL4SAN_CUDA_ASYNC1
+#ifndef AL4SAN_CUDA_ASYNC
     cudaStreamSynchronize( stream );
 #endif
 
     return;
 }
-#endif // defined(CHAMELEON_USE_CUDA)
+#endif // defined(AL4SAN_USE_CUDA)
 
 void INSERT_Task_dgemm( const AL4SAN_option_t *options,
                         cham_trans_t transA, cham_trans_t transB,
@@ -98,12 +117,13 @@ void INSERT_Task_dgemm( const AL4SAN_option_t *options,
 {
     (void)nb;
 
-/*    AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_R(A, Am, An);
-    AL4SAN_ACCESS_R(B, Bm, Bn);
-    AL4SAN_ACCESS_RW(C, Cm, Cn);
-    AL4SAN_END_ACCESS_DECLARATION;
-*/
+          /*
+            * Insert Task function:
+            *  @param[in] First argument AL4SAN_TASK macro with task name
+            *  @param[in] options argument which holds sequence data sturcture
+            *  @param[in] Parameter list  of va_list type to represent data and the dependencies
+          */
+
     AL4SAN_Insert_Task(AL4SAN_TASK(gemm), (AL4SAN_option_t*)options,
                        AL4SAN_VALUE,                    &transA,                                       sizeof(int),
                        AL4SAN_VALUE,                    &transB,                                       sizeof(int),
@@ -120,7 +140,6 @@ void INSERT_Task_dgemm( const AL4SAN_option_t *options,
                        AL4SAN_VALUE,                    &ldc,                                          sizeof(int),
                        AL4SAN_CUDA_FLG,                 ON,                                            sizeof(int),
                        AL4SAN_PRIORITY,                 options->priority,                             sizeof(int),
-//                       AL4SAN_CALLBACK,                 AL4SAN_CALLBACK(zgemm),                        sizeof(void),
                        AL4SAN_LABEL,                    "zgemm",                                       sizeof(char),
                        AL4SAN_COLOR,                    "yellow",                                      sizeof(char),
                        ARG_END);

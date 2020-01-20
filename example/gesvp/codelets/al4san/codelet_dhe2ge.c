@@ -36,10 +36,6 @@ void EIG_AL4SAN_CORE_dhe2ge(AL4SAN_option_t *options,
                        const AL4SAN_desc_t *B, int Bm, int Bn, int ldb)
 {
 
-    /*AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_R(A, Am, An);
-    AL4SAN_ACCESS_W(B, Bm, Bn);
-    AL4SAN_END_ACCESS_DECLARATION;*/
 
     AL4SAN_Insert_Task(AL4SAN_TASK(he2ge), (AL4SAN_option_t*)options,
         AL4SAN_VALUE,                       &uplo,                                       sizeof(int),

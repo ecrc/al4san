@@ -1,6 +1,5 @@
 #include "./timing.h"
 #include <chameleon.h>
-#include <runtime/starpu/chameleon_starpu.h>
 #include <math.h>
 double cWtime(void)
 {
@@ -31,37 +30,50 @@ RunTest(int *iparam, double *dparam, real_Double_t *t_)
 	PASTE_CODE_IPARAM_LOCALS( iparam );
 	LDA =  N;
 
-//        CHAMELEON_Init( iparam[IPARAM_THRDNBR],
- //                     iparam[IPARAM_NCUDAS] );
+        /* Initialize AL4SAN with main parameters */
          AL4SAN_context_t *al4san = AL4SAN_Init("Starpu", iparam[IPARAM_THRDNBR], iparam[IPARAM_NCUDAS]);
 	int nbnode = 1;
 
 	AL4SAN_desc_t *descchamA = NULL, *descchamB = NULL, *descchamQ = NULL, *descchamT = NULL;
 
-	AL4SAN_Desc_Create(&descchamA,  NULL, Al4sanRealDouble,
-			NB, NB,  NB*NB, LDA, N, 0, 0, N, N, 1, 1);
+    /*
+     * Initialize the structure required for AL4SAN data interface
+     * AL4SAN_desc_t is a structure wrapping your data allowing AL4SAN to get
+     * pointers to tiles. A tile is a data subset of your matrix on which we
+     * apply some optimized CPU/GPU kernels.
+     * Notice that this routine suppose your matrix is a contiguous vector of
+     * data (1D array), as a data you would give to BLAS/LAPACK.
+     * Main arguments:
+     *     - descA is a pointer to a descriptor, you need to give the address
+     *     of this pointer
+     *     - if you want to give your allocated matrix give its address,
+     *     if not give a NULL pointer, the routine will allocate the memory
+     *     and you access the matrix data with descA->mat
+     *     - give the data type (Al4sanByte, Al4sanInteger, Al4sanRealFloat,
+     *     Al4sanRealDouble, Al4sanComplexFloat, Al4sanComplexDouble)
+     *     - number of rows in a block (tile)
+     *     - number of columns in a block (tile)
+     *     - number of elements in a block (tile)
+     * The other parameters are specific, use:
+     * AL4SAN_Desc_Create( ... , 0, 0, number of rows, number of columns, 1, 1);
+     * Have a look to the documentation for details about these parameters.
+     */
+	AL4SAN_Matrix_Create(&descchamA,  NULL, Al4sanRealDouble,
+			AL4SAN_Col_Major, NB, NB,  NB, N, N, LDA);
 
-	AL4SAN_Desc_Create(&descchamB,  NULL, Al4sanRealDouble,
-			NB, NB,  NB*NB, LDA, N, 0, 0, N, N, 1, 1);
+        AL4SAN_Matrix_Create(&descchamB,  NULL, Al4sanRealDouble,
+                        AL4SAN_Col_Major, NB, NB,  NB, N, N, LDA);
 
-	AL4SAN_Desc_Create(&descchamQ,  NULL, Al4sanRealDouble,
-			NB, NB,  NB*NB, LDA, N, 0, 0, N, N, 1, 1);
+	AL4SAN_Matrix_Create(&descchamQ,  NULL, Al4sanRealDouble,
+			AL4SAN_Col_Major, NB, NB,  NB, N,  N, LDA);
 
         MT = (M%NB==0) ? (M/NB) : (M/NB+1);
         NT = (N%NB==0) ? (N/NB) : (N/NB+1);
 
-        AL4SAN_Desc_Create(&descchamT,  NULL, Al4sanRealDouble,
-                        IB, NB,  IB*NB, MT*IB, NT*NB, 0, 0, MT*IB, NT*NB, 1, 1);
-
-
-	if(check){
-		Acpy = (double *)malloc(LDA*N*sizeof(double));
-		Bcpy = (double *)malloc(LDA*N*sizeof(double));
-	}
-
+        AL4SAN_Matrix_Create(&descchamT,  NULL, Al4sanRealDouble,
+                        AL4SAN_Col_Major, IB, NB,  IB, MT*IB, NT*NB, MT*IB);
 
 	CHAM_PASTE_CODE_ALLOCATE_MATRIX( W, 1, double, N, 1 );
-	CHAM_PASTE_CODE_ALLOCATE_MATRIX( W1, 1, double, N, 1 );
 
 	mkl_set_num_threads(1);
 
@@ -69,7 +81,7 @@ RunTest(int *iparam, double *dparam, real_Double_t *t_)
 	eig_pdplgsy((double)N,   ChamUpperLower,  descchamB, 3753 );
 
 	printf("\n \t N:%d, M:%d, K:%d, LDA:%d, NB:%d MB:%d \t\n", N, M, K, LDA, NB, MB);
-
+        // Eigensolver first stage
 	START_TIMING1();
 	Eig_First_Stage_Tile (itype, vec,  uplo, descchamA, descchamB, W, descchamT);
 	STOP_TIMING1();
@@ -78,25 +90,27 @@ RunTest(int *iparam, double *dparam, real_Double_t *t_)
 	AL4SAN_Desc_Discharge(&descchamB);
 	AL4SAN_Desc_Discharge(&descchamQ);
 	AL4SAN_Desc_Discharge(&descchamT);
-   //     CHAMELEON_Finalize();
+        
         AL4SAN_Switch_Runtime("Quark", 28, 0);
 
 
 	uplo  = Al4sanLower;
 
         AL4SAN_desc_t *descA = NULL, *descB=NULL, *descQ=NULL, *descT=NULL;
-        AL4SAN_Desc_Create(&descA,  descchamA->mat, Al4sanRealDouble,
-                        NB, NB,  NB*NB, LDA, N, 0, 0, N, N, 1, 1);
 
-        AL4SAN_Desc_Create(&descB,  descchamB->mat, Al4sanRealDouble,
-                        NB, NB,  NB*NB, LDA, N, 0, 0, N, N, 1, 1);
+        AL4SAN_Matrix_Create(&descA,  descchamA->mat, Al4sanRealDouble,
+                        AL4SAN_Col_Major, NB, NB,  NB, N, N, LDA);
 
-        AL4SAN_Desc_Create(&descQ,  descchamQ->mat, Al4sanRealDouble,
-                        NB, NB,  NB*NB, LDA, N, 0, 0, N, N, 1, 1);
+        AL4SAN_Matrix_Create(&descB,  descchamB->mat, Al4sanRealDouble,
+                        AL4SAN_Col_Major, NB, NB,  NB, N, N, LDA);
 
-        AL4SAN_Desc_Create(&descT,  descchamT->mat, Al4sanRealDouble,
-                        IB, NB,  IB*NB, MT*IB, NT*NB, 0, 0, MT*IB, NT*NB, 1, 1);
+        AL4SAN_Matrix_Create(&descQ,  descchamQ->mat, Al4sanRealDouble,
+                        AL4SAN_Col_Major, NB, NB,  NB, N,  N, LDA);
 
+        AL4SAN_Matrix_Create(&descT,  descchamT->mat, Al4sanRealDouble,
+                        AL4SAN_Col_Major, IB, NB,  IB, MT*IB, NT*NB, MT*IB);
+
+        // Eigensolver second stage plus computing eigenvalues
 	START_TIMING2();
 	EIG_Second_Stage_Tile( itype, vec, uplo, descA, descB, W, descT);
 	STOP_TIMING2();
@@ -104,62 +118,13 @@ RunTest(int *iparam, double *dparam, real_Double_t *t_)
         if (vec == Al4sanVec) {
                 CHAM_PASTE_CODE_FREE_MATRIX(descQ);
         }
+        /* deallocate A B T and associated descriptors , ... */
         AL4SAN_Desc_Destroy(&descA);
         AL4SAN_Desc_Destroy(&descB);
         AL4SAN_Desc_Destroy(&descT);
         AL4SAN_Finalize();
-	/* 
-	 *     Checking
-	 *                */
-
-	mkl_set_num_threads(1);
-	omp_set_num_threads(1); 
-	double *Ainit, *Binit; 
-
-      CHAMELEON_Init( iparam[IPARAM_THRDNBR],
-                      iparam[IPARAM_NCUDAS] );
-        if(check){
-                CHAMELEON_dplgsy( (double)0.0, ChamUpperLower, N, Acpy, LDA, 51 );
-                CHAMELEON_dplgsy( (double)N, ChamUpperLower, N, Bcpy, LDA, 3753 );
-
-		A1    = (double *)malloc(LDA*N*sizeof(double));
-		B1    = (double *)malloc(LDA*N*sizeof(double));
-		memcpy(A1, Acpy, LDA*N*sizeof(double));
-		memcpy(B1, Bcpy, LDA*N*sizeof(double));
-
-	}
-
-	if(check)
-	{
-		char v;
-		if (vec=Al4sanVec)
-			v='V';
-		else
-			v='N';
-		char u;
-		if(uplo==Al4sanUpper)
-			u='U';
-		else
-			u='L';
-        mkl_set_num_threads(28);
-		int info= LAPACKE_dsygv( LAPACK_COL_MAJOR, 
-				itype, v, u,
-				N, A1, LDA, B1, LDA, W1);
-		printf("\n info:%d\n", info);
-        mkl_set_num_threads(1);
-		check_solution(N, W1, W, eps);
-
-		free(A1);
-		free(B1);
-		free(Acpy);
-		free(Bcpy);
-	}		
-	/* Init Chameleon to deallocate matrices
-	 */
 	free( W );
-	free( W1 );
 
-        CHAMELEON_Finalize();
 	return 0;
 }
 /*

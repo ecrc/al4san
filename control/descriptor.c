@@ -6,7 +6,8 @@
  *                      Tennessee Research Foundation. All rights reserved.
  * @copyright 2012-2018 Bordeaux INP, CNRS (LaBRI UMR 5800), Inria,
  *                      Univ. Bordeaux. All rights reserved.
- *
+ * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
+ *                     All rights reserved.
  ***
  *
  * @brief Al4san descriptors routines
@@ -15,24 +16,15 @@
  * @author Mathieu Faverge
  * @author Cedric Castagnede
  * @date 2019-02-06
- *
+ * @version 1.0.1
+ * @author Rabab Alomairy
+ * @date 2019-02-06
  ***
  *
  * @defgroup Descriptor
  * @brief Group descriptor routines exposed to users
  *
  */
-  /**
-   *
-   * @brief AL4SAN descriptors routines
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
-   * @version 1.0.1
-   * @author Rabab Alomairy
-   * @date 2019-02-06
-   *
-   **/
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -534,8 +526,8 @@ int al4san_desc_check(const AL4SAN_desc_t *desc)
  *
  * @param[out] desc
  *          On exit, descriptor of the matrix.
- *
- * @param[in] mat
+	 *
+	 * @param[in] mat
  *          Memory location of the matrix. If mat is NULL, the space to store
  *          the data is automatically allocated by the call to the function.
  *
@@ -598,7 +590,7 @@ int AL4SAN_Desc_Create( AL4SAN_desc_t **descptr, void *mat, al4san_flttype_t dty
  *
  * @ingroup Descriptor
  *
- *  AL4SAN_Desc_Create - Create tiled matrix descriptor.
+ *  AL4SAN_Matrix_Create - Create tiled matrix descriptor.
  *
  ******************************************************************************
  *
@@ -656,12 +648,23 @@ int AL4SAN_Desc_Create( AL4SAN_desc_t **descptr, void *mat, al4san_flttype_t dty
  *
  */
 
-int AL4SAN_Matrix_Create( AL4SAN_desc_t **descptr, void *mat, al4san_flttype_t dtyp, int mb, int nb, int bsiz,
-                           int lm, int ln, int i, int j, int m, int n, int p, int q )
+int AL4SAN_Matrix_Create( AL4SAN_desc_t **descptr, void *mat, al4san_flttype_t dtyp, int order, int mb, int nb, 
+                           int bld, int lm, int ln, int ld) 
 {
-    return AL4SAN_Desc_Create_User( descptr, mat, dtyp, mb, nb, bsiz,
-                                       lm, ln, i, j, m, n, p, q,
-                                       NULL, NULL, NULL );
+      AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Matrix_Create", "AL4SAN not initialized");
+        //return -1;
+    }
+#if defined(AL4SAN_USE_MPI)
+    return AL4SAN_Desc_Create_User( descptr, mat, dtyp, mb, nb, mb*nb,
+                                       lm, ln, 0, 0, lm, ln, al4san->prows, al4san->pcols,
+                                        NULL, NULL, NULL );
+#else
+    return AL4SAN_Desc_Create_User( descptr, mat, dtyp, mb, nb, mb*nb,
+                                       lm, ln, 0, 0, lm, ln, 1, 1,
+                                        NULL, NULL, NULL );
+#endif
 }
 
 /**
@@ -715,12 +718,23 @@ int AL4SAN_Matrix_Create( AL4SAN_desc_t **descptr, void *mat, al4san_flttype_t d
  *
  */
 
-int AL4SAN_Vector_Create( AL4SAN_desc_t **descptr, void *vec, al4san_flttype_t dtyp, int mb, int bsiz,
-                           int lm, int i, int m, int p, int q )
+int AL4SAN_Vector_Create( AL4SAN_desc_t **descptr, void *vec, al4san_flttype_t dtyp, int mb, 
+                           int lm)
 {
-    return AL4SAN_Desc_Create_User( descptr, vec, dtyp, mb, 1, bsiz,
-                                       lm, 1, i, 0, m, 1, p, q,
+      AL4SAN_context_t *al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Matrix_Create", "AL4SAN not initialized");
+        //return -1;
+    }
+#if defined(AL4SAN_USE_MPI)
+    return AL4SAN_Desc_Create_User( descptr, vec, dtyp, mb, 1, mb,
+                                       lm, 1, 0, 0, lm, 1, al4san->prows, al4san->pcols,
                                        NULL, NULL, NULL );
+#else
+    return AL4SAN_Desc_Create_User( descptr, vec, dtyp, mb, 1, mb,
+                                       lm, 1, 0, 0, lm, 1, 1, 1,
+                                       NULL, NULL, NULL );
+#endif
 }
 
 /**
@@ -757,10 +771,10 @@ int AL4SAN_Vector_Create( AL4SAN_desc_t **descptr, void *vec, al4san_flttype_t d
  */
 
 
-int AL4SAN_Scaler_Create( AL4SAN_desc_t **descptr, void *scaler, al4san_flttype_t dtyp, int i)
+int AL4SAN_Scaler_Create( AL4SAN_desc_t **descptr, void *scaler, al4san_flttype_t dtyp)
 {
     return AL4SAN_Desc_Create_User( descptr, scaler, dtyp, 1, 1, 1,
-                                       1, 1, i, 0, 1, 1, 1, 1,
+                                       1, 1, 0, 0, 1, 1, 1, 1,
                                        NULL, NULL, NULL );
 }
 
@@ -1311,10 +1325,6 @@ int AL4SAN_Desc_Discharge(AL4SAN_desc_t **desc)
 }
 
 /**
- * @}
- *
- * @name AL4SAN Memory management
- * @{
  ***
  * @brief Allocate size bytes through the runtime memory management system if any, or with malloc otherwise.
  *

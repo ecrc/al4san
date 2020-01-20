@@ -12,13 +12,12 @@
  ***
  *
  *
- * author Cedric Augonnet
- * author Mathieu Faverge
- * author Cedric Castagnede
- * date 2010-11-15
+ * @author Cedric Augonnet
+ * @author Mathieu Faverge
+ * @author Cedric Castagnede
+ * @date 2010-11-15
  *
- */
-/**
+ ***
  *
  * @brief AL4SAN StarPU options routines
  *

@@ -8,25 +8,15 @@
  *                      Univ. Bordeaux. All rights reserved.
  * @copyright 2018 King Abdullah University of Science and Technology (KAUST).
  *                     All rights reserved.
- *
+ * @brief AL4SAN asynchronous routines
  ***
- * author Jakub Kurzak
- * author Cedric Castagnede
- * date 2010-11-15
- *
+ * @author Jakub Kurzak
+ * @author Cedric Castagnede
+ * @date 2010-11-15
+ * @version 1.0.0
+ * @author Rabab Alomairy
+ * @date 2018-10-18
  */
-
-  /**
-   *
-   * @brief AL4SAN asynchronous routines
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
-   * @version 1.0.0
-   * @author Rabab Alomairy
-   * @date 2018-10-18
-   *
-   **/
 
 #ifndef _AL4SAN_ASYNC_H_
 #define _AL4SAN_ASYNC_H_

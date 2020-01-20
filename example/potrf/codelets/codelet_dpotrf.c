@@ -28,12 +28,13 @@
 
 #include "../potrf.h"
 
-/**
- *
- * @ingroup CORE_ double
- *
- */
-//AL4SAN_QUARK_TASK_HEADER(potrf)
+
+/*
+  * Preparing work's function:
+  * @param[in] First argument is task name.
+  * @param[in] Second argument user function name
+*/
+
 AL4SAN_TASK_CPU(potrf, potrf_cpu_fun)
 
 
@@ -43,10 +44,12 @@ void INSERT_Task_dpotrf( const AL4SAN_option_t *options,
                         int iinfo )
 {
 
-/*    AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_RW(A, Am, An);
-    AL4SAN_END_ACCESS_DECLARATION;
-*/
+          /*
+            * Insert Task function:
+            *  @param[in] First argument AL4SAN_TASK macro with task name
+            *  @param[in] options argument which holds sequence data sturcture
+            *  @param[in] Parameter list  of va_list type to represent data and the dependencies
+          */
 
    AL4SAN_Insert_Task(AL4SAN_TASK(potrf), (AL4SAN_option_t * )options,         
         AL4SAN_VALUE,                      &uplo,                                         sizeof(int),
@@ -57,7 +60,6 @@ void INSERT_Task_dpotrf( const AL4SAN_option_t *options,
         AL4SAN_VALUE,                      &(options->request),                           sizeof(AL4SAN_request_t*),
         AL4SAN_VALUE,                      &iinfo,                                        sizeof(int), 
         AL4SAN_PRIORITY,                   options->priority,                             sizeof(int),
-//        AL4SAN_CALLBACK,                   AL4SAN_CALLBACK(zpotrf),                       sizeof(void),
         AL4SAN_LABEL,                      "zpotrf",                                      sizeof(char),
         AL4SAN_COLOR,                      "green",                                       sizeof(char),
         ARG_END);
@@ -65,7 +67,6 @@ void INSERT_Task_dpotrf( const AL4SAN_option_t *options,
 }
 
 
-#if !defined(CHAMELEON_SIMULATION)
 void potrf_cpu_fun(AL4SAN_arg_list *al4san_arg)
 {
     int uplo;
@@ -77,9 +78,14 @@ void potrf_cpu_fun(AL4SAN_arg_list *al4san_arg)
     AL4SAN_sequence_t* sequence;
     AL4SAN_request_t* request;
 
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
+
      AL4SAN_Unpack_Arg(al4san_arg, &uplo, &n, &A, &lda, &sequence, &request, &iinfo);
     CORE_dpotrf(uplo, n, A, lda, &info);
 
 
 }
-#endif /* !defined(CHAMELEON_SIMULATION) */

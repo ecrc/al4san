@@ -11,24 +11,17 @@
  *
  ***
  * *
- * author Jakub Kurzak
- * author Piotr Luszczek
- * author Emmanuel Agullo
- * author Cedric Castagnede
- * date 2010-11-15
- *
- */
-  /**
-   *
-   * @brief AL4SAN auxiliary routines
-   *
-   *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
-   *
+ * @brief AL4SAN auxiliary routines
+ *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
+ * @author Jakub Kurzak
+ * @author Piotr Luszczek
+ * @author Emmanuel Agullo
+ * @author Cedric Castagnede
+ * @date 2010-11-15
    * @version 1.0.0
    * @author Rabab Alomairy
    * @date 2018-10-18
-   *
-   **/
+ */
 #ifndef _AL4SAN_AUXILIARY_H_
 #define _AL4SAN_AUXILIARY_H_
 
@@ -46,13 +39,6 @@ void al4san_error        (const char *func_name, const char* msg_text);
 void al4san_fatal_error  (const char *func_name, const char* msg_text);
 int  al4san_rank         (AL4SAN_context_t *al4san);
 int  al4san_tune         (AL4SAN_enum func, int M, int N, int NRHS);
-
-/**
- *  API routines
- */
-int  AL4SAN_Version      (int *ver_major, int *ver_minor, int *ver_micro);
-int  AL4SAN_Element_Size (int type);
-int  AL4SAN_My_Mpi_Rank  (void);
 
 #ifdef __cplusplus
 }

@@ -2,7 +2,6 @@
 #include <al4san.h>
 #include <runtime/al4san_quark.h>
 #include <runtime/al4san_starpu.h>
-//#include <runtime/al4san_parsec.h>
 
 
 void
@@ -31,12 +30,6 @@ void EIG_AL4SAN_CORE_dtpmqrt(AL4SAN_option_t *options,
                          const AL4SAN_desc_t *B, int Bm, int Bn, int ldb )
 {
 
-    /*AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_R(V, Vm, Vn);
-    AL4SAN_ACCESS_R(T, Tm, Tn);
-    AL4SAN_ACCESS_RW(A, Am, An);
-    AL4SAN_ACCESS_RW(B, Bm, Bn);
-    AL4SAN_END_ACCESS_DECLARATION;*/
 
         int shapeV = ( l == 0 ) ? 0 : (AL4SAN_REGION_U | AL4SAN_REGION_D);
 
@@ -71,7 +64,6 @@ void EIG_AL4SAN_CORE_dtpmqrt(AL4SAN_option_t *options,
     (void)ib; (void)nb;
 }
 
-#if !defined(CHAMELEON_SIMULATION)
 void tpmqrt_cpu_func(AL4SAN_arg_list *al4san_arg)
 {
     int side;
@@ -138,4 +130,3 @@ void tpmqrt_cuda_func(AL4SAN_arg_list *al4san_arg)
 #endif
 }
 #endif /* defined(CHAMELEON_USE_CUDA) */
-#endif /* !defined(CHAMELEON_SIMULATION) */

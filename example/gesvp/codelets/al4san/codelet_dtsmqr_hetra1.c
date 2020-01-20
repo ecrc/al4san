@@ -2,7 +2,6 @@
 #include <al4san.h>
 #include <runtime/al4san_quark.h>
 #include <runtime/al4san_starpu.h>
-//#include <runtime/al4san_parsec.h>
 
 AL4SAN_TASK_CPU(tsmqr_hetra1, tsmqr_hetra1_cpu_func)
 
@@ -17,12 +16,6 @@ void EIG_AL4SAN_CORE_dtsmqr_hetra1(AL4SAN_option_t *options,
 
     int ldwork = side == Al4sanLeft ? ib : nb;
 
-    /*AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_RW(A1, A1m, A1n);
-    AL4SAN_ACCESS_RW(A2, A2m, A2n);
-    AL4SAN_ACCESS_R(V, Vm, Vn);
-    AL4SAN_ACCESS_R(T, Tm, Tn);
-    AL4SAN_END_ACCESS_DECLARATION;*/
 
 
     AL4SAN_Insert_Task(AL4SAN_TASK(tsmqr_hetra1),       (AL4SAN_option_t*)options,
@@ -49,7 +42,6 @@ void EIG_AL4SAN_CORE_dtsmqr_hetra1(AL4SAN_option_t *options,
         ARG_END);
 }
 
-#if !defined(CHAMELEON_SIMULATION)
 void tsmqr_hetra1_cpu_func(AL4SAN_arg_list *al4san_arg)
 {
     int side;
@@ -78,4 +70,3 @@ void tsmqr_hetra1_cpu_func(AL4SAN_arg_list *al4san_arg)
     CORE_dtsmqr_hetra1(side, trans, m1, n1, m2, n2, k,
                        ib, A1, lda1, A2, lda2, V, ldv, T, ldt, WORK, ldwork);
 }
-#endif /* !defined(CHAMELEON_SIMULATION) */

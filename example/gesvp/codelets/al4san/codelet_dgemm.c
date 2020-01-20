@@ -22,7 +22,13 @@
 #include <al4san.h>
 #include <runtime/al4san_quark.h>
 #include <runtime/al4san_starpu.h>
-//#include <runtime/al4san_parsec.h>
+
+/*
+  * Preparing work's function:
+  * @param[in] First argument is task name.
+  * @param[in] Second argument cpu  user function name
+  * @param[in] Second argument gpu user function name
+*/
 
 AL4SAN_TASK_CPU_GPU(gemm, gemm_cpu_func, gemm_cuda_func)
 
@@ -43,6 +49,12 @@ void gemm_cpu_func(AL4SAN_arg_list *al4san_arg)
     double beta;
     double *C;
     int ldc;
+
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
 
     AL4SAN_Unpack_Arg(al4san_arg, &transA, &transB, &m, &n, &k, &alpha, &A, &lda, &B, &ldb, &beta, &C, &ldc);
     CORE_dgemm(transA, transB,
@@ -69,6 +81,11 @@ void gemm_cuda_func(AL4SAN_arg_list *al4san_arg)
     double *C;
     int ldc;
 
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
     AL4SAN_Unpack_Arg(al4san_arg, &transA, &transB, &m, &n, &k, &alpha, &A, &lda, &B, &ldb, &beta, &C, &ldc);
 
     AL4SAN_getStream( stream );
@@ -99,12 +116,13 @@ void EIG_AL4SAN_CORE_dgemm(AL4SAN_option_t *options,
 {
     (void)nb;
 
-/*    AL4SAN_BEGIN_ACCESS_DECLARATION;
-    AL4SAN_ACCESS_R(A, Am, An);
-    AL4SAN_ACCESS_R(B, Bm, Bn);
-    AL4SAN_ACCESS_RW(C, Cm, Cn);
-    AL4SAN_END_ACCESS_DECLARATION;
-*/
+          /*
+            * Insert Task function:
+            *  @param[in] First argument AL4SAN_TASK macro with task name
+            *  @param[in] options argument which holds sequence data sturcture
+            *  @param[in] Parameter list  of va_list type to represent data and the dependencies
+          */
+
     AL4SAN_Insert_Task(AL4SAN_TASK(gemm), (AL4SAN_option_t*)options,
                        AL4SAN_VALUE,                    &transA,                                       sizeof(int),
                        AL4SAN_VALUE,                    &transB,                                       sizeof(int),

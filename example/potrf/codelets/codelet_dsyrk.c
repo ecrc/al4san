@@ -22,18 +22,18 @@
  * @author Cedric Castagnede
  * @author Rabab Alomairy
  * @date 2019-02-06
- * @precisions normal z -> c d s
  *
  */
 
 #include "../potrf.h"
-/**
- *
- * @ingroup CORE_ double
- *
- */
 
-//AL4SAN_TASK_HEADER(syrk)
+/*
+  * Preparing work's function:
+  * @param[in] First argument is task name.
+  * @param[in] Second argument cpu  user function name
+  * @param[in] Second argument gpu user function name
+*/
+
 AL4SAN_TASK_CPU_GPU(syrk, syrk_cpu_func, syrk_cuda_func)
 
 void INSERT_Task_dsyrk( const AL4SAN_option_t *options,
@@ -43,12 +43,13 @@ void INSERT_Task_dsyrk( const AL4SAN_option_t *options,
                        double beta, const AL4SAN_desc_t *C, int Cm, int Cn, int ldc )
 {
     (void)nb;
-/*  AL4SAN_BEGIN_ACCESS_DECLARATION;
-  AL4SAN_ACCESS_R(A, Am, An);
-  AL4SAN_ACCESS_RW(C, Cm, Cn);
-  AL4SAN_END_ACCESS_DECLARATION;
-*/
-    AL4SAN_Insert_Task(AL4SAN_TASK(syrk), (AL4SAN_option_t * )options,         
+          /*
+            * Insert Task function:
+            *  @param[in] First argument AL4SAN_TASK macro with task name
+            *  @param[in] options argument which holds sequence data sturcture
+            *  @param[in] Parameter list  of va_list type to represent data and the dependencies
+          */ 
+   AL4SAN_Insert_Task(AL4SAN_TASK(syrk), (AL4SAN_option_t * )options,         
         AL4SAN_VALUE,                      &uplo,                                        sizeof(int),
         AL4SAN_VALUE,                      &trans,                                       sizeof(int),
         AL4SAN_VALUE,                      &n,                                           sizeof(int),
@@ -61,14 +62,12 @@ void INSERT_Task_dsyrk( const AL4SAN_option_t *options,
         AL4SAN_VALUE,                      &ldc,                                         sizeof(int), 
         AL4SAN_CUDA_FLG,                   ON,                                           sizeof(int),
         AL4SAN_PRIORITY,                   options->priority,                            sizeof(int),
-//        AL4SAN_CALLBACK,                   AL4SAN_CALLBACK(zsyrk),                       sizeof(void),
         AL4SAN_LABEL,                      "zsyrk",                                      sizeof(char),
         AL4SAN_COLOR,                      "red",                                        sizeof(char),
         ARG_END);
 
 }
 
-#if !defined(CHAMELEON_SIMULATION)
 void syrk_cpu_func(AL4SAN_arg_list *al4san_arg)
 {
     int uplo;
@@ -82,6 +81,11 @@ void syrk_cpu_func(AL4SAN_arg_list *al4san_arg)
     double *C;
     int ldc;
 
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
 
    AL4SAN_Unpack_Arg(al4san_arg, &uplo, &trans, &n, &k, &alpha, &A, &lda, &beta, &C, &ldc);
 
@@ -105,6 +109,12 @@ void syrk_cuda_func(AL4SAN_arg_list *al4san_arg)
     double *C;
     int ldc;
 
+   /*
+    * AL4SAN_Unpack_Arg:
+    *  @param[in] First argument AL4SAN_arg that hold the packed data
+    *  @param[in] Parameter list  of va_list type which holds list of arguments
+ */
+
    AL4SAN_Unpack_Arg(al4san_arg, &uplo, &trans, &n, &k, &alpha, &A, &lda, &beta, &C, &ldc);
     
     AL4SAN_getStream(stream);
@@ -116,12 +126,11 @@ void syrk_cuda_func(AL4SAN_arg_list *al4san_arg)
         &beta, C, ldc,
         stream);
 
-#ifndef AL4SAN_CUDA_ASYNC1
+#ifndef AL4SAN_CUDA_ASYNC
     cudaStreamSynchronize( stream );
 #endif
 
     return;
 }
 #endif /* AL4SAN_USE_CUDA */
-#endif /* !defined(AL4SAN_SIMULATION) */
 

@@ -12,12 +12,11 @@
  ***
  *
  *
- * author Vijay Joshi
- * author Cedric Castagnede
- * date 2011-10-29
+ * @author Vijay Joshi
+ * @author Cedric Castagnede
+ * @date 2011-10-29
  *
- */
-/**
+ *
  *
  * @brief AL4SAN Quark  options routines
  *  
