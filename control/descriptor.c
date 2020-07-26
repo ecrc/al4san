@@ -2135,7 +2135,7 @@ void *AL4SAN_Vector_getaddr( const AL4SAN_desc_t *desc,  int m)
 #endif
 #ifdef AL4SAN_SCHED_OPENMP 
     if(al4san->scheduler==3)
-    return AL4SAN_Openmp_vector_getaddr( desc, m, n);
+    return AL4SAN_Openmp_vector_getaddr( desc, m);
 #endif
 }
 
@@ -2182,7 +2182,7 @@ void *AL4SAN_Scaler_getaddr( const AL4SAN_desc_t *desc)
 #endif
 #ifdef AL4SAN_SCHED_OPENMP 
     if(al4san->scheduler==3)
-    return AL4SAN_Openmp_scaler_getaddr( desc, m, n);
+    return AL4SAN_Openmp_scaler_getaddr( desc);
 #endif
 }
 /**

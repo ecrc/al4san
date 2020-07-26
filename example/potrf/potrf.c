@@ -28,10 +28,6 @@
 #include <stdarg.h>
 #include <pthread.h>
 #include <al4san.h>
-#include <chameleon.h>
-#include <coreblas.h>
-#include <coreblas/lapacke.h>
-#include <coreblas/cblas.h>
 #include <al4san/timer.h>
 #include "potrf.h"
 
@@ -55,7 +51,7 @@ float get_time();
 /* Cholesky factorization:
  * A is replaced by its factorization L or L^T depending on uplo */
 
-int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
+int AL4SAN_cholesky(al4san_uplo_t uplo, AL4SAN_desc_t *A)
 {
 
    /*
@@ -66,7 +62,7 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
 
     AL4SAN_context_t *al4sanctxt;
     AL4SAN_sequence_t *sequence = NULL;
-    AL4SAN_request_t* request = RUNTIME_REQUEST_INITIALIZER;
+    AL4SAN_request_t* request = AL4SAN_REQUEST_INITIALIZER;
     AL4SAN_option_t options;
 
     int status;
@@ -97,9 +93,9 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
             ldak = BLKLDD(A, k);
 
             options.priority = 2*A->nt - 2*k;
-            INSERT_Task_dpotrf(
+            if(1)Task_dpotrf(
                 &options,
-                ChamUpper,
+                Al4sanUpper,
                 tempkm, A->mb,
                 A(k, k), ldak, A->nb*k);
 
@@ -107,9 +103,9 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
                 tempnn = n == A->nt-1 ? A->n - n*A->nb : A->nb;
 
                 options.priority = 2*A->nt - 2*k - n;
-                INSERT_Task_dtrsm(
+                if(1)Task_dtrsm(
                     &options,
-                    ChamLeft, ChamUpper, ChamConjTrans, ChamNonUnit,
+                    Al4sanLeft, Al4sanUpper, Al4sanConjTrans, Al4sanNonUnit,
                     A->mb, tempnn, A->mb,
                     zone, A(k, k), ldak,
                           A(k, n), ldak);
@@ -121,9 +117,9 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
                 ldam = BLKLDD(A, m);
 
                 options.priority = 2*A->nt - 2*k  - m;
-                INSERT_Task_dsyrk(
+                if(1)Task_dsyrk(
                     &options,
-                    ChamUpper, ChamConjTrans,
+                    Al4sanUpper, Al4sanConjTrans,
                     tempmm, A->mb, A->mb,
                     -1.0, A(k, m), ldak,
                      1.0, A(m, m), ldam);
@@ -132,9 +128,9 @@ int AL4SAN_cholesky(cham_uplo_t uplo, AL4SAN_desc_t *A)
                     tempnn = n == A->nt-1 ? A->n-n*A->nb : A->nb;
 
                     options.priority = 2*A->nt - 2*k - n - m;
-                    INSERT_Task_dgemm(
+                    if(1)Task_dgemm(
                         &options,
-                        ChamConjTrans, ChamNoTrans,
+                        Al4sanTrans, Al4sanNoTrans,
                         tempmm, tempnn, A->mb, A->mb,
                         mzone, A(k, m), ldak,
                                A(k, n), ldak,
@@ -170,11 +166,11 @@ int main(int argc, char* argv[]){
     int NRHS; // number of RHS vectors
     int NCPU; // number of cores to use
     int NGPU; // number of gpus (cuda devices) to use
-    int UPLO = ChamUpper; // where is stored L
+    int UPLO = Al4sanUpper; // where is stored L
     /* descriptors necessary for calling AL4SAN data descriptor interface  */
     AL4SAN_desc_t *descA = NULL,  *descAC = NULL, *descB = NULL, *descX = NULL;
     /* declarations to time the program and evaluate performances */
-    double fmuls, fadds, flops, gflops, cpu_time;
+    double fmuls, fadds, flops, gflops, cpu_time= 0.0;
 
     /* variable to check the numerical results */
     double anorm, bnorm, xnorm, eps, res;
@@ -191,8 +187,9 @@ int main(int argc, char* argv[]){
     NRHS = iparam[IPARAM_NRHS];
     NB =  iparam[IPARAM_NB];
     /* compute the algorithm complexity to evaluate performances */
-    fadds = (double)( FADDS_POTRF(N) + 2 * FADDS_TRSM(N,NRHS) );
-    fmuls = (double)( FMULS_POTRF(N) + 2 * FMULS_TRSM(N,NRHS) );
+    fadds = (double)( FADDS_POTRF(N));
+    fmuls = (double)( FMULS_POTRF(N));
+
     flops = 1e-9 * (fmuls + fadds);
 
     /* initialize the number of thread if not given by the user in argv
@@ -204,11 +201,18 @@ int main(int argc, char* argv[]){
     NCPU = iparam[IPARAM_THRDNBR];
     NGPU = iparam[IPARAM_GPUS];
 
-    /* print informations to user */
-    print_header( argv[0], iparam);
 
     /* Initialize AL4SAN with main parameters */
-   AL4SAN_context_t *al4san = AL4SAN_Init("Starpu", NCPU, NGPU);
+   AL4SAN_context_t *al4san = AL4SAN_Init(runtime, NCPU, NGPU);
+
+#if defined(AL4SAN_USE_MPI)
+    al4san->prows=iparam[IPARAM_P];
+    al4san->pcols=iparam[IPARAM_Q];
+    AL4SAN_Init_Processor_Grid(al4san->prows, al4san->pcols);
+#endif
+
+    /* print informations to user */
+    print_header( argv[0], iparam);
 
     /*
      * Allocate memory for our data using a C macro (see step2.h)
@@ -237,12 +241,12 @@ int main(int argc, char* argv[]){
      * AL4SAN_Desc_Create( ... , 0, 0, number of rows, number of columns, 1, 1);
      * Have a look to the documentation for details about these parameters.
      */
+
     AL4SAN_Matrix_Create(&descA,  NULL, Al4sanRealDouble,
                       AL4SAN_Col_Major, NB, NB, NB, N, N, N);
+    /* generate A matrix with random values such that it is spd*/
 
-    /* generate A matrix with random values such that it is spd using chameleon lib*/
-    int rc = CHAMELEON_Init( NCPU, NGPU );
-    CHAMELEON_dplgsy_Tile( (double)N, ChamUpperLower, (CHAM_desc_t*) descA, 51 );
+    dplgsy_Tile( (double)N, Al4sanUpperLower, descA, 51 );
 
     cpu_time = -AL4SAN_timer();
     /* Cholesky factorization:
@@ -254,15 +258,17 @@ int main(int argc, char* argv[]){
 
     /* print informations to user */
     gflops = flops / cpu_time;
+
+  if(AL4SAN_My_Mpi_Rank()==0){
     printf( "%9.3f %9.2f\n", cpu_time, gflops);
     fflush( stdout );
-
+    }
 
     /* deallocate A and associated descriptors descA, ... */
    AL4SAN_Desc_Destroy( &descA );
 
    /* Finalize AL4SAN */
    AL4SAN_Finalize();
-
+   return 0;
 }
 

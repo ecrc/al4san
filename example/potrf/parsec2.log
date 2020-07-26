@@ -1,0 +1,78 @@
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          163840
+# NB:         3584
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 163840,  163840,  163840,    3584,      55,      835.914   1753.80
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          163840
+# NB:         3584
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 163840,  163840,  163840,    3584,      55,      895.981   1636.23
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          163840
+# NB:         3584
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 163840,  163840,  163840,    3584,      55,      832.869   1760.22
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          163840
+# NB:         4096
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 163840,  163840,  163840,    4096,      55,      865.124   1694.59
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          163840
+# NB:         4096
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 163840,  163840,  163840,    4096,      55,      908.302   1614.03
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          163840
+# NB:         4096
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 163840,  163840,  163840,    4096,      55,      872.316   1680.62

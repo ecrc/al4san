@@ -111,9 +111,10 @@ typedef struct al4san_arg_list_s
 #define GET_MACRO_ADDR(_1,_2,_3,_4, NAME,...) NAME
 #define AL4SAN_ADDR(...) GET_MACRO_ADDR(__VA_ARGS__, AL4SAN_ADDR4, AL4SAN_ADDR3, AL4SAN_ADDR2)(__VA_ARGS__)
 
-#define AL4SAN_ADDR4( desc, type, m, n ) ( (type*)AL4SAN_Data_getaddr( desc, m, n ) )
-#define AL4SAN_ADDR3( desc, type, m) ( (type*)AL4SAN_Data_getaddr( desc, m, 0 ) )
-#define AL4SAN_ADDR2( desc, type) ( (type*)AL4SAN_Data_getaddr( desc, 0, 0 ) )
+
+#define AL4SAN_ADDR4( desc, type, m, n ) ( (type*)AL4SAN_Data_getaddr( desc, m, n ) ), desc->schedopt
+#define AL4SAN_ADDR3( desc, type, m) ( (type*)AL4SAN_Data_getaddr( desc, m, 0 ) ), desc->schedopt
+#define AL4SAN_ADDR2( desc, type) ( (type*)AL4SAN_Data_getaddr( desc, 0, 0 ) ), desc->schedopt
 
 #define AL4SAN_TASK_HEADER(name)\
 	AL4SAN_QUARK_TASK_HEADER(name)\
@@ -133,6 +134,21 @@ void *OPENMP_func;
 #if defined(AL4SAN_SCHED_STARPU) && defined(AL4SAN_SCHED_QUARK) && !defined(AL4SAN_SCHED_PARSEC) && !defined(AL4SAN_SCHED_OPENMP)
 void *OPENMP_func, *PARSEC_func;
 #define AL4SAN_TASK(name) QUARK_##name##_func, &cl_##name, PARSEC_func, OPENMP_func
+#endif
+
+#if !defined(AL4SAN_SCHED_STARPU) && !defined(AL4SAN_SCHED_QUARK) && defined(AL4SAN_SCHED_PARSEC) && !defined(AL4SAN_SCHED_OPENMP)
+void *QUARK_func, *STARPU_func, *OPENMP_func;
+#define AL4SAN_TASK(name) QUARK_func, STARPU_func, PARSEC_##name##_func, OPENMP_func
+#endif
+
+#if !defined(AL4SAN_SCHED_STARPU) && defined(AL4SAN_SCHED_QUARK) && !defined(AL4SAN_SCHED_PARSEC) && !defined(AL4SAN_SCHED_OPENMP)
+void *OPENMP_func, *STARPU_func, *PARSEC_func;
+#define AL4SAN_TASK(name) QUARK_##name##_func, STARPU_func, PARSEC_func, OPENMP_func
+#endif
+
+#if !defined(AL4SAN_SCHED_STARPU) && !defined(AL4SAN_SCHED_QUARK) && !defined(AL4SAN_SCHED_PARSEC) && defined(AL4SAN_SCHED_OPENMP)
+void *QUARK_func, *STARPU_func, *PARSEC_func;
+#define AL4SAN_TASK(name) QUARK_func, STARPU_func, PARSEC_func,  OPENMP_##name##_func
 #endif
 
 #if defined(AL4SAN_SCHED_STARPU) && defined(AL4SAN_SCHED_QUARK) && defined(AL4SAN_SCHED_PARSEC) && defined(AL4SAN_SCHED_OPENMP)

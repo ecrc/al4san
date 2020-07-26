@@ -50,7 +50,7 @@ add_custom_target(runtime_openmp_include ALL SOURCES ${AL4SAN_RUNTIME_HDRS})
 # installation
 # ------------
 install(FILES ${AL4SAN_RUNTIME_HDRS}
-        DESTINATION include/runtime)
+        DESTINATION include/runtime/openmp/include)
 
 
 set(AL4SAN_RUNTIME_COMMON

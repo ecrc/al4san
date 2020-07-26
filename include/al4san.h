@@ -177,7 +177,7 @@ int AL4SAN_Desc_Acquire (AL4SAN_desc_t  *desc);
 int AL4SAN_Desc_Release (AL4SAN_desc_t  *desc);
 void AL4SAN_Flush();
 int AL4SAN_Desc_Flush   (AL4SAN_desc_t  *desc, AL4SAN_sequence_t *sequence);
-//void AL4SAN_Data_flush( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am, int An );
+void AL4SAN_Data_Flush( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am, int An );
 void AL4SAN_Matrix_Flush( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am, int An );
 void AL4SAN_Vector_Flush( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A, int Am);
 void AL4SAN_Scaler_Flush( const AL4SAN_sequence_t *sequence, const AL4SAN_desc_t *A);
@@ -216,6 +216,7 @@ int AL4SAN_Options_Workspace_Free(AL4SAN_option_t *options );
 #define PRAGMA(x) _Pragma(#x)
 #define AL4SAN_Sequence_Create()                                        \
          malloc(sizeof(AL4SAN_sequence_t));                              \
+              (*sequence)->status = AL4SAN_SUCCESS;                        \
         PRAGMA(omp parallel)                                               \
          {                                                                  \
            PRAGMA(omp master)                                               \

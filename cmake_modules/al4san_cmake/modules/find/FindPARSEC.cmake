@@ -648,13 +648,13 @@ mark_as_advanced(PARSEC_DIR_FOUND)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(PARSEC DEFAULT_MSG
   PARSEC_LIBRARIES
-  PARSEC_parsec_ptgpp_BIN_DIR
+  #PARSEC_parsec_ptgpp_BIN_DIR
   PARSEC_WORKS)
 
-if ( PARSEC_parsec_ptgpp_BIN_DIR )
-  find_program(PARSEC_PARSEC_PTGPP
-    NAMES parsec_ptgpp
-    HINTS ${PARSEC_parsec_ptgpp_BIN_DIR})
-else()
-  set(PARSEC_PARSEC_PTGPP "PARSEC_PARSEC_PTGPP-NOTFOUND")
-endif()
+#if ( PARSEC_parsec_ptgpp_BIN_DIR )
+#  find_program(PARSEC_PARSEC_PTGPP
+#    NAMES parsec_ptgpp
+#    HINTS ${PARSEC_parsec_ptgpp_BIN_DIR})
+#else()
+#  set(PARSEC_PARSEC_PTGPP "PARSEC_PARSEC_PTGPP-NOTFOUND")
+#endif()

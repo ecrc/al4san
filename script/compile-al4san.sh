@@ -4,7 +4,7 @@ module load mkl/2018-initial
 module load gcc/5.5.0
 module load cmake/3.9.6
 module load hwloc/1.11.8-gcc-5.5.0
-#module load openmpi/3.0.0-gcc-5.5.0
+module load openmpi/3.0.0-gcc-5.5.0
 module load cuda/9.0
 module load ecrc-extras
 

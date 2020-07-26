@@ -121,31 +121,40 @@ void al4san_quark_task_info(AL4SAN_Quark_task_t *al4san, va_list varg_list){
   
   while ((arg_type = va_arg(varg_list_copy, int))!=ARG_END)
   { 
-    arg_ptr = va_arg(varg_list_copy, void *);
-    arg_size = va_arg(varg_list_copy, int);
     quark_direction_t arg_direction = (quark_direction_t) ((arg_type & AL4SAN_QUARK_UNDEFINED_MASK) & QUARK_DIRECTION_BITMASK);
     if( arg_direction==AL4SAN_INPUT || 
       arg_direction==AL4SAN_OUTPUT || 
       arg_direction==AL4SAN_INOUT ) 
     {
+     arg_ptr = va_arg(varg_list_copy, void *);
+     (void *)va_arg(varg_list_copy, void *);
+     arg_size = va_arg(varg_list_copy, int);
      al4san->arg_depenency[narg]=arg_direction;
      al4san->arg_size[narg]=sizeof(char *);
      narg++;
     }
    else if( arg_type==AL4SAN_SCRATCH ||
      arg_type==AL4SAN_NODEP){
+     arg_ptr = va_arg(varg_list_copy, void *);
+     arg_size = va_arg(varg_list_copy, int);
      al4san->arg_depenency[narg]=arg_type;
-   al4san->arg_size[narg]=sizeof(char *);
+     al4san->arg_size[narg]=sizeof(char *);
    narg++;
    }
  else if( arg_type==AL4SAN_VALUE ) {
   mask=( arg_type & QUARK_QUARK_VALUE_FLAGS_BITMASK );
+  arg_ptr = va_arg(varg_list_copy, void *);
+  arg_size = va_arg(varg_list_copy, int);
   if(mask==0){
    al4san->arg_depenency[narg]=arg_type;
    al4san->arg_size[narg]=arg_size;
    narg++;
       }
-   }  
+   }
+ else{
+   arg_ptr = va_arg(varg_list_copy, void *);
+   arg_size = va_arg(varg_list_copy, int);
+ }  
 }
 al4san->num_arg=narg;
 
@@ -167,59 +176,78 @@ int al4san_quark_task_create(Quark *quark, Quark_Task *task, va_list varg_list, 
   arg_type=AL4SAN_VALUE;
   arg_ptr= (void *)&al4san;
   arg_size=sizeof(AL4SAN_Quark_task_t);
+  QUARK_Task_Pack_Arg( quark, task, arg_size, arg_ptr, arg_type);
 
-  do{
+  while((arg_type = va_arg(varg_list, int)) != ARG_END){
     quark_direction_t arg_direction = (quark_direction_t) ((arg_type & AL4SAN_QUARK_UNDEFINED_MASK) & QUARK_DIRECTION_BITMASK);
     if( arg_direction==AL4SAN_INPUT || arg_direction==AL4SAN_OUTPUT || arg_direction==AL4SAN_INOUT ) {
-   //  QUARK_Task_Pack_Arg( quark, task, arg_size, arg_ptr, (arg_type & AL4SAN_QUARK_UNDEFINED_MASK));
+
+       arg_ptr = va_arg(varg_list, void *);
+       (void*)va_arg(varg_list, void *);
+       arg_size = va_arg(varg_list, int);
        QUARK_Task_Pack_Arg( quark, task, AL4SAN_DEP, arg_ptr, (arg_type & AL4SAN_QUARK_UNDEFINED_MASK));
     }
    else if (arg_type==AL4SAN_VALUE || arg_type==AL4SAN_SCRATCH || arg_type==AL4SAN_NODEP)
    {
-    QUARK_Task_Pack_Arg( quark, task, arg_size, arg_ptr, arg_type);
+      arg_ptr = va_arg(varg_list, void *);
+      arg_size = va_arg(varg_list, int);
+      QUARK_Task_Pack_Arg( quark, task, arg_size, arg_ptr, arg_type);
    }
         //Task flags (add support to task option inside insert task API)
   else if (arg_type==AL4SAN_PRIORITY){
-   QUARK_Task_Flag_Set(task_flags, AL4SAN_PRIORITY, (intptr_t)arg_ptr);
-   nflags++;
+      arg_ptr = va_arg(varg_list, void *);
+      arg_size = va_arg(varg_list, int);
+      QUARK_Task_Flag_Set(task_flags, AL4SAN_PRIORITY, (intptr_t)arg_ptr);
+      nflags++;
    }
   else if (arg_type==AL4SAN_LOCK_TO_THREAD){
-   QUARK_Task_Flag_Set(task_flags, AL4SAN_LOCK_TO_THREAD, (intptr_t)arg_ptr);
-   nflags++;
+      arg_ptr = va_arg(varg_list, void *);
+      arg_size = va_arg(varg_list, int);
+      QUARK_Task_Flag_Set(task_flags, AL4SAN_LOCK_TO_THREAD, (intptr_t)arg_ptr);
+      nflags++;
    }
   else if (arg_type==AL4SAN_SEQUENCE){
-   QUARK_Task_Flag_Set(task_flags, AL4SAN_SEQUENCE, (intptr_t)arg_ptr);
-   nflags++;
+      arg_ptr = va_arg(varg_list, void *);
+      arg_size = va_arg(varg_list, int);
+      QUARK_Task_Flag_Set(task_flags, AL4SAN_SEQUENCE, (intptr_t)arg_ptr);
+      nflags++;
    }
   else if (arg_type==AL4SAN_THREAD_COUNT){
-   QUARK_Task_Flag_Set(task_flags, AL4SAN_THREAD_COUNT, (intptr_t)arg_ptr);
-   nflags++;
+      arg_ptr = va_arg(varg_list, void *);
+      arg_size = va_arg(varg_list, int);
+      QUARK_Task_Flag_Set(task_flags, AL4SAN_THREAD_COUNT, (intptr_t)arg_ptr);
+      nflags++;
    }
   else if (arg_type==AL4SAN_THREAD_SET_TO_MANUAL_SCHEDULING){
-   QUARK_Task_Flag_Set(task_flags, AL4SAN_THREAD_SET_TO_MANUAL_SCHEDULING, (intptr_t)arg_ptr);
-   nflags++;
+      arg_ptr = va_arg(varg_list, void *);
+      arg_size = va_arg(varg_list, int);
+      QUARK_Task_Flag_Set(task_flags, AL4SAN_THREAD_SET_TO_MANUAL_SCHEDULING, (intptr_t)arg_ptr);
+      nflags++;
    }
   else if (arg_type==AL4SAN_LOCK_TO_THREAD_MASK){
-   QUARK_Task_Flag_Set(task_flags, AL4SAN_LOCK_TO_THREAD_MASK, (intptr_t)strdup((unsigned char *)arg_ptr));
-   nflags++;
+      arg_ptr = va_arg(varg_list, void *);
+      arg_size = va_arg(varg_list, int);
+      QUARK_Task_Flag_Set(task_flags, AL4SAN_LOCK_TO_THREAD_MASK, (intptr_t)strdup((unsigned char *)arg_ptr));
+      nflags++;
   }
   else if (arg_type==AL4SAN_LABEL){
-   QUARK_Task_Flag_Set(task_flags, AL4SAN_LABEL, (intptr_t)strdup((char *)arg_ptr));
-   nflags++;
+      arg_ptr = va_arg(varg_list, void *);
+      arg_size = va_arg(varg_list, int);
+      QUARK_Task_Flag_Set(task_flags, AL4SAN_LABEL, (intptr_t)strdup((char *)arg_ptr));
+      nflags++;
  }
  else if (arg_type==AL4SAN_COLOR){
-   QUARK_Task_Flag_Set(task_flags, AL4SAN_COLOR, (intptr_t)strdup((char *)arg_ptr));
-   nflags++;
+      arg_ptr = va_arg(varg_list, void *);
+      arg_size = va_arg(varg_list, int);
+      QUARK_Task_Flag_Set(task_flags, AL4SAN_COLOR, (intptr_t)strdup((char *)arg_ptr));
+      nflags++;
   }
 else if (arg_type!=AL4SAN_QUARK_UNDEFINED){
    fprintf(stderr,"Unrecognized argument, did you perhaps forget to end arguments with ARG_END?\n");
    abort();
  }
 
- arg_type = va_arg(varg_list, int); 
- arg_ptr = va_arg(varg_list, void *);
- arg_size = va_arg(varg_list, int);
-}while (arg_type != ARG_END);
+ }
 
 if (nflags!=0){
   quark_set_task_flags_in_task_structure( quark, task, task_flags );

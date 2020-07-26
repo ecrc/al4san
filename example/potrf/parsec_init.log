@@ -1,0 +1,1859 @@
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         256
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,     256,      55,        1.520   1883.52
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         256
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,     256,      55,        1.496   1913.50
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         256
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,     256,      55,        1.482   1931.93
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,     512,      55,        1.948   1469.72
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,     512,      55,        1.925   1487.70
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,     512,      55,        1.897   1509.11
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,     768,      55,        1.853   1545.67
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,     768,      55,        1.754   1632.96
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,     768,      55,        1.758   1628.62
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,    1024,      55,        2.105   1360.18
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,    1024,      55,        2.051   1396.06
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          20480
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  20480,   20480,   20480,    1024,      55,        2.050   1396.97
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         256
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,     256,      55,        5.105   1893.26
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         256
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,     256,      55,        5.109   1891.72
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         256
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,     256,      55,        5.169   1869.50
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,     512,      55,        6.422   1504.92
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,     512,      55,        6.322   1528.68
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,     512,      55,        6.355   1520.67
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,     768,      55,        5.653   1709.61
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,     768,      55,        5.620   1719.49
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,     768,      55,        5.654   1709.40
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,    1024,      55,        5.899   1638.32
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,    1024,      55,        5.917   1633.17
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          30720
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  30720,   30720,   30720,    1024,      55,        6.115   1580.38
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         256
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,     256,      55,       12.233   1872.52
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         256
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,     256,      55,       12.231   1872.93
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         256
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,     256,      55,       12.237   1871.95
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,     512,      55,       14.707   1557.61
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,     512,      55,       14.614   1567.44
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,     512,      55,       14.583   1570.88
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,     768,      55,       13.353   1715.48
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,     768,      55,       12.898   1776.01
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,     768,      55,       12.998   1762.34
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,    1024,      55,       13.439   1704.54
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,    1024,      55,       13.488   1698.39
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          40960
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  40960,   40960,   40960,    1024,      55,       13.391   1710.66
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,     512,      55,       28.292   1581.40
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,     512,      55,       28.170   1588.26
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,     512,      55,       28.114   1591.43
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,     768,      55,       25.097   1782.72
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,     768,      55,       25.626   1745.92
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,     768,      55,       25.158   1778.40
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1024,      55,       26.045   1717.84
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1024,      55,       25.395   1761.80
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1024,      55,       26.310   1700.51
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1280,      55,       24.588   1819.61
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1280,      55,       24.495   1826.53
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1280,      55,       24.736   1808.75
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1536,      55,       24.177   1850.51
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1536,      55,       24.541   1823.13
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1536,      55,       25.058   1785.46
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1792,      55,       24.862   1799.55
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1792,      55,       25.279   1769.84
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    1792,      55,       24.476   1827.94
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    2048,      55,       27.040   1654.61
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    2048,      55,       27.092   1651.46
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          51200
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  51200,   51200,   51200,    2048,      55,       27.037   1654.79
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,     512,      55,       48.078   1608.04
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,     512,      55,       48.161   1605.26
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,     512,      55,       47.997   1610.76
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,     768,      55,       43.187   1790.15
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,     768,      55,       42.864   1803.64
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,     768,      55,       42.953   1799.91
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1024,      55,       44.498   1737.42
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1024,      55,       44.797   1725.80
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1024,      55,       44.448   1739.35
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1280,      55,       41.662   1855.67
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1280,      55,       42.121   1835.47
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1280,      55,       42.130   1835.06
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1536,      55,       40.746   1897.38
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1536,      55,       40.560   1906.09
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1536,      55,       41.142   1879.11
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1792,      55,       41.237   1874.79
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1792,      55,       40.837   1893.18
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    1792,      55,       40.286   1919.07
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    2048,      55,       44.008   1756.77
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    2048,      55,       43.671   1770.30
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          61440
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  61440,   61440,   61440,    2048,      55,       42.901   1802.08
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,     512,      55,       76.167   1611.80
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,     512,      55,       76.124   1612.73
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,     512,      55,       75.946   1616.51
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,     768,      55,       67.888   1808.38
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,     768,      55,       68.398   1794.90
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,     768,      55,       67.706   1813.23
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1024,      55,       71.524   1716.45
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1024,      55,       70.178   1749.36
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1024,      55,       70.468   1742.16
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1280,      55,       67.186   1827.27
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1280,      55,       67.091   1829.86
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1280,      55,       66.849   1836.49
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1536,      55,       63.155   1943.91
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1536,      55,       64.179   1912.89
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1536,      55,       64.210   1911.96
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1792,      55,       63.808   1924.01
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1792,      55,       63.513   1932.96
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    1792,      55,       64.049   1916.76
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    2048,      55,       66.885   1835.50
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    2048,      55,       65.639   1870.33
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          71680
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  71680,   71680,   71680,    2048,      55,       65.519   1873.76
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,     512,      55,      112.664   1626.56
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,     512,      55,      112.969   1622.18
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,     512,      55,      112.565   1627.99
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,     768,      55,      102.265   1791.96
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,     768,      55,      101.512   1805.26
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,     768,      55,      100.433   1824.65
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1024,      55,      103.541   1769.88
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1024,      55,      104.010   1761.90
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1024,      55,      103.322   1773.63
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1280,      55,       99.731   1837.49
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1280,      55,       99.145   1848.36
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1280,      55,       98.823   1854.38
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1536,      55,       96.162   1905.70
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1536,      55,       96.258   1903.80
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1536,      55,       95.053   1927.93
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1792,      55,       93.763   1954.45
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1792,      55,       95.114   1926.69
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    1792,      55,       95.591   1917.07
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    2048,      55,       98.702   1856.64
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    2048,      55,       96.816   1892.81
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          81920
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F#  81920,   81920,   81920,    2048,      55,       98.613   1858.33
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,     512,      55,      219.396   1631.38
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,     512,      55,      218.360   1639.12
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,     512,      55,      218.456   1638.40
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,     768,      55,      195.930   1826.77
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,     768,      55,      195.296   1832.70
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         768
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,     768,      55,      198.101   1806.75
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1024,      55,      203.577   1758.15
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1024,      55,      201.278   1778.23
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1024
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1024,      55,      202.620   1766.46
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1280,      55,      193.023   1854.28
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1280,      55,      192.895   1855.51
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1280
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1280,      55,      197.082   1816.09
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1536,      55,      190.021   1883.58
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1536,      55,      186.503   1919.11
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1536
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1536,      55,      186.138   1922.87
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1792,      55,      184.126   1943.88
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1792,      55,      182.916   1956.75
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         1792
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    1792,      55,      184.925   1935.48
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    2048,      55,      188.708   1896.68
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    2048,      55,      186.480   1919.35
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          102400
+# NB:         2048
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 102400,  102400,  102400,    2048,      55,      189.379   1889.97
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          122880
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 122880,  122880,  122880,     512,      55,      379.168   1631.16
+#
+# AL4SAN 1.0.0, ./potrf
+# Nb threads: 55
+# Nb gpus:    0
+# Nb Prows:    1
+# Nb Qcols:    1
+# N:          122880
+# NB:         512
+# eps:        1.110223e-16
+# Activated runtime: Parsec
+#
+#      M       N  K/NRHS      NB      Nb threads      seconds       Gflop/s
+F# 122880,  122880,  122880,     512,      55,    

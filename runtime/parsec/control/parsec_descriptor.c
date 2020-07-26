@@ -247,7 +247,7 @@ void AL4SAN_Parsec_desc_create( AL4SAN_desc_t *mdesc )
         (void)rc;
     }
 #endif
-    data_collection->memory_registration_status = MEMORY_STATUS_UNREGISTERED;
+    data_collection->memory_registration_status = PARSEC_MEMORY_STATUS_UNREGISTERED;
 
     pdesc->data_map = calloc( mdesc->lmt * mdesc->lnt, sizeof(parsec_data_t*) );
 
@@ -297,7 +297,10 @@ void AL4SAN_Parsec_desc_create( AL4SAN_desc_t *mdesc )
             }
 
             /* Register the new arena */
-            parsec_matrix_add2arena( parsec_dtd_arenas[i], datatype, matrix_UpperLower, 1,
+            //parsec_matrix_add2arena( parsec_dtd_arenas[i], datatype, matrix_UpperLower, 1,
+            //                         mdesc->mb, mdesc->nb, mdesc->mb, PARSEC_ARENA_ALIGNMENT_SSE, -1 );
+            //parsec_arena_datatype_t **adt;
+            parsec_matrix_add2arena( &parsec_dtd_arenas_datatypes[i], datatype, matrix_UpperLower, 1,
                                      mdesc->mb, mdesc->nb, mdesc->mb, PARSEC_ARENA_ALIGNMENT_SSE, -1 );
             arena->size = size;
             pdesc->arena_index = i;
@@ -380,13 +383,17 @@ void AL4SAN_Parsec_desc_flush( const AL4SAN_desc_t     *desc,
 void AL4SAN_Parsec_data_flush( const AL4SAN_sequence_t *sequence,
                          const AL4SAN_desc_t *A, int Am, int An )
 {
-    /*
-     * For now, we do nothing in this function as in PaRSEC, once the data is
-     * flushed it cannot be reused in the same sequence, when this issue will be
-     * fixed, we will uncomment this function
-     */
-    /* parsec_taskpool_t* PARSEC_dtd_taskpool = (parsec_taskpool_t *)(sequence->schedopt); */
-    /* parsec_dtd_data_flush( PARSEC_dtd_taskpool, RTBLKADDR( A, AL4SAN_Complex64_t, Am, An ) ); */
+    parsec_taskpool_t* PARSEC_dtd_taskpool = (parsec_taskpool_t *)(sequence->schedopt); 
+
+    if( A->dtyp == Al4sanComplexDouble ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, An));
+    } else if ( A->dtyp == Al4sanComplexFloat ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, An));
+    } else if ( A->dtyp == Al4sanRealDouble ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, An));
+    }  else if ( A->dtyp == Al4sanRealFloat ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, An));
+    }
 
     (void)sequence; (void)A; (void)Am; (void)An;
     return;
@@ -395,14 +402,17 @@ void AL4SAN_Parsec_data_flush( const AL4SAN_sequence_t *sequence,
 void AL4SAN_Parsec_matrix_flush( const AL4SAN_sequence_t *sequence,
                          const AL4SAN_desc_t *A, int Am, int An )
 {
-    /*
-     * For now, we do nothing in this function as in PaRSEC, once the data is
-     * flushed it cannot be reused in the same sequence, when this issue will be
-     * fixed, we will uncomment this function
-     */
-    /* parsec_taskpool_t* PARSEC_dtd_taskpool = (parsec_taskpool_t *)(sequence->schedopt); */
-    /* parsec_dtd_data_flush( PARSEC_dtd_taskpool, RTBLKADDR( A, AL4SAN_Complex64_t, Am, An ) ); */
+    parsec_taskpool_t* PARSEC_dtd_taskpool = (parsec_taskpool_t *)(sequence->schedopt);
 
+    if( A->dtyp == Al4sanComplexDouble ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, An));
+    } else if ( A->dtyp == Al4sanComplexFloat ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, An));
+    } else if ( A->dtyp == Al4sanRealDouble ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, An));
+    }  else if ( A->dtyp == Al4sanRealFloat ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, An));
+    }
     (void)sequence; (void)A; (void)Am; (void)An;
     return;
 }
@@ -410,14 +420,17 @@ void AL4SAN_Parsec_matrix_flush( const AL4SAN_sequence_t *sequence,
 void AL4SAN_Parsec_vector_flush( const AL4SAN_sequence_t *sequence,
                          const AL4SAN_desc_t *A, int Am)
 {
-    /*
-     * For now, we do nothing in this function as in PaRSEC, once the data is
-     * flushed it cannot be reused in the same sequence, when this issue will be
-     * fixed, we will uncomment this function
-     */
-    /* parsec_taskpool_t* PARSEC_dtd_taskpool = (parsec_taskpool_t *)(sequence->schedopt); */
-    /* parsec_dtd_data_flush( PARSEC_dtd_taskpool, RTBLKADDR( A, AL4SAN_Complex64_t, Am, An ) ); */
+    parsec_taskpool_t* PARSEC_dtd_taskpool = (parsec_taskpool_t *)(sequence->schedopt);
 
+    if( A->dtyp == Al4sanComplexDouble ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, 0));
+    } else if ( A->dtyp == Al4sanComplexFloat ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, 0));
+    } else if ( A->dtyp == Al4sanRealDouble ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, 0));
+    }  else if ( A->dtyp == Al4sanRealFloat ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, Am, 0));
+    }
     (void)sequence; (void)A; (void)Am;
     return;
 }
@@ -425,14 +438,17 @@ void AL4SAN_Parsec_vector_flush( const AL4SAN_sequence_t *sequence,
 void AL4SAN_Parsec_scaler_flush( const AL4SAN_sequence_t *sequence,
                          const AL4SAN_desc_t *A)
 {
-    /*
-     * For now, we do nothing in this function as in PaRSEC, once the data is
-     * flushed it cannot be reused in the same sequence, when this issue will be
-     * fixed, we will uncomment this function
-     */
-    /* parsec_taskpool_t* PARSEC_dtd_taskpool = (parsec_taskpool_t *)(sequence->schedopt); */
-    /* parsec_dtd_data_flush( PARSEC_dtd_taskpool, RTBLKADDR( A, AL4SAN_Complex64_t, Am, An ) ); */
+    parsec_taskpool_t* PARSEC_dtd_taskpool = (parsec_taskpool_t *)(sequence->schedopt);
 
+    if( A->dtyp == Al4sanComplexDouble ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, 0, 0));
+    } else if ( A->dtyp == Al4sanComplexFloat ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, 0, 0));
+    } else if ( A->dtyp == Al4sanRealDouble ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, 0, 0));
+    }  else if ( A->dtyp == Al4sanRealFloat ){
+       parsec_dtd_data_flush( PARSEC_dtd_taskpool, AL4SAN_Parsec_data_getaddr( A, 0, 0));
+    }
     (void)sequence; (void)A; 
     return;
 }

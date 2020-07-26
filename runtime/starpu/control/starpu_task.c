@@ -120,12 +120,13 @@ void al4san_starpu_task_info(AL4SAN_Starpu_task_t* al4san_task, int *codelet_buf
   va_copy(varg_list_copy, varg_list);
   while ((arg_type = va_arg(varg_list_copy, int))!=ARG_END)
   {
-    arg_ptr = va_arg(varg_list_copy, void *);
-    ptr_size = va_arg(varg_list_copy, int);
     
     if ((arg_type & AL4SAN_STARPU_UNDEFINED_MASK)== AL4SAN_INPUT || 
      (arg_type & AL4SAN_STARPU_UNDEFINED_MASK)==AL4SAN_OUTPUT || 
      (arg_type & AL4SAN_STARPU_UNDEFINED_MASK)==AL4SAN_INOUT){
+    arg_ptr = va_arg(varg_list_copy, void *);
+    (void*)va_arg(varg_list_copy, void *);
+    ptr_size = va_arg(varg_list_copy, int);
       al4san_task->arg_depenency[num_arg]=(arg_type & AL4SAN_STARPU_UNDEFINED_MASK);
     al4san_task->arg_size[num_arg]=1;
     num_arg++;
@@ -133,20 +134,28 @@ void al4san_starpu_task_info(AL4SAN_Starpu_task_t* al4san_task, int *codelet_buf
   }
   else if (arg_type==AL4SAN_SCRATCH || 
     arg_type==AL4SAN_REDUX){
+    arg_ptr = va_arg(varg_list_copy, void *);
+    ptr_size = va_arg(varg_list_copy, int);
     al4san_task->arg_depenency[num_arg]=arg_type;
-  al4san_task->arg_size[num_arg]=1;
-  num_arg++;
-  (*codelet_buffers)++;
+    al4san_task->arg_size[num_arg]=1;
+    num_arg++;
+    (*codelet_buffers)++;
 }
 else if (arg_type==AL4SAN_VALUE || 
   arg_type==AL4SAN_DATA_ARRAY || 
   arg_type==AL4SAN_DATA_MODE_ARRAY || 
   arg_type==AL4SAN_CL_ARGS || 
   arg_type==AL4SAN_CL_ARGS_NFREE){
+    arg_ptr = va_arg(varg_list_copy, void *);
+    ptr_size = va_arg(varg_list_copy, int);
   al4san_task->arg_depenency[num_arg]=arg_type;
 al4san_task->arg_size[num_arg]=ptr_size;
 num_arg++;
 }
+ else{
+    arg_ptr = va_arg(varg_list_copy, void *);
+    ptr_size = va_arg(varg_list_copy, int);
+     }
 }
 al4san_task->num_arg=num_arg;
 va_end(varg_list_copy);
@@ -188,8 +197,15 @@ int al4san_starpu_task_create(struct starpu_codelet *cl, struct starpu_task *tas
     if ((arg_type & AL4SAN_STARPU_UNDEFINED_MASK)==AL4SAN_INPUT || 
       (arg_type & AL4SAN_STARPU_UNDEFINED_MASK)==AL4SAN_OUTPUT || 
       (arg_type & AL4SAN_STARPU_UNDEFINED_MASK)==AL4SAN_INOUT || 
-      (arg_type & AL4SAN_STARPU_UNDEFINED_MASK)==AL4SAN_SCRATCH || 
       (arg_type & AL4SAN_STARPU_UNDEFINED_MASK)==AL4SAN_REDUX)
+    {
+        /* We have an access mode : we expect to find a handle */
+      starpu_data_handle_t handle = va_arg(varg_list, starpu_data_handle_t);
+      starpu_task_insert_data_process_arg(cl, task, &allocated_buffers, &current_buffer, (arg_type & AL4SAN_STARPU_UNDEFINED_MASK), handle);
+     (void*)va_arg(varg_list, void *);
+      ptr_size=va_arg(varg_list, int);
+    }
+    else if((arg_type & AL4SAN_STARPU_UNDEFINED_MASK)==AL4SAN_SCRATCH)
     {
         /* We have an access mode : we expect to find a handle */
       starpu_data_handle_t handle = va_arg(varg_list, starpu_data_handle_t);
@@ -488,7 +504,7 @@ int al4san_starpu_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb
       }
       (void)va_arg(varg_list_copy, int);  
     }
-    else if (arg_type_nocommute==AL4SAN_INPUT || arg_type_nocommute==AL4SAN_OUTPUT || arg_type_nocommute==AL4SAN_INOUT || arg_type==AL4SAN_SCRATCH || arg_type==AL4SAN_REDUX)
+    else if (arg_type_nocommute==AL4SAN_INPUT || arg_type_nocommute==AL4SAN_OUTPUT || arg_type_nocommute==AL4SAN_INOUT || arg_type==AL4SAN_REDUX)
     {
       starpu_data_handle_t data = va_arg(varg_list_copy, starpu_data_handle_t);
       enum starpu_data_access_mode mode = (enum starpu_data_access_mode) (arg_type & AL4SAN_STARPU_UNDEFINED_MASK);
@@ -511,8 +527,33 @@ int al4san_starpu_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb
       descrs[nb_data].handle = data;
       descrs[nb_data].mode = mode;
       nb_data ++;
-
+      (void*)va_arg(varg_list_copy, void *);
       (void)va_arg(varg_list_copy, int);  
+    }
+    else if (arg_type==AL4SAN_SCRATCH)
+    {
+      starpu_data_handle_t data = va_arg(varg_list_copy, starpu_data_handle_t);
+      enum starpu_data_access_mode mode = (enum starpu_data_access_mode) (arg_type & AL4SAN_STARPU_UNDEFINED_MASK);
+      if (node_selected == 0)
+      {
+        int ret = _starpu_mpi_find_executee_node(data, mode, me, do_execute, &inconsistent_execute, xrank);
+        if (ret == -EINVAL)
+        {
+          free(descrs);
+          va_end(varg_list_copy);
+          _STARPU_TRACE_TASK_MPI_DECODE_END();
+          return ret;
+        }
+      }
+      if (nb_data >= nb_allocated_data)
+      {
+        nb_allocated_data *= 2;
+        _STARPU_MPI_REALLOC(descrs, nb_allocated_data * sizeof(struct starpu_data_descr));
+      }
+      descrs[nb_data].handle = data;
+      descrs[nb_data].mode = mode;
+      nb_data ++;
+      (void)va_arg(varg_list_copy, int);
     }
     else if (arg_type == AL4SAN_DATA_ARRAY)
     {
@@ -703,12 +744,27 @@ int al4san_starpu_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb
         select_node_policy = va_arg(varg_list_copy, int);
         (void)va_arg(varg_list_copy, int);  
       }
-      else if (arg_type==AL4SAN_CUDA_FLG)
-      {
-        (void)va_arg(varg_list_copy, unsigned);
-        (void)va_arg(varg_list_copy, int);
-      }
-      else if (arg_type!=AL4SAN_STARPU_UNDEFINED)
+
+    else if(arg_type==AL4SAN_CUDA_FLG)
+    {
+  #ifdef AL4SAN_USE_CUDA
+     if ( va_arg(varg_list, int)== ON){
+      cl->cuda_flags[0]=AL4SAN_CUDA_ASYNC;
+      (void)va_arg(varg_list, int);
+    }
+    else
+      (void)va_arg(varg_list, int);
+  #else
+    (void)va_arg(varg_list, int);
+    (void)va_arg(varg_list, int);          
+  #endif
+  }
+     else if (arg_type==AL4SAN_STARPU_UNDEFINED)
+     {
+       (void)va_arg(varg_list, int);
+       (void)va_arg(varg_list, int);
+     } 
+     else if (arg_type!=AL4SAN_STARPU_UNDEFINED)
       {
         STARPU_ABORT_MSG("Unrecognized argument %d, did you perhaps forget to end arguments with 0?\n", arg_type);
       }
@@ -792,6 +848,9 @@ int al4san_starpu_mpi_task_decode(struct starpu_codelet *codelet, int me, int nb
 
       *task = starpu_task_create();
       (*task)->cl_arg_free = 1;
+      (*task)->callback_arg_free = 1;
+      (*task)->prologue_callback_arg_free = 1;
+      (*task)->prologue_callback_pop_arg_free = 1;
 
       va_copy(varg_list_copy, varg_list);
       al4san_starpu_task_create(codelet, *task, varg_list_copy);

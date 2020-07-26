@@ -1,0 +1,13 @@
+#module load mkl/2018-initial
+module load ecrc-extras
+module load mkl/2019-update-5
+#module load gcc/5.5.0
+module load cmake/3.9.6
+module load gcc/7.2.0
+#module load intel
+#module load likwid/5.0.0-gcc-8.3.0
+#module load hwloc/1.11.8-gcc-5.5.0
+#module load starpu/1.2.3-gcc-5.5.0-mkl-openmpi-3.0.0
+#module load starpu/1.2.4-gcc-5.5.0-mkl-openmpi-3.0.0
+#module load starpu/1.2.6-gcc-5.5.0-mkl-openmpi-3.0.0 
+#module load gsl/2.4-gcc-5.5.0

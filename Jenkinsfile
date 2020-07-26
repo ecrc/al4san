@@ -41,11 +41,10 @@ AL4SAN
                     steps {
                         sh '''#!/bin/bash -el
                         module purge
-                        module load ecrc-extras
-                        module load gcc/5.5.0
-                        module load mkl/2018-update-2
-                        module load openmpi/3.0.0-gcc-5.5.0
-                        module load parsec/master-gcc-5.5.0-mkl-openmpi-plasma-2.8.0
+			module load gcc/7.2.0
+			module load mkl/2020.0.166
+			module load openmpi/3.0.0-gcc-7.2.0
+			module load parsec/master-gcc-7.2.0-mkl-openmpi-plasma-3.0.0
 
                         mkdir -p build-parsec
                         cd build-parsec

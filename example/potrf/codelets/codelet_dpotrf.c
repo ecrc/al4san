@@ -38,8 +38,8 @@
 AL4SAN_TASK_CPU(potrf, potrf_cpu_fun)
 
 
-void INSERT_Task_dpotrf( const AL4SAN_option_t *options,
-                        cham_uplo_t uplo, int n, int nb,
+void Task_dpotrf( const AL4SAN_option_t *options,
+                        al4san_uplo_t uplo, int n, int nb,
                         const AL4SAN_desc_t *A, int Am, int An, int lda,
                         int iinfo )
 {
@@ -51,6 +51,10 @@ void INSERT_Task_dpotrf( const AL4SAN_option_t *options,
             *  @param[in] Parameter list  of va_list type to represent data and the dependencies
           */
 
+    AL4SAN_BEGIN_ACCESS_DECLARATION;
+    AL4SAN_ACCESS_RW(A, Am, An);
+    AL4SAN_END_ACCESS_DECLARATION;
+
    AL4SAN_Insert_Task(AL4SAN_TASK(potrf), (AL4SAN_option_t * )options,         
         AL4SAN_VALUE,                      &uplo,                                         sizeof(int),
         AL4SAN_VALUE,                      &n,                                            sizeof(int),
@@ -59,9 +63,10 @@ void INSERT_Task_dpotrf( const AL4SAN_option_t *options,
         AL4SAN_VALUE,                      &(options->sequence),                          sizeof(AL4SAN_sequence_t*),
         AL4SAN_VALUE,                      &(options->request),                           sizeof(AL4SAN_request_t*),
         AL4SAN_VALUE,                      &iinfo,                                        sizeof(int), 
-        AL4SAN_PRIORITY,                   options->priority,                             sizeof(int),
+/*       AL4SAN_PRIORITY,                   options->priority,                             sizeof(int),
         AL4SAN_LABEL,                      "zpotrf",                                      sizeof(char),
-        AL4SAN_COLOR,                      "green",                                       sizeof(char),
+*/
+//        AL4SAN_COLOR,                      "green",                                       sizeof(char), 
         ARG_END);
 
 }
@@ -85,7 +90,14 @@ void potrf_cpu_fun(AL4SAN_arg_list *al4san_arg)
  */
 
      AL4SAN_Unpack_Arg(al4san_arg, &uplo, &n, &A, &lda, &sequence, &request, &iinfo);
-    CORE_dpotrf(uplo, n, A, lda, &info);
-
+      info =  LAPACKE_dpotrf_work(
+        LAPACK_COL_MAJOR,
+        'U',
+        n, A, lda );
+//       printf("\n &uplo:%d, &n:%d, &A:%p, &lda:%d, &sequence:%p, &request:%p, &iinfo:%d\n", uplo, n, A, lda, sequence, request, iinfo);
+       if (info !=0){
+           printf("\nMatrix is not SPD:%d\n", info);
+           exit(0);
+       }
 
 }

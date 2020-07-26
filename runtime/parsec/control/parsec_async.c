@@ -53,7 +53,8 @@ int AL4SAN_Parsec_sequence_destroy( AL4SAN_context_t  *al4san,
     parsec_taskpool_t *parsec_dtd_tp = (parsec_taskpool_t *)(sequence->schedopt);
 
     assert( parsec_dtd_tp );
-    parsec_dtd_taskpool_wait( parsec, parsec_dtd_tp );
+//    parsec_dtd_taskpool_wait( parsec, parsec_dtd_tp );
+    parsec_dtd_taskpool_wait( parsec_dtd_tp );
     parsec_taskpool_free( parsec_dtd_tp );
 
     sequence->schedopt = NULL;
@@ -70,8 +71,8 @@ int AL4SAN_Parsec_sequence_wait( AL4SAN_context_t  *al4san,
     parsec_taskpool_t *parsec_dtd_tp = (parsec_taskpool_t *) sequence->schedopt;
 
     assert( parsec_dtd_tp );
-    parsec_dtd_taskpool_wait( parsec, parsec_dtd_tp );
-
+//    parsec_dtd_taskpool_wait( parsec, parsec_dtd_tp );
+    parsec_dtd_taskpool_wait( parsec_dtd_tp );
     return AL4SAN_SUCCESS;
 }
 

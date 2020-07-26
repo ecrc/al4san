@@ -155,19 +155,19 @@ AL4SAN_context_t*  AL4SAN_InitPar(char *runtime, int ncpus, int ncudas, int nthr
 
 #ifdef AL4SAN_SCHED_QUARK
     if(al4san->scheduler==0)
-    al4san->my_mpi_rank   = AL4SAN_Quark_comm_size( al4san );
+    al4san->mpi_comm_size   = AL4SAN_Quark_comm_size( al4san );
 #endif
 #ifdef AL4SAN_SCHED_STARPU
     if(al4san->scheduler==1)
-         al4san->my_mpi_rank   = AL4SAN_Starpu_comm_size( al4san );
+         al4san->mpi_comm_size   = AL4SAN_Starpu_comm_size( al4san );
 #endif
 #ifdef AL4SAN_SCHED_PARSEC
     if(al4san->scheduler==2)
-         al4san->my_mpi_rank   = AL4SAN_Parsec_comm_size( al4san );
+         al4san->mpi_comm_size   = AL4SAN_Parsec_comm_size( al4san );
 #endif
 #ifdef AL4SAN_SCHED_OPENMP 
     if(al4san->scheduler==3)
-         al4san->my_mpi_rank   = AL4SAN_Openmp_comm_size( al4san );
+         al4san->mpi_comm_size    = AL4SAN_Openmp_comm_size( al4san );
 #endif
 
     //al4san->mpi_comm_size = AL4SAN_Runtime_comm_size( al4san );
@@ -286,7 +286,7 @@ AL4SAN_context_t*  AL4SAN_Switch_Runtime(char *runtime, int ncpus, int ncudas)
 #ifdef AL4SAN_SCHED_OPENMP 
     if(strcmp(runtime, "Openmp")){
         AL4SAN_Openmp_context_create(al4san); 
-        AL4SAN_Openmp_init( al4san, ncpus, ncudas, nthreads_per_worker );
+        AL4SAN_Openmp_init( al4san, ncpus, ncudas, -1 );
         AL4SAN_Openmp_task_option_init();
     }
 #endif
@@ -312,19 +312,19 @@ AL4SAN_context_t*  AL4SAN_Switch_Runtime(char *runtime, int ncpus, int ncudas)
 
 #ifdef AL4SAN_SCHED_QUARK
     if(al4san->scheduler==0)
-    al4san->my_mpi_rank   = AL4SAN_Quark_comm_size( al4san );
+    al4san->mpi_comm_size   = AL4SAN_Quark_comm_size( al4san );
 #endif
 #ifdef AL4SAN_SCHED_STARPU
     if(al4san->scheduler==1)
-         al4san->my_mpi_rank   = AL4SAN_Starpu_comm_size( al4san );
+         al4san->mpi_comm_size   = AL4SAN_Starpu_comm_size( al4san );
 #endif
 #ifdef AL4SAN_SCHED_PARSEC
     if(al4san->scheduler==2)
-         al4san->my_mpi_rank   = AL4SAN_Parsec_comm_size( al4san );
+         al4san->mpi_comm_size   = AL4SAN_Parsec_comm_size( al4san );
 #endif
 #ifdef AL4SAN_SCHED_OPENMP 
     if(al4san->scheduler==3)
-         al4san->my_mpi_rank   = AL4SAN_Openmp_comm_size( al4san );
+         al4san->mpi_comm_size  = AL4SAN_Openmp_comm_size( al4san );
 #endif
 
 #endif
@@ -641,7 +641,7 @@ int AL4SAN_Progress()
 #endif
 #ifdef AL4SAN_SCHED_OPENMP
     if(al4san->scheduler==3) 
-         AL4SAN_Runtime_progress(al4san);
+         AL4SAN_Openmp_progress(al4san);
 #endif
 
     return AL4SAN_SUCCESS;          
@@ -857,7 +857,7 @@ void AL4SAN_Init_Processor_Grid(int p, int q){
 
         al4sanctxt = al4san_context_self();
     if (al4sanctxt == NULL) {
-        al4sab_error("AL4SAN_Init_Processor_Grid", "AL4SAN not initialized");
+        al4san_error("AL4SAN_Init_Processor_Grid", "AL4SAN not initialized");
         //return CHAMELEON_ERR_NOT_INITIALIZED;
     }
 

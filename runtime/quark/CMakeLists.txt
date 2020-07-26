@@ -63,7 +63,7 @@ add_custom_target(
 # ------------
 install(
   FILES ${AL4SAN_RUNTIME_HDRS}
-  DESTINATION include/runtime )
+  DESTINATION include/runtime/quark/include)
 
 # Generate the Al4san common for all possible precisions
 # ---------------------------------------------------------

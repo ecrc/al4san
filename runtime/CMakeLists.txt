@@ -52,6 +52,25 @@ if( AL4SAN_SCHED_OPENMP)
     add_subdirectory(openmp)
 endif()
 
+# Define the list of headers
+# --------------------------
+set(AL4SAN_RUNTIME_HDRS
+  ${CMAKE_CURRENT_SOURCE_DIR}/al4san_runtime.h
+  )
+
+
+# Force generation of headers
+# ---------------------------
+add_custom_target(
+  runtime_include
+  ALL SOURCES ${AL4SAN_RUNTIME_HDRS})
+
+# Installation
+# ------------
+install(
+  FILES ${AL4SAN_RUNTIME_HDRS}
+  DESTINATION include/runtime )
+
 # Put doxygen input to parent scope
 set(DOXYGEN_INPUT ${DOXYGEN_INPUT} PARENT_SCOPE )
 

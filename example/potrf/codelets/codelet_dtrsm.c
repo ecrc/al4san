@@ -35,8 +35,8 @@
 AL4SAN_TASK_CPU_GPU(trsm, trsm_cpu_func, trsm_cuda_func)
 
 
-void INSERT_Task_dtrsm( const AL4SAN_option_t *options,
-                       cham_side_t side, cham_uplo_t uplo, cham_trans_t transA, cham_diag_t diag,
+void Task_dtrsm( const AL4SAN_option_t *options,
+                       al4san_side_t side, al4san_uplo_t uplo, al4san_trans_t transA, al4san_diag_t diag,
                        int m, int n, int nb,
                        double alpha, const AL4SAN_desc_t *A, int Am, int An, int lda,
                        const AL4SAN_desc_t *B, int Bm, int Bn, int ldb )
@@ -48,6 +48,12 @@ void INSERT_Task_dtrsm( const AL4SAN_option_t *options,
             *  @param[in] options argument which holds sequence data sturcture
             *  @param[in] Parameter list  of va_list type to represent data and the dependencies
           */
+
+    AL4SAN_BEGIN_ACCESS_DECLARATION;
+    AL4SAN_ACCESS_R(A, Am, An);
+    AL4SAN_ACCESS_RW(B, Bm, Bn);
+    AL4SAN_END_ACCESS_DECLARATION;
+
 
     AL4SAN_Insert_Task(AL4SAN_TASK(trsm), (AL4SAN_option_t * )options,
         AL4SAN_VALUE,                      &side,                                        sizeof(int),         
@@ -61,10 +67,11 @@ void INSERT_Task_dtrsm( const AL4SAN_option_t *options,
         AL4SAN_VALUE,                      &lda,                                         sizeof(int),
         AL4SAN_INOUT | AL4SAN_AFFINITY,    AL4SAN_ADDR(B, double, Bm, Bn),  AL4SAN_DEP,
         AL4SAN_VALUE,                      &ldb,                                         sizeof(int), 
+#ifdef AL4SAN_USE_CUDA
         AL4SAN_CUDA_FLG,                   ON,                                           sizeof(int),
+#endif
         AL4SAN_PRIORITY,                   options->priority,                            sizeof(int),
         AL4SAN_LABEL,                      "ztrsm",                                      sizeof(char),
-        AL4SAN_COLOR,                      "yellow",                                     sizeof(char),
         ARG_END);
 }
 
@@ -90,11 +97,14 @@ void trsm_cpu_func(AL4SAN_arg_list *al4san_arg)
 
     AL4SAN_Unpack_Arg(al4san_arg, &side, &uplo, &transA, &diag, &m, &n, &alpha, &A, &lda, &B, &ldb);
 
-    CORE_dtrsm(side, uplo,
-        transA, diag,
+    cblas_dtrsm(
+        CblasColMajor,
+        (CBLAS_SIDE)side, (CBLAS_UPLO)uplo,
+        (CBLAS_TRANSPOSE)transA, (CBLAS_DIAG)diag,
         m, n,
-        alpha, A, lda,
+        (alpha), A, lda,
         B, ldb);
+
 }
 #ifdef AL4SAN_USE_CUDA
 void trsm_cuda_func(AL4SAN_arg_list *al4san_arg) 

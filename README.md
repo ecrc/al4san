@@ -81,3 +81,24 @@ shared-memory systems, GPU-based nodes, distributed-memory hardware configuratio
     make test
     make install
 ```
+## References
+1. AL4SAN: Abstraction Layer For Standardizing APIs of Task-Based Engines,
+R. Alomairy, H. Ltaief, M. Abduljabbar & D. Keyes. IEEE Transactions on
+Parallel and Distributed Systems, vol. 31, no. 11, pp. 2482-2495, 1 Nov. 2020,
+doi: 10.1109/TPDS.2020.2992923.
+
+2. AL4SAN: Abstraction Layer For Standardizing APIs of Task-Based Engines,
+R. Alomairy, H. Ltaief, M. Abduljabbar & D. Keyes. Poster at ISC High Performance 
+conference, 2020. Available at: https://www.youtube.com/watch?v=xgrQT-igXp8
+
+## Acknowledgment
+The authors would like to thank Yu Pei from Innovative Computing Laboratory at University of Tennessee for his helping to extend AL4SAN to support PaRSEC (DTD) runtime system in shared- and distributed- memory system.  
+
+## Contact
+Rabab Alomairy: rabab.omairy@kaust.edu.sa
+
+Hatem Ltaief: hatem.ltaief@kaust.edu.sa
+
+Mustafa Abduljabbar: mustafa.abduljabbar@kaust.edu.sa 
+
+

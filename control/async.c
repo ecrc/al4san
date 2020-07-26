@@ -121,7 +121,7 @@ int al4san_sequence_wait(AL4SAN_context_t *al4san, AL4SAN_sequence_t *sequence)
 #endif
 #ifdef AL4SAN_SCHED_OPENMP  
     if(al4san->scheduler==3)
-         AL4SAN_Runtime_sequence_wait( al4san, sequence );
+         AL4SAN_Openmp_sequence_wait( al4san, sequence );
 #endif
 
     return AL4SAN_SUCCESS;

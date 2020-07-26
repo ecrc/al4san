@@ -75,7 +75,7 @@ typedef int (al4san_openmp_codelet) (kmp_int32, kmp_task_t *);
 
 #define AL4SAN_OPENMP_getStream(_stream_)  
 
-int al4san_openmp_workspace_destroy(AL4SAN_Openmp_arg_list *al4san_arg);
+int al4san_openmp_workspace_destroy(AL4SAN_arg_list *al4san_arg);
 
 END_C_DECLS
 #endif /* _AL4SAN_OPENMP_H_ */

@@ -229,61 +229,61 @@ inline static int al4san_desc_islocal( const AL4SAN_desc_t *A, int m, int n )
 
 #if defined(AL4SAN_SCHED_STARPU) 
 #define AL4SAN_BEGIN_ACCESS_DECLARATION { \
-    unsigned __al4san_need_submit = 0; \
+    unsigned __al4san_starpu_need_submit = 0; \
     AL4SAN_STARPU_BEGIN_ACCESS_DECLARATION
 
 #define AL4SAN_ACCESS_R3(A, Am, An) do { \
-    if (al4san_desc_islocal(A, Am, An)) __al4san_need_submit = 1; \
+    if (al4san_desc_islocal(A, Am, An)) __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_ACCESS_R(A, Am, An); \
 } while(0)
 
 #define AL4SAN_ACCESS_R2(A, Am) do { \
-    if (al4san_desc_islocal(A, Am, 0)) __al4san_need_submit = 1; \
+    if (al4san_desc_islocal(A, Am, 0)) __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_ACCESS_R(A, Am, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_R1(A) do { \
-    if (al4san_desc_islocal(A, 0, 0)) __al4san_need_submit = 1; \
+    if (al4san_desc_islocal(A, 0, 0)) __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_ACCESS_R(A, 0, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_W3(A, Am, An) do { \
-    if (al4san_desc_islocal(A, Am, An)) __al4san_need_submit = 1; \
+    if (al4san_desc_islocal(A, Am, An)) __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_ACCESS_W(A, Am, An); \
 } while(0)
 
 #define AL4SAN_ACCESS_W2(A, Am) do { \
-    if (al4san_desc_islocal(A, Am, 0)) __al4san_need_submit = 1; \
+    if (al4san_desc_islocal(A, Am, 0)) __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_ACCESS_W(A, Am, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_W1(A) do { \
-    if (al4san_desc_islocal(A, 0, 0)) __al4san_need_submit = 1; \
+    if (al4san_desc_islocal(A, 0, 0)) __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_ACCESS_W(A, 0, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_RW3(A, Am, An) do { \
-    if (al4san_desc_islocal(A, Am, An)) __al4san_need_submit = 1; \
+    if (al4san_desc_islocal(A, Am, An)) __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_ACCESS_RW(A, Am, An); \
 } while(0)
 
 #define AL4SAN_ACCESS_RW2(A, Am) do { \
-    if (al4san_desc_islocal(A, Am, 0)) __al4san_need_submit = 1; \
+    if (al4san_desc_islocal(A, Am, 0)) __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_ACCESS_RW(A, Am, 0); \
 } while(0)
 
 #define AL4SAN_ACCESS_RW1(A) do { \
-    if (al4san_desc_islocal(A, 0, 0)) __al4san_need_submit = 1; \
+    if (al4san_desc_islocal(A, 0, 0)) __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_ACCESS_RW(A, 0, 0); \
 } while(0)
 #define AL4SAN_RANK_CHANGED(rank) do {\
-    __al4san_need_submit = 1; \
+    __al4san_starpu_need_submit = 1; \
     AL4SAN_STARPU_RANK_CHANGED(rank); \
 } while (0)
 
 #define AL4SAN_END_ACCESS_DECLARATION \
     AL4SAN_STARPU_END_ACCESS_DECLARATION; \
-    if (!__al4san_need_submit) return; \
+    if (!__al4san_starpu_need_submit) return; \
 }
 #else
 #define AL4SAN_BEGIN_ACCESS_DECLARATION 

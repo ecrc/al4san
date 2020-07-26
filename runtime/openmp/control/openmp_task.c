@@ -26,6 +26,7 @@ void AL4SAN_Openmp_task_option_init()
 {
   AL4SAN_DEP = 101;
   ARG_END = 0;
+  AL4SAN_INPUT=(1<<0);
   AL4SAN_OUTPUT=(1<<1);
   AL4SAN_INOUT=(AL4SAN_INPUT|AL4SAN_OUTPUT);
   AL4SAN_VALUE=(1<<2);
@@ -114,25 +115,38 @@ void al4san_openmp_task_info(AL4SAN_Openmp_task_t* al4san_task, int *codelet_buf
   va_copy(varg_list_copy, varg_list);
   while ((arg_type = va_arg(varg_list_copy, int))!=ARG_END)
   {
-    arg_ptr = va_arg(varg_list_copy, void *);
-    ptr_size = va_arg(varg_list_copy, int);
 
     if (((arg_type & AL4SAN_OPENMP_UNDEFINED_MASK)== AL4SAN_INPUT) ||
      ((arg_type & AL4SAN_OPENMP_UNDEFINED_MASK)==AL4SAN_OUTPUT) ||
-     ((arg_type & AL4SAN_OPENMP_UNDEFINED_MASK)==AL4SAN_INOUT)    ||
-      ((arg_type  & AL4SAN_OPENMP_UNDEFINED_MASK) ==AL4SAN_SCRATCH)){
-     
+     ((arg_type & AL4SAN_OPENMP_UNDEFINED_MASK)==AL4SAN_INOUT)){
+
+      arg_ptr = va_arg(varg_list_copy, void *);
+      (void*)va_arg(varg_list_copy, void *);
+      ptr_size = va_arg(varg_list_copy, int);
       al4san_task->arg_depenency[num_arg]=(arg_type & AL4SAN_OPENMP_UNDEFINED_MASK);
+      al4san_task->arg_size[num_arg]=ptr_size;
+      num_arg++;
+      (*codelet_buffers)++;
+   }
+     else if ((arg_type  & AL4SAN_OPENMP_UNDEFINED_MASK) ==AL4SAN_SCRATCH){
+      arg_ptr = va_arg(varg_list_copy, void *);
+      ptr_size = va_arg(varg_list_copy, int);
+      al4san_task->arg_depenency[num_arg]=(arg_type & AL4SAN_OPENMP_UNDEFINED_MASK);
+      al4san_task->arg_size[num_arg]=ptr_size;
+      num_arg++;
+      (*codelet_buffers)++;
+   }
+  else if (arg_type==AL4SAN_VALUE)
+   { 
+    arg_ptr = va_arg(varg_list_copy, void *);
+    ptr_size = va_arg(varg_list_copy, int);
+    al4san_task->arg_depenency[num_arg]=arg_type;
     al4san_task->arg_size[num_arg]=ptr_size;
     num_arg++;
-    (*codelet_buffers)++;
+  }else{
+    arg_ptr = va_arg(varg_list_copy, void *);
+    ptr_size = va_arg(varg_list_copy, int);
   }
-else if (arg_type==AL4SAN_VALUE)
-{
-  al4san_task->arg_depenency[num_arg]=arg_type;
-al4san_task->arg_size[num_arg]=ptr_size;
-num_arg++;
-}
 }
 al4san_task->num_arg=num_arg;
 va_end(varg_list_copy);
@@ -206,10 +220,11 @@ kmp_depend_info_t dep_info[NUM_SHAREDS];
 
 while ((arg_dep=va_arg(varg_list, int))!=0)
 { 
-       ptr=va_arg(varg_list, void *);
-      arg_size=va_arg(varg_list, int);
       if((arg_dep & AL4SAN_OPENMP_UNDEFINED_MASK)==AL4SAN_INPUT )
        {
+         ptr=va_arg(varg_list, void *);
+         (void*)va_arg(varg_list, void *);
+         arg_size=va_arg(varg_list, int);
         dep_info[dep_count].base_addr=ptr;
         dep_info[dep_count].len=arg_size;
         dep_info[dep_count].flags.in = 1;
@@ -221,6 +236,9 @@ while ((arg_dep=va_arg(varg_list, int))!=0)
        }
       else if((arg_dep & AL4SAN_OPENMP_UNDEFINED_MASK)==AL4SAN_OUTPUT)
        {
+        ptr=va_arg(varg_list, void *);
+        (void*)va_arg(varg_list, void *);
+        arg_size=va_arg(varg_list, int);
         dep_info[dep_count].base_addr=ptr;
         dep_info[dep_count].len=arg_size;
         dep_info[dep_count].flags.in = 0;
@@ -232,6 +250,9 @@ while ((arg_dep=va_arg(varg_list, int))!=0)
        }
      else if((arg_dep& AL4SAN_OPENMP_UNDEFINED_MASK) ==AL4SAN_INOUT)
        {
+        ptr=va_arg(varg_list, void *);
+        (void*)va_arg(varg_list, void *);
+        arg_size=va_arg(varg_list, int);
         dep_info[dep_count].base_addr=ptr;
         dep_info[dep_count].len=arg_size;
         dep_info[dep_count].flags.in = 1;
@@ -243,6 +264,8 @@ while ((arg_dep=va_arg(varg_list, int))!=0)
        }
      else if((arg_dep& AL4SAN_OPENMP_UNDEFINED_MASK) ==AL4SAN_SCRATCH)
        {
+           ptr=va_arg(varg_list, void *);
+           arg_size=va_arg(varg_list, int);
       if (ptr==NULL)
           {
           ptr=malloc(arg_size);
@@ -257,13 +280,28 @@ while ((arg_dep=va_arg(varg_list, int))!=0)
           }
        }
      else if(arg_dep==AL4SAN_VALUE){
-    al4san_openmp_pack_arg(&state, ptr, arg_size);
+       ptr=va_arg(varg_list, void *);
+       arg_size=va_arg(varg_list, int);
+       al4san_openmp_pack_arg(&state, ptr, arg_size);
    }
-  else if (arg_dep!=AL4SAN_OPENMP_UNDEFINED)
-  {
+   else if(arg_dep==AL4SAN_PRIORITY  ||
+           arg_dep==AL4SAN_LABEL     ||
+           arg_dep==AL4SAN_OPENMP_UNDEFINED)
+    {
+             ptr = va_arg(varg_list, void *);
+             arg_size  = va_arg(varg_list, int);
+   }
+  else if(arg_dep!=AL4SAN_PRIORITY  &&
+          arg_dep!=AL4SAN_LABEL     &&
+          arg_dep!=AL4SAN_OPENMP_UNDEFINED)
+           {
    fprintf(stderr,"Unrecognized argument, did you perhaps forget to end arguments with ARG_END?\n");
    abort();
      }
+  else{
+       ptr=va_arg(varg_list, void *);
+       arg_size=va_arg(varg_list, int);
+  }
 }
 if (state.nargs>0)
 {
