@@ -92,7 +92,7 @@ AL4SAN
                         '''
                     }
                 }
-                stage ('build-quark-starpu') {
+/*                stage ('build-quark-starpu') {
                     agent { label 'jenkinsfile-gpu' }
                     steps {
                         sh '''#!/bin/bash -el
@@ -129,7 +129,7 @@ AL4SAN
                         '''
                     }
                 }
-/***   omit this stage for now
+*/
                 stage ('build-clang-openmp') {
                     agent { label 'jenkinsfile' }
                     steps {
@@ -155,11 +155,11 @@ AL4SAN
                         '''
                     }
                 }
-*/
+
             }
         }
     }
-    post {
+    //post {
         //always {
         //}
         //success {
@@ -168,11 +168,11 @@ AL4SAN
         //}
         //failure {
         //}
-         unstable {
-             emailext body: "${env.JOB_NAME} - Please go to ${env.BUILD_URL}", subject: "Jenkins Pipeline build is UNSTABLE", recipientProviders: [culprits()]
-         }
-         failure {
-             emailext body: "${env.JOB_NAME} - Please go to ${env.BUILD_URL}", subject: "Jenkins Pipeline build FAILED", recipientProviders: [culprits(),requestor()]
-         }
-     }
+        // unstable {
+         //    emailext body: "${env.JOB_NAME} - Please go to ${env.BUILD_URL}", subject: "Jenkins Pipeline build is UNSTABLE", recipientProviders: [culprits()]
+         //}
+         //failure {
+          //   emailext body: "${env.JOB_NAME} - Please go to ${env.BUILD_URL}", subject: "Jenkins Pipeline build FAILED", recipientProviders: [culprits(),requestor()]
+         //}
+     //}
 }
