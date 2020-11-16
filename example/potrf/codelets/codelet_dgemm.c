@@ -13,7 +13,7 @@
  *
  * @brief Chameleon zgemm AL4SAN codelet
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  * @precisions normal z -> c d s

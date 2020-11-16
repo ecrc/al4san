@@ -11,7 +11,7 @@
  *
  * @brief Chameleon dplgsy AL4SAN codelet
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @comment This file has been automatically generated
  *          from Plasma 2.5.0 for CHAMELEON 1.0.0
  * @author Hatem Ltaief

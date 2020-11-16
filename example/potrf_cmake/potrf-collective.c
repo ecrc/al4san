@@ -27,8 +27,6 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <pthread.h>
-#include <al4san.h>
-#include <al4san/timer.h>
 #include "potrf.h"
 
 float get_time();
@@ -47,6 +45,7 @@ float get_time();
 
 #define A(m,n) A,  m,  n
 #define BLKLDD(A, k) A->get_blkldd( A, k )
+
 
 /* Cholesky factorization:
  * A is replaced by its factorization L or L^T depending on uplo */
@@ -88,27 +87,95 @@ int AL4SAN_cholesky(al4san_uplo_t uplo, AL4SAN_desc_t *A)
    sequence = AL4SAN_Sequence_Create();
    AL4SAN_Options_Init(&options, sequence, request);
 
+       /* Variables used for collective */
+        int root, num_dest_ranks, dest_rank_idx, flag;
+        int *dest_ranks = (int*)malloc((A->q+A->p)*sizeof(int));;
+
         for (k = 0; k < A->nt; k++) {
             tempkm = k == A->nt-1 ? A->n-k*A->nb : A->nb;
             ldak = BLKLDD(A, k);
 
-            options.priority = 2*A->nt - 2*k;
-            if(1)Task_dpotrf(
+            if( AL4SAN_Data_Getrank( A, k, k) == AL4SAN_My_Mpi_Rank()) {
+            options.priority = (A->nt - k) * (A->nt-k) * (A->nt - k);
+                Task_dpotrf(
                 &options,
                 Al4sanUpper,
                 tempkm, A->mb,
                 A(k, k), ldak, A->nb*k);
+            }
+            /*
+             * Broadcast the diagonal tile to the current panel
+             */
+            root =  AL4SAN_Data_Getrank( A, k, k);
+            num_dest_ranks = A->q -1;
+
+            dest_rank_idx = 0;
+            flag = 0;
+            for(int m = k+1; m < A->nt; m++) {
+                int tile_rank =  AL4SAN_Data_Getrank( A, k, m);
+                if(tile_rank == root) {flag = 1; continue;}
+                dest_ranks[dest_rank_idx] = tile_rank;
+                if(tile_rank == AL4SAN_My_Mpi_Rank()) flag = 1;
+                ++dest_rank_idx;
+                if(dest_rank_idx == A->q -1) break; /* this is to populate the destination ranks */
+            }
+               if( ( flag || (AL4SAN_My_Mpi_Rank() == root) ) && ( dest_rank_idx >= 1) ) {
+              //if( ( dest_rank_idx >= 1) ) {
+                int bcast_id = (1<<29) | (k* A->nt + k +k);
+                AL4SAN_Broadcast_ID(
+                        bcast_id, sequence, AL4SAN_My_Mpi_Rank(), root,
+                        AL4SAN_Data_getaddr(A, k, k), AL4SAN_FULL_TILE,
+                        dest_ranks, dest_rank_idx);
+            }
+
 
             for (n = k+1; n < A->nt; n++) {
                 tempnn = n == A->nt-1 ? A->n - n*A->nb : A->nb;
 
-                options.priority = 2*A->nt - 2*k - n;
-                if(1)Task_dtrsm(
+                options.priority = (A->nt - n) * (A->nt-n) * (A->nt - n) + 3 * ((2 * A->nt) - k - n - 1) * (n - k);
+                if(  ( AL4SAN_Data_Getrank( A, k, n) == AL4SAN_My_Mpi_Rank() ||  AL4SAN_Data_Getrank( A, k, k) ==  AL4SAN_My_Mpi_Rank() )) {
+                Task_dtrsm(
                     &options,
                     Al4sanLeft, Al4sanUpper, Al4sanConjTrans, Al4sanNonUnit,
                     A->mb, tempnn, A->mb,
                     zone, A(k, k), ldak,
                           A(k, n), ldak);
+            }
+                
+            /*
+            * Broadcast the TRSM tile to the descendant SYRK/GEMM tasks
+            */
+            root =  AL4SAN_Data_Getrank( A, k, n);
+            num_dest_ranks = A->p + A->q -1;
+
+            dest_rank_idx = 0;
+            flag = 0;
+            /* Loop over P and Q processes to gather the broadcast destinations */
+            for(int i = k+1; i <= n; i++) {
+                int tile_rank =  AL4SAN_Data_Getrank( A, i, n);
+                if(tile_rank == root) {break;} /* we have loop over all the ranks in the column */
+                dest_ranks[dest_rank_idx] = tile_rank;
+                if(tile_rank == AL4SAN_My_Mpi_Rank()) flag = 1; /* flip the flag for the owner of the tile */
+                ++dest_rank_idx;
+                }
+
+            int diag_rank =  AL4SAN_Data_Getrank( A, n, n);
+            for(int j = n+1; j < A->nt; j++) {
+                int tile_rank =  AL4SAN_Data_Getrank( A, n, j);
+                if(tile_rank == diag_rank) {break;} /* we have loop over all the ranks in the column */
+                dest_ranks[dest_rank_idx] = tile_rank;
+                if(tile_rank == AL4SAN_My_Mpi_Rank()) flag = 1; /* flip the flag for the owner of the tile */
+                ++dest_rank_idx;
+                }
+
+                   //if( ( dest_rank_idx >= 1) ) {
+                if( ( flag || (AL4SAN_My_Mpi_Rank() == root) ) && ( dest_rank_idx >= 1) ) {
+                     int bcast_id = (1<<29) | (k*A->nt+n+k); // m*nt+n+k
+                    AL4SAN_Broadcast_ID(
+                            bcast_id, sequence, AL4SAN_My_Mpi_Rank(), root,
+                             AL4SAN_Data_getaddr(A, k, n), AL4SAN_FULL_TILE,
+                            dest_ranks, dest_rank_idx);
+                }
             }
             AL4SAN_Data_Flush( sequence, A(k, k) );
 
@@ -116,25 +183,27 @@ int AL4SAN_cholesky(al4san_uplo_t uplo, AL4SAN_desc_t *A)
                 tempmm = m == A->mt-1 ? A->m - m*A->mb : A->mb;
                 ldam = BLKLDD(A, m);
 
-                options.priority = 2*A->nt - 2*k  - m;
-                if(1)Task_dsyrk(
+                options.priority = (A->nt - m) * (A->nt - m) * (A->nt - m) + 3 * (m - k);
+            if( AL4SAN_Data_Getrank( A, m, m) == AL4SAN_My_Mpi_Rank() ||  AL4SAN_Data_Getrank( A, k, m) == AL4SAN_My_Mpi_Rank() ) {
+                Task_dsyrk(
                     &options,
                     Al4sanUpper, Al4sanConjTrans,
                     tempmm, A->mb, A->mb,
                     -1.0, A(k, m), ldak,
                      1.0, A(m, m), ldam);
-
+            }
                 for (n = m+1; n < A->nt; n++) {
                     tempnn = n == A->nt-1 ? A->n-n*A->nb : A->nb;
-
-                    options.priority = 2*A->nt - 2*k - n - m;
-                    if(1)Task_dgemm(
+                    if( AL4SAN_Data_Getrank( A, m, n) == AL4SAN_My_Mpi_Rank()  ||  AL4SAN_Data_Getrank( A, k, m) == AL4SAN_My_Mpi_Rank()  ||  AL4SAN_Data_Getrank( A, k, n) == AL4SAN_My_Mpi_Rank() ) {
+                    options.priority = (A->nt - m) * (A->nt - m) * (A->nt - m) + 3 * ((2 * A->nt) - m - n - 3) * (m - n) + 6 * (m - k);
+                    Task_dgemm(
                         &options,
                         Al4sanTrans, Al4sanNoTrans,
                         tempmm, tempnn, A->mb, A->mb,
                         mzone, A(k, m), ldak,
                                A(k, n), ldak,
                         zone,  A(m, n), ldam);
+                }
                 }
                 AL4SAN_Data_Flush( sequence, A(k, m) );
             }
@@ -152,7 +221,7 @@ int AL4SAN_cholesky(al4san_uplo_t uplo, AL4SAN_desc_t *A)
     * Use sequence for sync
     * Destroy sequence
    */
-
+   free(dest_ranks);
    AL4SAN_Sequence_Wait(sequence);
    AL4SAN_Sequence_Destroy( sequence );
 
@@ -166,7 +235,7 @@ int main(int argc, char* argv[]){
     int NRHS; // number of RHS vectors
     int NCPU; // number of cores to use
     int NGPU; // number of gpus (cuda devices) to use
-    int UPLO = Al4sanUpper; // where is stored L
+    al4san_uplo_t UPLO = Al4sanUpper; // where is stored L
     /* descriptors necessary for calling AL4SAN data descriptor interface  */
     AL4SAN_desc_t *descA = NULL,  *descAC = NULL, *descB = NULL, *descX = NULL;
     /* declarations to time the program and evaluate performances */
@@ -213,7 +282,6 @@ int main(int argc, char* argv[]){
 
     /* print informations to user */
     print_header( argv[0], iparam);
-
     /*
      * Allocate memory for our data using a C macro (see step2.h)
      *     - matrix A                   : size N x N
@@ -245,7 +313,6 @@ int main(int argc, char* argv[]){
     AL4SAN_Matrix_Create(&descA,  NULL, Al4sanRealDouble,
                       AL4SAN_Col_Major, NB, NB, NB, N, N, N);
     /* generate A matrix with random values such that it is spd*/
-
     dplgsy_Tile( (double)N, Al4sanUpperLower, descA, 51 );
 
     cpu_time = -AL4SAN_timer();
@@ -260,7 +327,7 @@ int main(int argc, char* argv[]){
     gflops = flops / cpu_time;
 
   if(AL4SAN_My_Mpi_Rank()==0){
-    printf( "%9.3f %9.2f\n", cpu_time, gflops);
+    printf( "%9.3f +- %9.2f\n", cpu_time, gflops);
     fflush( stdout );
     }
 

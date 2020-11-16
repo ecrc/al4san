@@ -12,7 +12,7 @@
 **
    * @brief AL4SAN task routines exposed to the users
    *
-   * @version 1.0.1
+   * @version 1.1.0
    * @author Rabab Alomairy
    * @date 2019-02-06
    *
@@ -98,6 +98,8 @@ int AL4SAN_REF;
 int AL4SAN_AFFINITY; 
 int AL4SAN_DONT_TRACK;
 int AL4SAN_PASSED_BY_REF;
+
+int AL4SAN_FULL_TILE;
 
 typedef struct al4san_arg_list_s
 {

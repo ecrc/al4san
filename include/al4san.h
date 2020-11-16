@@ -20,7 +20,7 @@
  *@author Cedric Castagnede
  *@author Florent Pruvost
  *@date 2012-09-15
- *@version 1.0.1
+ *@version 1.1.0
  *@author Rabab Alomairy
  *@date 2019-02-06
  *
@@ -196,6 +196,18 @@ void *AL4SAN_Matrix_getaddr( const AL4SAN_desc_t *desc, int m, int n);
 void *AL4SAN_Vector_getaddr( const AL4SAN_desc_t *desc, int m);
 void *AL4SAN_Scaler_getaddr( const AL4SAN_desc_t *desc);
 
+int AL4SAN_Data_Getrank( const AL4SAN_desc_t *desc, int m, int n);
+int AL4SAN_Matrix_Getrank( const AL4SAN_desc_t *desc, int m, int n);
+int AL4SAN_Vector_Getrank( const AL4SAN_desc_t *desc, int m);
+int AL4SAN_Scaler_Getrank( const AL4SAN_desc_t *desc, void **ptr);
+
+void AL4SAN_Broadcast(AL4SAN_sequence_t *sequence, int myrank,
+                        int root, void* tile_root, int arena_index,
+                        int *dest_ranks, int dest_rank_idx);
+
+void AL4SAN_Broadcast_ID(int32_t bcast_id, AL4SAN_sequence_t *sequence, int myrank,
+                        int root, void* tile_root, int arena_index,
+                        int *dest_ranks, int dest_rank_idx);
 /**
  * @name AL4SAN options functions
  * @{
@@ -216,7 +228,7 @@ int AL4SAN_Options_Workspace_Free(AL4SAN_option_t *options );
 #define PRAGMA(x) _Pragma(#x)
 #define AL4SAN_Sequence_Create()                                        \
          malloc(sizeof(AL4SAN_sequence_t));                              \
-              (*sequence)->status = AL4SAN_SUCCESS;                        \
+              (sequence)->status = AL4SAN_SUCCESS;                        \
         PRAGMA(omp parallel)                                               \
          {                                                                  \
            PRAGMA(omp master)                                               \

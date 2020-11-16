@@ -69,7 +69,7 @@
 !  AL4SAN is a software package provided by Univ. of Tennessee,
 !  Univ. of California Berkeley and Univ. of Colorado Denver
 !
-! @version 1.0.0
+! @version 1.1.0
 ! @author Numerical Algorithm Group
 ! @date 2011-09-15
 ! @precisions normal z -> c d s

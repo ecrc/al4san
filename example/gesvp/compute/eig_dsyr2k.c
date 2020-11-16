@@ -18,7 +18,7 @@
  * @author Emmanuel Agullo
  * @author Cedric Castagnede
  * @date 2014-11-16
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  * @generated d Tue Apr  2 10:58:05 2019

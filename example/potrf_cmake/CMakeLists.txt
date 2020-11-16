@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.13)
 # Defines the source files of the tests. Each file generates 1 test
 include_directories( ${CMAKE_SOURCE_DIR} )
-include_directories(../../build-parsec/install/include)
-include_directories(/project/k1205/omairyrm/dplasma-parsec/parsec/build/install_dir/include/)
+include_directories(${AL4SAN_INCDIR})
+include_directories(${STARPU_INCDIR})
+include_directories(${PARSEC_INCDIR})
+include_directories(${QUARK_INCDIR})
+include_directories(${OPENMP_INCDIR})
+
+#include_directories(/home/omairyrm/al4san-dev/starpu-1.2-install/include/starpu/1.2/)
 set(SRC
    ${CMAKE_SOURCE_DIR}/codelets/codelet_dtrsm.c
    ${CMAKE_SOURCE_DIR}/codelets/codelet_dpotrf.c
@@ -27,6 +32,7 @@ string(REPLACE ";" " " CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 
 set( TIMINGS_SRC 
    ${CMAKE_SOURCE_DIR}/potrf.c
+   ${CMAKE_SOURCE_DIR}/potrf-collective.c
    )
 foreach( test_src ${TIMINGS_SRC} )
     get_filename_component( test_exe ${test_src}  NAME_WE )
@@ -43,6 +49,8 @@ foreach( test_src ${TIMINGS_SRC} )
     target_link_libraries( ${test_exe} potrf_lib
                                        ${MPI_C_LIBRARIES}
                                        ${PARSEC_LIBRARIES}
+                                       ${STARPU_LIBRARIES}
+                                       ${QUARK_LIBRARIES}
                                        ${LAPACKE_LIBRARIES}
                                        ${LAPACK_LIBRARIES}
                                        ${BLAS_LIBRARIES}

@@ -9,7 +9,7 @@
  *
  * @author Hatem Ltaief
  * @date 2010-11-15
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  *

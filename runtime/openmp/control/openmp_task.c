@@ -9,7 +9,7 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.0
+   * @version 1.1.0
    * @author Rabab Alomairy
    * @date 2018-10-18
 **/
@@ -103,6 +103,7 @@ void AL4SAN_Openmp_task_option_init()
   AL4SAN_CUDA_ASYNC = AL4SAN_OPENMP_UNDEFINED;
 
   AL4SAN_LOCALITY=AL4SAN_OPENMP_UNDEFINED;
+  AL4SAN_FULL_TILE = AL4SAN_OPENMP_UNDEFINED;
 }
 
 void al4san_openmp_task_info(AL4SAN_Openmp_task_t* al4san_task, int *codelet_buffers, va_list varg_list)

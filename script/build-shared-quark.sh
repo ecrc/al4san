@@ -2,7 +2,7 @@
 repo=al4san-dev
 currentdir=`pwd`
 hwloc_install_dir=$currentdir/al4san-dev/hwloc-install
-starpu_install_dir=$currentdir/al4san-dev/starpu-1.2-install
+quark_install_dir=$currentdir/al4san-dev/quark
 
 
 currentdir=`pwd`
@@ -10,13 +10,10 @@ run_clone=0
 set_pkgconfig_runtime_libs=1
 run_update_submodules=0
 run_module_setup=1
-compile_hwloc=1
-compile_starpu=1
+compile_hwloc=0
+compile_quark=1
 compile_cham=0
-compile_starsh=0
-compile_starshcore=0
 compile_al4san=1
-compile_hcore=1
 pause_info(){
     echo "Please press enter key to proceed"; read
     echo "================="
@@ -67,25 +64,13 @@ if [ $compile_hwloc -eq 1 ];then
     pause_info
 fi
 cd  $currentdir/$repo
-if [ $compile_starpu -eq 1 ];then
-    if [ ! -f "starpu-1.2.10.tar.gz" ]; then
-        wget http://starpu.gforge.inria.fr/files/starpu-1.2.10/starpu-1.2.10.tar.gz
-    fi
-    if [ -d "starpu-1.2.10" ]; then
-        rm -rf starpu-1.2.10
-    fi
-    tar -zxvf starpu-1.2.10.tar.gz
-    cd starpu-1.2.10
-    [[ -d $starpu_install_dir ]] || mkdir -p $starpu_install_dir
-    ./configure --prefix=$starpu_install_dir --disable-cuda --disable-opencl  --disable-build-doc --disable-export-dynamic  --without-mpicc 
-    #--disable-mpi-check 
+if [ $compile_quark -eq 1 ];then
+    git clone https://github.com/ecrc/quark
+    cd quark
+    git checkout switchruntime 
     make -j
     make -j install
-    if [ -d "$starpu_install_dir/lib/pkgconfig" ]; then
-        export PKG_CONFIG_PATH=$starpu_install_dir/lib/pkgconfig:$PKG_CONFIG_PATH
-        export LD_LIBRARY_PATH=$starpu_install_dir/lib:$LD_LIBRARY_PATH
-
-    fi
+    export LD_LIBRARY_PATH=$quark_install_dir:$LD_LIBRARY_PATH
     pause_info
 fi
 cd $currentdir/$repo
@@ -111,7 +96,7 @@ if [ $compile_al4san -eq 1 ];then
     rm -rf build
     mkdir build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=$currentdir/$repo/build/install -DAL4SAN_SCHED_STARPU=ON -DAL4SAN_USE_MPI=OFF -DAL4SAN_ENABLE_CUDA=OFF -DAL4SAN_USE_CUDA=OFF -DCMAKE_COLOR_MAKEFILE:BOOL=ON -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+    cmake .. -DCMAKE_INSTALL_PREFIX=$currentdir/$repo/build/install -DAL4SAN_SCHED_QUARK=ON -DQUARK_INCDIR=$quark_install_dir  -DQUARK_LIBDIR=$quark_install_dir  -DCMAKE_COLOR_MAKEFILE:BOOL=ON -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
     make -j
     make install
     if [ -d $currentdir/$repo/build/install ]; then

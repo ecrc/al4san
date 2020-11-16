@@ -11,7 +11,7 @@
  *
  * @brief Al4san basic datatypes header
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Cedric Augonnet
  * @author Mathieu Faverge
  * @author Cedric Castagnede
@@ -24,7 +24,7 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.1
+   * @version 1.1.0
    * @author Rabab Alomairy
    * @date 2019-02-06
    *

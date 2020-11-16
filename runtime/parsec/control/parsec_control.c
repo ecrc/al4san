@@ -18,7 +18,7 @@
  * @author Reazul Hoque
  * @author Mathieu Faverge
  * @date 2017-01-12
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  */

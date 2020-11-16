@@ -13,7 +13,7 @@
  * @author Jakub Kurzak
  * @author Cedric Castagnede
  * @date 2010-11-15
- * @version 1.0.0
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2018-10-18
  */
@@ -35,14 +35,15 @@ int al4san_request_fail(AL4SAN_sequence_t *sequence, AL4SAN_request_t *request, 
 #if defined(AL4SAN_SCHED_OPENMP)
 #define PRAGMA(x) _Pragma(#x)
 
-#define al4san_sequence_create(al4san, sequence)                           \
+#define al4san_sequence_create(al4san)                           \
         PRAGMA(omp parallel)                                               \
          {                                                                  \
            PRAGMA(omp master)                                               \
             {                                                               \
-              if ((*sequence = malloc(sizeof(AL4SAN_sequence_t)))==NULL)     \
+             AL4SAN_sequence_t *sequence;                                   \
+              if ((sequence = malloc(sizeof(AL4SAN_sequence_t)))==NULL)     \
                   al4san_error("al4san_sequence_create", "malloc() failed"); \
-              (*sequence)->status = AL4SAN_SUCCESS
+              (sequence)->status = AL4SAN_SUCCESS
 
 #define al4san_sequence_destroy(al4san, sequence)                           \
           }                                                                 \

@@ -13,13 +13,13 @@
  *
  * @brief AL4SAN Quark descriptor routines
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Vijay Joshi
  * @author Cedric Castagnede
  * @date 2019-02-06
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  */
@@ -196,4 +196,44 @@ void *AL4SAN_Quark_scaler_getaddr( const AL4SAN_desc_t *desc)
 void AL4SAN_Quark_data_getaddr_ptr( const AL4SAN_desc_t *desc, void **ptr, int m, int n)
 {
     *ptr = desc->get_blkaddr( desc, m, n );
+}
+
+int AL4SAN_Quark_data_getrank( const AL4SAN_desc_t *A, int m, int n )
+{
+
+  return A->get_rankof( A, m, n );
+}
+
+
+int AL4SAN_Quark_matrix_getrank( const AL4SAN_desc_t *A, int m, int n )
+{
+
+  return A->get_rankof( A, m, n );
+}
+
+int AL4SAN_Quark_vector_getrank( const AL4SAN_desc_t *A, int m)
+{
+
+  return A->get_rankof( A, m, 0);
+}
+
+int AL4SAN_Quark_scaler_getrank( const AL4SAN_desc_t *A)
+{
+
+  return A->get_rankof( A, 0, 0);
+}
+void AL4SAN_Quark_broadcast(AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx){
+
+  //fprintf(stderr, "It is not available in QUARK since it is shared-memory only\n");
+  return;
+}
+
+void AL4SAN_Quark_broadcast_id(int32_t bcast_id, AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx){
+
+  //fprintf(stderr, "It is not available in QUARK since it is shared-memory only\n");
+  return;
 }

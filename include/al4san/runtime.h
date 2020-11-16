@@ -15,7 +15,7 @@
  * @author Cedric Augonnet
  * @author Cedric Castagnede
  * @date 2011-06-01
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  * @brief AL4SAN runtimes API
@@ -1440,6 +1440,176 @@ void *
 AL4SAN_Parsec_scaler_getaddr( const AL4SAN_desc_t *A);
 void *
 AL4SAN_Openmp_scaler_getaddr( const AL4SAN_desc_t *A);
+
+/**
+ * @brief Get the rank of the data (m, n) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @retval rank.
+ */
+int
+AL4SAN_Quark_data_getrank( const AL4SAN_desc_t *A, int Am, int An );
+int
+AL4SAN_Starpu_data_getrank( const AL4SAN_desc_t *A, int Am, int An );
+int
+AL4SAN_Parsec_data_getrank( const AL4SAN_desc_t *A, int Am, int An );
+int
+AL4SAN_Openmp_data_getrank( const AL4SAN_desc_t *A, int Am, int An );
+/**
+ * @brief Get the rank of the data (m, n) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @retval rank. 
+*/
+int
+AL4SAN_Quark_martix_getrank( const AL4SAN_desc_t *A, int Am, int An );
+int
+AL4SAN_Starpu_matrix_getrank( const AL4SAN_desc_t *A, int Am, int An );
+int
+AL4SAN_Parsec_matrix_getrank( const AL4SAN_desc_t *A, int Am, int An );
+int
+AL4SAN_Openmp_matrix_getrank( const AL4SAN_desc_t *A, int Am, int An );
+/**
+ * @brief Get the rank of the data (m) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @retval rank.
+ */
+int
+AL4SAN_Quark_vector_getrank( const AL4SAN_desc_t *A, int Am);
+int
+AL4SAN_Starpu_vector_getrank( const AL4SAN_desc_t *A, int Am);
+int
+AL4SAN_Parsec_vector_getrank( const AL4SAN_desc_t *A, int Am);
+int
+AL4SAN_Openmp_vector_getrank( const AL4SAN_desc_t *A, int Am);
+
+/**
+ * @brief Get the rank of the data
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ * @retval rank.
+ */
+int
+AL4SAN_Quark_scaler_getrank( const AL4SAN_desc_t *A);
+int
+AL4SAN_Starpu_scaler_getrank( const AL4SAN_desc_t *A);
+int
+AL4SAN_Parsec_scaler_getrank( const AL4SAN_desc_t *A);
+int
+AL4SAN_Openmp_scaler_getrank( const AL4SAN_desc_t *A);
+
+
+/**
+ * @brief Perform a broadcast for of the tile_root from the
+   root node associated with the rank root to the nodes with ranks
+   set in the dest_ranks array.
+ *
+ * @param[in] sequence
+ *          Identifies a set of routines sharing common exception handling.
+ *
+ * @param[in] myrank
+ *            current node MPI rank
+ *
+ * @param[in] root
+ *            root MPI rank
+ *
+ * @param[in] arena_index
+ *            index to temporary memory to move user data.
+ *
+ * @param[in] dest_ranks
+ *            Set of destination ranks.
+ *
+ * @param[in] dest_rank_idx
+ *            destination index.
+ *
+ */
+
+void AL4SAN_Quark_broadcast(AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx);
+void AL4SAN_Starpu_broadcast(AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx);
+void AL4SAN_Parsec_broadcast(AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx);
+void AL4SAN_Openmp_broadcast(AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx);
+
+/**
+ * @brief Perform a broadcast for of the tile_root from the
+   root node associated with the rank root to the nodes with ranks
+   set in the dest_ranks array.
+ *
+ * @param[in] bcast_id
+ *            broadcast bitmask id.
+ *
+ * @param[in] sequence
+ *          Identifies a set of routines sharing common exception handling.
+ *
+ * @param[in] myrank
+ *            current node MPI rank
+ *
+ * @param[in] root
+ *            root MPI rank
+ *
+ * @param[in] arena_index
+ *            index to temporary memory to move user data.
+ *
+ * @param[in] dest_ranks
+ *            Set of destination ranks.
+ *
+ * @param[in] dest_rank_idx
+ *            destination index.
+ *
+ */
+
+void AL4SAN_Quark_broadcast_id(int32_t bcast_id, AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx);
+void AL4SAN_Starpu_broadcast_id(int32_t bcast_id, AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx);
+void AL4SAN_Parsec_broadcast_id(int32_t bcast_id, AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx);
+void AL4SAN_Openmp_broadcast_id(int32_t bcast_id, AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx);
 /**
  * @}
  *

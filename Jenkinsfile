@@ -159,11 +159,12 @@ AL4SAN
             }
         }
     }
-    //post {
+    /*post {
         //always {
         //}
-        //success {
-        //}
+        success { 
+		build '../hicma-dev/master'
+        }
         //unstable {
         //}
         //failure {
@@ -174,5 +175,5 @@ AL4SAN
          //failure {
           //   emailext body: "${env.JOB_NAME} - Please go to ${env.BUILD_URL}", subject: "Jenkins Pipeline build FAILED", recipientProviders: [culprits(),requestor()]
          //}
-     //}
+     }*/
 }

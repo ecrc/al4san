@@ -11,7 +11,7 @@
  * @brief AL4SAN PaRSEC Task routines
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2018-10-18
  *
@@ -47,6 +47,7 @@ void AL4SAN_Parsec_task_option_init()
 
  AL4SAN_PRIORITY=1<<30;
  AL4SAN_LABEL=1<<31;
+ AL4SAN_FULL_TILE = 0;
 
                //Data region
  AL4SAN_REGION_0=AL4SAN_PARSEC_UNDEFINED;

@@ -11,7 +11,7 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.1
+   * @version 1.1.0
    * @author Rabab Alomairy
    * @date 2019-02-06
    *
@@ -257,7 +257,7 @@ int main(int argc, char* argv[]){
     gflops = flops / cpu_time;
 
   if(AL4SAN_My_Mpi_Rank()==0){
-    printf( "%9.3f %9.2f\n", cpu_time, gflops);
+    printf( "%9.3f +- %9.2f\n", cpu_time, gflops);
     fflush( stdout );
     }
 

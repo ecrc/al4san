@@ -15,12 +15,12 @@
 *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
 *
  *
- * version 1.0.0
+ * version 1.1.0
  * author Vijay Joshi
  * author Cedric Castagnede
  * date 2012-09-15
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  */
@@ -147,3 +147,4 @@ int AL4SAN_Openmp_comm_size( AL4SAN_context_t *al4san )
     (void)al4san;
     return 1;
 }
+

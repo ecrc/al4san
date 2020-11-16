@@ -11,7 +11,7 @@
 #  AL4SAN is a software package provided by:
 #     King Abdullah Univesity of Science and Technology
 #
-#  @version 1.0.1
+#  @version 1.1.0
 #  @author Eduardo Gonzalez
 #  @author Rabab Alomairy
 #

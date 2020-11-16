@@ -8,7 +8,7 @@
  * @defgroup Task
  * @brief AL4SAN task routines exposed to the users 
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  *

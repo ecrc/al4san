@@ -10,12 +10,12 @@
  ***
  * @brief Al4san descriptor header
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Jakub Kurzak
  * @author Mathieu Faverge
  * @author Cedric Castagnede
  * @date 2019-02-06
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  *

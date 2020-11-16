@@ -13,7 +13,7 @@
  *
  * @brief Al4san StarPU workspace header
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author Cedric Augonnet
  * @date 2018-10-18
  *
@@ -23,7 +23,7 @@
  *
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2018-10-18
  *

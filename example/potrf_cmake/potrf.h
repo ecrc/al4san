@@ -11,7 +11,7 @@
  *
  * @brief Chameleon step2 example header
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Florent Pruvost
  * @date 2019-02-06
  *

@@ -19,7 +19,7 @@
  * @author Vijay Joshi
  * @author Cedric Castagnede
  * @date 2011-10-29
- * @version 1.0.0
+ * @version 1.1.0
 * @author Rabab Alomairy
 * @date 2018-10-18
  */

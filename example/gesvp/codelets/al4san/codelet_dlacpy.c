@@ -10,7 +10,7 @@
  *                      All rights reserved.
  * @brief Chameleon dlacpy AL4SAN codelet
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2018-09-19
  * @generated d Wed Jan 16 11:13:56 2019

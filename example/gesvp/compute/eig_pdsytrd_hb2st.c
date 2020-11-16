@@ -14,7 +14,7 @@
  *
  * @comment This file has been automatically generated
  *          from Plasma 2.5.0
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  * @generated d Tue Apr  2 10:58:06 2019

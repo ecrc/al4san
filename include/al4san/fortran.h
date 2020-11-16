@@ -36,7 +36,7 @@
 !**
 !
 ! @brief Chameleon Fortran77 header
-! @version 1.0.0
+! @version 1.1.0
 ! @author Bilel Hadri
 ! @author Mathieu Faverge
 ! @author Cedric Castagnede

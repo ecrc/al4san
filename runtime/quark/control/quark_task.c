@@ -10,7 +10,7 @@
  *  AL4SAN Task
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2018-10-18
  *
@@ -106,6 +106,7 @@ void AL4SAN_Quark_task_option_init()
                //CUDA async option not defined in quark
      AL4SAN_CUDA_FLG=AL4SAN_QUARK_UNDEFINED;
      AL4SAN_CUDA_ASYNC = AL4SAN_QUARK_UNDEFINED;
+     AL4SAN_FULL_TILE = AL4SAN_QUARK_UNDEFINED;
 }
 
 void al4san_quark_task_info(AL4SAN_Quark_task_t *al4san, va_list varg_list){

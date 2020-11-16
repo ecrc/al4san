@@ -16,11 +16,11 @@
  *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
  *
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Reazul Hoque
  * @author Mathieu Faverge
  * @date 2019-02-06
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  */
@@ -515,3 +515,50 @@ void *AL4SAN_Parsec_scaler_getaddr( const AL4SAN_desc_t *desc)
 return parsec_dtd_tile_of( (parsec_data_collection_t *) ((desc)->schedopt),
                                                             ((parsec_data_collection_t *) (desc)->schedopt)->data_key((desc)->schedopt, 0, 0) );
 }
+
+int AL4SAN_Parsec_data_getrank( const AL4SAN_desc_t *A, int m, int n )
+{
+
+  return A->get_rankof( A, m, n );
+}
+
+
+int AL4SAN_Parsec_matrix_getrank( const AL4SAN_desc_t *A, int m, int n )
+{
+
+  return A->get_rankof( A, m, n );
+}
+
+int AL4SAN_Parsec_vector_getrank( const AL4SAN_desc_t *A, int m)
+{
+
+  return A->get_rankof( A, m, 0);
+}
+
+int AL4SAN_Parsec_scaler_getrank( const AL4SAN_desc_t *A)
+{
+
+  return A->get_rankof( A, 0, 0);
+}
+
+void AL4SAN_Parsec_broadcast(AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx){
+
+     parsec_dtd_broadcast(
+        sequence->schedopt, myrank, root,
+        (parsec_dtd_tile_t*) tile_root, arena_index,
+        dest_ranks, dest_rank_idx);
+}
+
+void AL4SAN_Parsec_broadcast_id(int32_t bcast_id, AL4SAN_sequence_t *sequence, int myrank,
+                                int root, void* tile_root, int arena_index,
+                                int *dest_ranks, int dest_rank_idx){
+
+     parsec_dtd_broadcast_id(
+        bcast_id, sequence->schedopt, myrank, root,
+        (parsec_dtd_tile_t*) tile_root, arena_index,
+        dest_ranks, dest_rank_idx);
+}
+
+

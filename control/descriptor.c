@@ -12,11 +12,11 @@
  *
  * @brief Al4san descriptors routines
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Mathieu Faverge
  * @author Cedric Castagnede
  * @date 2019-02-06
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rabab Alomairy
  * @date 2019-02-06
  ***
@@ -2426,4 +2426,322 @@ void AL4SAN_User_Tag_Size(int user_tag_width, int user_tag_sep) {
 #endif
     return;
 }
+/**
+ * @brief Get the rank of the data (m, n) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+int AL4SAN_Data_Getrank( const AL4SAN_desc_t *desc, int m, int n)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    return AL4SAN_Quark_data_getrank( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+    return AL4SAN_Starpu_data_getrank( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+    return AL4SAN_Parsec_data_getrank( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    return AL4SAN_Openmp_data_getrank( desc, m, n);
+#endif
+}
+
+/**
+ * @brief Get the rank of the data (m, n) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the matrix
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the matrix
+ *
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+int AL4SAN_Matrix_Getrank( const AL4SAN_desc_t *desc, int m, int n)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    return AL4SAN_Quark_matrix_getrank( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+    return AL4SAN_Starpu_matrix_getrank( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+    return AL4SAN_Parsec_matrix_getrank( desc, m, n);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    return AL4SAN_Openmp_matrix_getrank( desc, m, n);
+#endif
+}
+/**
+ * @brief Get the rank of the data (m) in desc.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the vector
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the vector
+ *
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+int AL4SAN_Vector_Getrank( const AL4SAN_desc_t *desc, int m)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    return AL4SAN_Quark_vector_getrank( desc, m);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+    return AL4SAN_Starpu_vector_getrank( desc, m);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+    return AL4SAN_Parsec_vector_getrank( desc, m);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    return AL4SAN_Openmp_vector_getrank( desc, m);
+#endif
+}
+
+/**
+ * @brief Get the rank of the data.
+ *
+ * @param[in] A
+ *            The descriptor to which belongs the piece of data.
+ *
+ * @param[in] Am
+ *            The row coordinate of the piece of data in the vector
+ *
+ * @param[in] An
+ *            The column coordinate of the piece of data in the vector
+ *
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+int AL4SAN_Scaler_Getrank( const AL4SAN_desc_t *desc, void **ptr)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    return AL4SAN_Quark_scaler_getrank( desc );
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+    return AL4SAN_Starpu_scaler_getrank( desc );
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+     return AL4SAN_Parsec_scaler_getrank( desc );
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    return AL4SAN_Openmp_scaler_getrank( desc );
+#endif
+}
+
+
+
+/**
+ * @brief Perform a broadcast for of the tile_root from the
+   root node associated with the rank root to the nodes with ranks
+   set in the dest_ranks array.
+ *
+ * @param[in] sequence
+ *          Identifies a set of routines sharing common exception handling.
+ *
+ * @param[in] myrank
+ *            current node MPI rank
+ *
+ * @param[in] root
+ *            root MPI rank
+ *
+ * @param[in] arena_index
+ *            index to temporary memory to move user data.
+ *
+ * @param[in] dest_ranks
+ *            Set of destination ranks.
+ *
+ * @param[in] dest_rank_idx
+ *            destination index.
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+void AL4SAN_Broadcast(AL4SAN_sequence_t *sequence, int myrank,
+                        int root, void* tile_root, int arena_index,
+                        int *dest_ranks, int dest_rank_idx)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_broadcast(sequence, myrank,
+                        root, tile_root, arena_index,
+                        dest_ranks, dest_rank_idx);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+    AL4SAN_Starpu_broadcast(sequence, myrank,
+                        root, tile_root, arena_index,
+                        dest_ranks, dest_rank_idx);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+    AL4SAN_Parsec_broadcast(sequence, myrank,
+                        root, tile_root, arena_index,
+                        dest_ranks, dest_rank_idx);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_broadcast(sequence, myrank,
+                        root, tile_root, arena_index,
+                        dest_ranks, dest_rank_idx);
+#endif
+}
+
+/**
+ * @brief Perform a broadcast for of the tile_root from the
+   root node associated with the rank root to the nodes with ranks
+   set in the dest_ranks array.
+ *
+ * @param[in] bcast_id
+ *            broadcast bitmask id.
+ *
+ * @param[in] sequence
+ *          Identifies a set of routines sharing common exception handling.
+ *
+ * @param[in] myrank
+ *            current node MPI rank
+ *
+ * @param[in] root
+ *            root MPI rank
+ *
+ * @param[in] arena_index
+ *            index to temporary memory to move user data.
+ *
+ * @param[in] dest_ranks
+ *            Set of destination ranks.
+ *
+ * @param[in] dest_rank_idx
+ *            destination index.
+ *
+ * @retval The runtime handler address of the piece of data.
+ */
+
+void AL4SAN_Broadcast_ID(int32_t bcast_id, AL4SAN_sequence_t *sequence, int myrank,
+                        int root, void* tile_root, int arena_index,
+                        int *dest_ranks, int dest_rank_idx)
+{
+    AL4SAN_context_t *al4san;
+
+    al4san = al4san_context_self();
+    if (al4san == NULL) {
+        al4san_error("AL4SAN_Desc_Destroy", "AL4SAN not initialized");
+        //return AL4SAN_ERR_NOT_INITIALIZED;
+    }  
+#ifdef AL4SAN_SCHED_QUARK
+    if(al4san->scheduler==0)
+    AL4SAN_Quark_broadcast_id(bcast_id, sequence, myrank,
+                        root, tile_root, arena_index,
+                        dest_ranks, dest_rank_idx);
+#endif
+#ifdef AL4SAN_SCHED_STARPU
+    if(al4san->scheduler==1)
+    AL4SAN_Starpu_broadcast_id(bcast_id, sequence, myrank,
+                        root, tile_root, arena_index,
+                        dest_ranks, dest_rank_idx);
+#endif
+#ifdef AL4SAN_SCHED_PARSEC
+    if(al4san->scheduler==2)
+    AL4SAN_Parsec_broadcast_id(bcast_id, sequence, myrank,
+                        root, tile_root, arena_index,
+                        dest_ranks, dest_rank_idx);
+#endif
+#ifdef AL4SAN_SCHED_OPENMP 
+    if(al4san->scheduler==3)
+    AL4SAN_Openmp_broadcast_id(bcast_id, sequence, myrank,
+                        root, tile_root, arena_index,
+                        dest_ranks, dest_rank_idx);
+#endif
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

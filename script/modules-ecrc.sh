@@ -4,6 +4,7 @@ module load mkl/2019-update-5
 #module load gcc/5.5.0
 module load cmake/3.9.6
 module load gcc/7.2.0
+module load cmake/3.17.3
 #module load intel
 #module load likwid/5.0.0-gcc-8.3.0
 #module load hwloc/1.11.8-gcc-5.5.0

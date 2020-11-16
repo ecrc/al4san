@@ -4,7 +4,7 @@
  *
  *  File provided by Univ. of Tennessee,
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author Mathieu Faverge
  * @date 2010-12-20
  *

@@ -10,7 +10,7 @@
    *
    *  AL4SAN is a software package provided by King Abdullah University of Science and Technology (KAUST)
    *
-   * @version 1.0.1
+   * @version 1.1.0
    * @author Rabab Alomairy
    * @date 2019-02-06
    *
@@ -107,7 +107,7 @@ void AL4SAN_Starpu_task_option_init()
  AL4SAN_AFFINITY=AL4SAN_STARPU_UNDEFINED;
  AL4SAN_DONT_TRACK=AL4SAN_STARPU_UNDEFINED; 
  AL4SAN_PASSED_BY_REF=AL4SAN_STARPU_UNDEFINED;
-
+ AL4SAN_FULL_TILE=AL4SAN_STARPU_UNDEFINED;
 }
 
 void al4san_starpu_task_info(AL4SAN_Starpu_task_t* al4san_task, int *codelet_buffers, va_list varg_list)
