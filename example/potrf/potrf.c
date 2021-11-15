@@ -27,9 +27,11 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <pthread.h>
-#include <al4san.h>
-#include <al4san/timer.h>
+//#include <al4san.h>
+//#include <al4san/timer.h>
 #include "potrf.h"
+
+char runtime[20];
 
 float get_time();
 /*

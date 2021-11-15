@@ -70,6 +70,7 @@ if [ $compile_parsec -eq 1 ];then
     git clone https://rabab53@bitbucket.org/yupei2/parsec-future.git
     cd parsec-future
     git checkout dtd_enable_user_trimming
+    git reset --hard 2093af020936bd172e0eeb56fd58cffe007b1529
      mkdir build
      cd build
     [[ -d $parsec_install_dir ]] || mkdir -p $parsec_install_dir

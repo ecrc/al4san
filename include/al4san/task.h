@@ -26,80 +26,80 @@
 BEGIN_C_DECLS
 
 //#define INIT_VALUE 111
-int ARG_END;
-int AL4SAN_DEP;
-int AL4SAN_CUDA_ASYNC;
-int AL4SAN_CUDA_FLG;
-int AL4SAN_INPUT;
-int AL4SAN_OUTPUT;
-int AL4SAN_INOUT;
-int AL4SAN_SCRATCH;
-int AL4SAN_REDUX;
-int AL4SAN_COMMUTE;
-int AL4SAN_SSEND;
-int AL4SAN_ACCESS_MODE_MAX;
-int AL4SAN_VALUE;
-int AL4SAN_DATA_ARRAY;
-int AL4SAN_DATA_MODE_ARRAY;
-int AL4SAN_CL_ARGS_NFREE;
-int AL4SAN_CL_ARGS;
-int AL4SAN_CALLBACK;
-int AL4SAN_CALLBACK_WITH_ARG;
-int AL4SAN_CALLBACK_ARG;
-int AL4SAN_PROLOGUE_CALLBACK;
-int AL4SAN_PROLOGUE_CALLBACK_ARG;
-int AL4SAN_PROLOGUE_CALLBACK_POP;
-int AL4SAN_PROLOGUE_CALLBACK_POP_ARG;
-int AL4SAN_EXECUTE_ON_NODE;
-int AL4SAN_EXECUTE_ON_DATA;
-int AL4SAN_EXECUTE_ON_WORKER;
-int AL4SAN_WORKER_ORDER;
-int AL4SAN_SCHED_CTX;
-int AL4SAN_HYPERVISOR_TAG;
-int AL4SAN_POSSIBLY_PARALLEL;
-int AL4SAN_FLOPS;
-int AL4SAN_TAG;
-int AL4SAN_TAG_ONLY;
-int AL4SAN_NODE_SELECTION_POLICY;
-int AL4SAN_TASK_DEPS_ARRAY;
-int AL4SAN_EXECUTE_WHERE;
-int AL4SAN_COLOR;
-int AL4SAN_LOCALITY;
-int AL4SAN_PRIORITY;
-int AL4SAN_LABEL;
-int AL4SAN_REGION_0;
-int AL4SAN_REGION_1;
-int AL4SAN_REGION_2;
-int AL4SAN_REGION_3;
-int AL4SAN_REGION_4;
-int AL4SAN_REGION_5;
-int AL4SAN_REGION_6;
-int AL4SAN_REGION_7;
+extern int ARG_END;
+extern int AL4SAN_DEP;
+extern int AL4SAN_CUDA_ASYNC;
+extern int AL4SAN_CUDA_FLG;
+extern int AL4SAN_INPUT;
+extern int AL4SAN_OUTPUT;
+extern int AL4SAN_INOUT;
+extern int AL4SAN_SCRATCH;
+extern int AL4SAN_REDUX;
+extern int AL4SAN_COMMUTE;
+extern int AL4SAN_SSEND;
+extern int AL4SAN_ACCESS_MODE_MAX;
+extern int AL4SAN_VALUE;
+extern int AL4SAN_DATA_ARRAY;
+extern int AL4SAN_DATA_MODE_ARRAY;
+extern int AL4SAN_CL_ARGS_NFREE;
+extern int AL4SAN_CL_ARGS;
+extern int AL4SAN_CALLBACK;
+extern int AL4SAN_CALLBACK_WITH_ARG;
+extern int AL4SAN_CALLBACK_ARG;
+extern int AL4SAN_PROLOGUE_CALLBACK;
+extern int AL4SAN_PROLOGUE_CALLBACK_ARG;
+extern int AL4SAN_PROLOGUE_CALLBACK_POP;
+extern int AL4SAN_PROLOGUE_CALLBACK_POP_ARG;
+extern int AL4SAN_EXECUTE_ON_NODE;
+extern int AL4SAN_EXECUTE_ON_DATA;
+extern int AL4SAN_EXECUTE_ON_WORKER;
+extern int AL4SAN_WORKER_ORDER;
+extern int AL4SAN_SCHED_CTX;
+extern int AL4SAN_HYPERVISOR_TAG;
+extern int AL4SAN_POSSIBLY_PARALLEL;
+extern int AL4SAN_FLOPS;
+extern int AL4SAN_TAG;
+extern int AL4SAN_TAG_ONLY;
+extern int AL4SAN_NODE_SELECTION_POLICY;
+extern int AL4SAN_TASK_DEPS_ARRAY;
+extern int AL4SAN_EXECUTE_WHERE;
+extern int AL4SAN_COLOR;
+extern int AL4SAN_LOCALITY;
+extern int AL4SAN_PRIORITY;
+extern int AL4SAN_LABEL;
+extern int AL4SAN_REGION_0;
+extern int AL4SAN_REGION_1;
+extern int AL4SAN_REGION_2;
+extern int AL4SAN_REGION_3;
+extern int AL4SAN_REGION_4;
+extern int AL4SAN_REGION_5;
+extern int AL4SAN_REGION_6;
+extern int AL4SAN_REGION_7;
                //ldu region
-int AL4SAN_REGION_L;
-int AL4SAN_REGION_D;
-int AL4SAN_REGION_U;
+extern int AL4SAN_REGION_L;
+extern int AL4SAN_REGION_D;
+extern int AL4SAN_REGION_U;
                //flags
-int AL4SAN_LOCK_TO_THREAD;
-int AL4SAN_SEQUENCE;
-int AL4SAN_THREAD_COUNT;
-int AL4SAN_THREAD_SET_TO_MANUAL_SCHEDULING;
-int AL4SAN_LOCK_TO_THREAD_MASK;
+extern int AL4SAN_LOCK_TO_THREAD;
+extern int AL4SAN_SEQUENCE;
+extern int AL4SAN_THREAD_COUNT;
+extern int AL4SAN_THREAD_SET_TO_MANUAL_SCHEDULING;
+extern int AL4SAN_LOCK_TO_THREAD_MASK;
 //int AL4SAN_COLOR = INIT_VALUE;
                //data dep
-int AL4SAN_NODEP;
-int AL4SAN_NOLOCALITY;
-int AL4SAN_ACCUMULATOR;
-int AL4SAN_NOACCUMULATOR;
-int AL4SAN_GATHERV;
-int AL4SAN_NOGATHERV;
+extern int AL4SAN_NODEP;
+extern int AL4SAN_NOLOCALITY;
+extern int AL4SAN_ACCUMULATOR;
+extern int AL4SAN_NOACCUMULATOR;
+extern int AL4SAN_GATHERV;
+extern int AL4SAN_NOGATHERV;
                //parsec
-int AL4SAN_REF;
-int AL4SAN_AFFINITY; 
-int AL4SAN_DONT_TRACK;
-int AL4SAN_PASSED_BY_REF;
+extern int AL4SAN_REF;
+extern int AL4SAN_AFFINITY; 
+extern int AL4SAN_DONT_TRACK;
+extern int AL4SAN_PASSED_BY_REF;
 
-int AL4SAN_FULL_TILE;
+extern int AL4SAN_FULL_TILE;
 
 typedef struct al4san_arg_list_s
 {
@@ -124,32 +124,32 @@ typedef struct al4san_arg_list_s
         AL4SAN_OPENMP_TASK_HEADER(name)
 
 #if defined(AL4SAN_SCHED_STARPU) && !defined(AL4SAN_SCHED_QUARK) && !defined(AL4SAN_SCHED_PARSEC) && !defined(AL4SAN_SCHED_OPENMP)
-void *QUARK_func, *PARSEC_func, *OPENMP_func;
+extern void *QUARK_func, *PARSEC_func, *OPENMP_func;
 #define AL4SAN_TASK(name) QUARK_func, &cl_##name, PARSEC_func, OPENMP_func
 #endif
 
 #if defined(AL4SAN_SCHED_STARPU) && defined(AL4SAN_SCHED_QUARK) && defined(AL4SAN_SCHED_PARSEC) && !defined(AL4SAN_SCHED_OPENMP)
-void *OPENMP_func;
+extern void *OPENMP_func;
 #define AL4SAN_TASK(name) QUARK_##name##_func, &cl_##name, PARSEC_##name##_func, OPENMP_func
 #endif
 
 #if defined(AL4SAN_SCHED_STARPU) && defined(AL4SAN_SCHED_QUARK) && !defined(AL4SAN_SCHED_PARSEC) && !defined(AL4SAN_SCHED_OPENMP)
-void *OPENMP_func, *PARSEC_func;
+extern void *OPENMP_func, *PARSEC_func;
 #define AL4SAN_TASK(name) QUARK_##name##_func, &cl_##name, PARSEC_func, OPENMP_func
 #endif
 
 #if !defined(AL4SAN_SCHED_STARPU) && !defined(AL4SAN_SCHED_QUARK) && defined(AL4SAN_SCHED_PARSEC) && !defined(AL4SAN_SCHED_OPENMP)
-void *QUARK_func, *STARPU_func, *OPENMP_func;
+extern void *QUARK_func, *STARPU_func, *OPENMP_func;
 #define AL4SAN_TASK(name) QUARK_func, STARPU_func, PARSEC_##name##_func, OPENMP_func
 #endif
 
 #if !defined(AL4SAN_SCHED_STARPU) && defined(AL4SAN_SCHED_QUARK) && !defined(AL4SAN_SCHED_PARSEC) && !defined(AL4SAN_SCHED_OPENMP)
-void *OPENMP_func, *STARPU_func, *PARSEC_func;
+extern void *OPENMP_func, *STARPU_func, *PARSEC_func;
 #define AL4SAN_TASK(name) QUARK_##name##_func, STARPU_func, PARSEC_func, OPENMP_func
 #endif
 
 #if !defined(AL4SAN_SCHED_STARPU) && !defined(AL4SAN_SCHED_QUARK) && !defined(AL4SAN_SCHED_PARSEC) && defined(AL4SAN_SCHED_OPENMP)
-void *QUARK_func, *STARPU_func, *PARSEC_func;
+extern void *QUARK_func, *STARPU_func, *PARSEC_func;
 #define AL4SAN_TASK(name) QUARK_func, STARPU_func, PARSEC_func,  OPENMP_##name##_func
 #endif
 

@@ -22,6 +22,83 @@
 #include "al4san_parsec.h"
 #include <stdarg.h>
 
+int ARG_END;
+int AL4SAN_DEP;
+int AL4SAN_CUDA_ASYNC;
+int AL4SAN_CUDA_FLG;
+int AL4SAN_INPUT;
+int AL4SAN_OUTPUT;
+int AL4SAN_INOUT;
+int AL4SAN_SCRATCH;
+int AL4SAN_REDUX;
+int AL4SAN_COMMUTE;
+int AL4SAN_SSEND;
+int AL4SAN_ACCESS_MODE_MAX;
+int AL4SAN_VALUE;
+int AL4SAN_DATA_ARRAY;
+int AL4SAN_DATA_MODE_ARRAY;
+int AL4SAN_CL_ARGS_NFREE;
+int AL4SAN_CL_ARGS;
+int AL4SAN_CALLBACK;
+int AL4SAN_CALLBACK_WITH_ARG;
+int AL4SAN_CALLBACK_ARG;
+int AL4SAN_PROLOGUE_CALLBACK;
+int AL4SAN_PROLOGUE_CALLBACK_ARG;
+int AL4SAN_PROLOGUE_CALLBACK_POP;
+int AL4SAN_PROLOGUE_CALLBACK_POP_ARG;
+int AL4SAN_EXECUTE_ON_NODE;
+int AL4SAN_EXECUTE_ON_DATA;
+int AL4SAN_EXECUTE_ON_WORKER;
+int AL4SAN_WORKER_ORDER;
+int AL4SAN_SCHED_CTX;
+int AL4SAN_HYPERVISOR_TAG;
+int AL4SAN_POSSIBLY_PARALLEL;
+int AL4SAN_FLOPS;
+int AL4SAN_TAG;
+int AL4SAN_TAG_ONLY;
+int AL4SAN_NODE_SELECTION_POLICY;
+int AL4SAN_TASK_DEPS_ARRAY;
+int AL4SAN_EXECUTE_WHERE;
+int AL4SAN_COLOR;
+int AL4SAN_LOCALITY;
+int AL4SAN_PRIORITY;
+int AL4SAN_LABEL;
+int AL4SAN_REGION_0;
+int AL4SAN_REGION_1;
+int AL4SAN_REGION_2;
+int AL4SAN_REGION_3;
+int AL4SAN_REGION_4;
+int AL4SAN_REGION_5;
+int AL4SAN_REGION_6;
+int AL4SAN_REGION_7;
+
+               //ldu region
+int AL4SAN_REGION_L;
+int AL4SAN_REGION_D;
+int AL4SAN_REGION_U;
+               //flags
+int AL4SAN_LOCK_TO_THREAD;
+int AL4SAN_SEQUENCE;
+int AL4SAN_THREAD_COUNT;
+int AL4SAN_THREAD_SET_TO_MANUAL_SCHEDULING;
+int AL4SAN_LOCK_TO_THREAD_MASK;
+//int AL4SAN_COLOR = INIT_VALUE;
+               //data dep
+int AL4SAN_NODEP;
+int AL4SAN_NOLOCALITY;
+int AL4SAN_ACCUMULATOR;
+int AL4SAN_NOACCUMULATOR;
+int AL4SAN_GATHERV;
+int AL4SAN_NOGATHERV;
+               //parsec
+int AL4SAN_REF;
+int AL4SAN_AFFINITY;
+int AL4SAN_DONT_TRACK;
+int AL4SAN_PASSED_BY_REF;
+
+int AL4SAN_FULL_TILE;
+
+void *OPENMP_func, *STARPU_func, *PARSEC_func, *QUARK_func;
 
 /*
  * This function iterates over a va_list, whose end
@@ -35,14 +112,14 @@ void AL4SAN_Parsec_task_option_init()
 
  AL4SAN_DEP = 101;
  ARG_END = PARSEC_DTD_ARG_END;
- AL4SAN_INPUT=INPUT;
- AL4SAN_OUTPUT=OUTPUT;
- AL4SAN_INOUT=INOUT;
- AL4SAN_VALUE=VALUE;
- AL4SAN_REF=REF;
- AL4SAN_SCRATCH=SCRATCH;
- AL4SAN_AFFINITY=AFFINITY; 
- AL4SAN_DONT_TRACK=DONT_TRACK; 
+ AL4SAN_INPUT=PARSEC_INPUT;
+ AL4SAN_OUTPUT=PARSEC_OUTPUT;
+ AL4SAN_INOUT=PARSEC_INOUT;
+ AL4SAN_VALUE=PARSEC_VALUE;
+ AL4SAN_REF=PARSEC_REF;
+ AL4SAN_SCRATCH=PARSEC_SCRATCH;
+ AL4SAN_AFFINITY=PARSEC_AFFINITY; 
+ AL4SAN_DONT_TRACK=PARSEC_DONT_TRACK; 
  AL4SAN_PASSED_BY_REF=PASSED_BY_REF;
 
  AL4SAN_PRIORITY=1<<30;
@@ -123,9 +200,9 @@ al4san_parsec_arg_iterator(va_list args, parsec_dtd_arg_cb *cb, void *cb_data)
     void *ptr;
     while(PARSEC_DTD_ARG_END != (arg_type = va_arg(args, int))) {
         
-        if(((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & GET_OP_TYPE) == AL4SAN_INPUT || 
-         ((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & GET_OP_TYPE) == AL4SAN_INOUT || 
-         ((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & GET_OP_TYPE) == AL4SAN_OUTPUT )
+        if(((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & PARSEC_GET_OP_TYPE) == AL4SAN_INPUT || 
+         ((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & PARSEC_GET_OP_TYPE) == AL4SAN_INOUT || 
+         ((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & PARSEC_GET_OP_TYPE) == AL4SAN_OUTPUT )
           {
              arg_ptr = va_arg(args, void *);
              ptr = va_arg(args, void *);
@@ -189,9 +266,9 @@ void al4san_parsec_flags_decode(AL4SAN_Parsec_Task_Flags *task_flag, va_list arg
            arg_size  = va_arg(args_for_flags, int);
            task_flag->task_label=(char *)arg_ptr;
          }
-      else if(((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & GET_OP_TYPE) == AL4SAN_INPUT ||
-         ((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & GET_OP_TYPE) == AL4SAN_INOUT ||
-         ((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & GET_OP_TYPE) == AL4SAN_OUTPUT )
+      else if(((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & PARSEC_GET_OP_TYPE) == AL4SAN_INPUT ||
+         ((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & PARSEC_GET_OP_TYPE) == AL4SAN_INOUT ||
+         ((arg_type & AL4SAN_PARSEC_UNDEFINED_MASK) & PARSEC_GET_OP_TYPE) == AL4SAN_OUTPUT )
         {
            (void)va_arg(args_for_flags, void *);
            (void)va_arg(args_for_flags, void *);
@@ -351,16 +428,16 @@ int AL4SAN_Parsec_unpack_arg(AL4SAN_arg_list* al4san_arg, va_list varg_list)
     void *tmp_val; void **tmp_ref;
 
     while(current_param != NULL) {
-        if((current_param->op_type & GET_OP_TYPE) == VALUE) {
+        if((current_param->op_type & PARSEC_GET_OP_TYPE) == PARSEC_VALUE) {
             tmp_val = va_arg(varg_list, void*);
             memcpy(tmp_val, current_param->pointer_to_tile, current_param->arg_size);
-        } else if((current_param->op_type & GET_OP_TYPE) == SCRATCH ||
-          (current_param->op_type & GET_OP_TYPE) == REF) {
+        } else if((current_param->op_type & PARSEC_GET_OP_TYPE) == PARSEC_SCRATCH ||
+          (current_param->op_type & PARSEC_GET_OP_TYPE) == PARSEC_REF) {
             tmp_ref = va_arg(varg_list, void**);
             *tmp_ref = current_param->pointer_to_tile;
-        } else if((current_param->op_type & GET_OP_TYPE) == INPUT ||
-          (current_param->op_type & GET_OP_TYPE) == INOUT ||
-          (current_param->op_type & GET_OP_TYPE) == OUTPUT) {
+        } else if((current_param->op_type & PARSEC_GET_OP_TYPE) == PARSEC_INPUT ||
+          (current_param->op_type & PARSEC_GET_OP_TYPE) == PARSEC_INOUT ||
+          (current_param->op_type & PARSEC_GET_OP_TYPE) == PARSEC_OUTPUT) {
             tmp_ref = va_arg(varg_list, void**);
             *tmp_ref = PARSEC_DATA_COPY_GET_PTR(parsecarg->this_task->data[i].data_in);
             i++;

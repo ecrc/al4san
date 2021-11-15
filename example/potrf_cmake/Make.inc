@@ -20,7 +20,7 @@ CFLAGS =  -ldl -Wno-unused-parameter -multiply_defined
 #LIBS  =   -lpthread  -lhwloc -L/opt/ecrc/openmpi/3.0.0-gcc-5.5.0/ub16/lib -lmpi -L../../build-parsec/install/lib/ -lal4san  -lal4san_parsec   -L/opt/ecrc/parsec/master-gcc-5.5.0-mkl-openmpi-plasma-2.8.0/ub16/lib -lparsec -L${MKLROOT}/lib/intel64 -lm -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -ldl
 
 #parsec mpi
-LIBS  =   -lpthread  -lhwloc -L/opt/intel/compilers_and_libraries_2019.5.281/linux/mpi/intel64/lib/release -lmpi -L../../build-parsec/install/lib/ -lal4san  -lal4san_parsec   -L/project/k1205/omairyrm/dplasma-parsec/parsec/build/install_dir/lib64/ -lparsec -L${MKLROOT}/lib/intel64 -lm -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -ldl
+LIBS  =   -lpthread  -lhwloc -L/opt/ecrc/openmpi/4.1.0-gcc-10.2.0/ub18/lib/ -lmpi -L../../build-parsec/install/lib/ -lal4san  -lal4san_parsec   -L/home/omairyrm/packages/parsec-future/build/install/lib/ -lparsec -L${MKLROOT}/lib/intel64 -lm -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -ldl
 
 #LIBS  =   -lpthread  -lhwloc -L/opt/ecrc/openmpi/3.0.0-gcc-5.5.0/ub16/lib -lmpi -L../../build-parsec/install/lib -lal4san -lal4san_parsec   -L/opt/ecrc/parsec/master-gcc-5.5.0-mkl-openmpi-plasma-2.8.0/ub16/lib -lparsec -L${MKLROOT}/lib/intel64 -lm -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -ldl
 
@@ -36,7 +36,7 @@ LIBS  =   -lpthread  -lhwloc -L/opt/intel/compilers_and_libraries_2019.5.281/lin
 #INCLUDES  = -I${MKLROOT}/include -I../../build/install/include   -I../../starpu-1.3-install/include/starpu/1.3/
 
 #parsec mpi
-INCLUDES  =  -I${MKLROOT}/include -I../../build-parsec/install/include  -I/opt/intel/compilers_and_libraries_2019.5.281/linux/mpi/intel64/include/ -I/project/k1205/omairyrm/dplasma-parsec/parsec/build/install_dir/include/ -I/project/k1205/omairyrm/dplasma-parsec/parsec/build/install_dir/include/parsec 
+INCLUDES  =  -I${MKLROOT}/include -I../../build-parsec/install/include  -I/opt/ecrc/openmpi/4.1.0-gcc-10.2.0/ub18/include/ -I/home/omairyrm/packages/parsec-future/build/install/lib/include/
 
 #INCLUDES  =  -I${MKLROOT}/include -I../../build-parsec2/installdir/include   -I/home/omairyrm/parsec-last/dplasma/build/installdir/include
 

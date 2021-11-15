@@ -37,6 +37,7 @@
 #include <al4san.h>
 #include "runtime/al4san_runtime.h"
 #include "control/al4san_descriptor.h"
+#include <al4san/timer.h>
 //#include <lapacke.h>
 #include <mkl.h>
 #include <sys/time.h>
@@ -109,7 +110,7 @@ void pdplgsy( double bump, al4san_uplo_t uplo, AL4SAN_desc_t *A,
                     unsigned long long int seed,
                     AL4SAN_sequence_t *sequence, AL4SAN_request_t *request );
 
-char runtime[20];
+extern char runtime[20];
 /* Integer parameters for step2 */
 enum iparam_step2 {
     IPARAM_THRDNBR,        /* Number of cores                            */

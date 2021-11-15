@@ -23,9 +23,12 @@ AL4SAN
                         sh '''#!/bin/bash -el
                         module purge
                         module load ecrc-extras
-                        module load gcc/5.5.0
-                        module load mkl/2018-update-2
-                        module load starpu/1.2.4-gcc-5.5.0-mkl-openmpi-3.0.0
+                        module load gcc/10.2.0 
+                        module load mkl/2019-update-5
+			module load openmpi/4.1.0-gcc-10.2.0
+			module load hwloc/2.4.0-nocuda-gcc-10.2.0
+			module load cmake/3.21.2
+                        module load starpu/1.2.10-gcc-10.2.0-mkl-openmpi-4.1.0
 
                         mkdir -p build-starpu
                         cd build-starpu
@@ -41,10 +44,10 @@ AL4SAN
                     steps {
                         sh '''#!/bin/bash -el
                         module purge
-			module load gcc/7.2.0
+			module load gcc/10.2.0
 			module load mkl/2020.0.166
-			module load openmpi/3.0.0-gcc-7.2.0
-			module load parsec/master-gcc-7.2.0-mkl-openmpi-plasma-3.0.0
+			module load openmpi/4.1.0-gcc-10.2.0
+			module load parsec/master-gcc-10.2.0-mkl-openmpi-plasma-4.0.0
 
                         mkdir -p build-parsec
                         cd build-parsec
@@ -67,8 +70,10 @@ AL4SAN
                         sh '''#!/bin/bash -el
                         module purge
                         module load ecrc-extras
-                        module load gcc/5.5.0
-                        module load mkl/2018-update-2
+                        module load gcc/10.2.0 
+			module load cmake/3.21.2
+			module load hwloc/2.4.0-nocuda-gcc-10.2.0
+                        module load mkl/2019-update-5
 
                         mkdir -p build-quark
                         cd build-quark
@@ -137,7 +142,8 @@ AL4SAN
                         module purge
                         module load ecrc-extras
                         module load llvm/6.0.1-flang
-                        module load mkl/2018-update-2
+			module load cmake/3.21.2 
+                        module load mkl/2019-update-5
 
 
                         mkdir -p build-openmp
